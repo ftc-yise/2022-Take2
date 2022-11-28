@@ -116,10 +116,13 @@ public class SampleMecanumDrive extends MecanumDrive {
         // For example, if +Y in this diagram faces downwards, you would use AxisDirection.NEG_Y.
         // BNO055IMUUtil.remapZAxis(imu, AxisDirection.NEG_Y);
 
-        leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
-        leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
-        rightRear = hardwareMap.get(DcMotorEx.class, "rightRear");
-        rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
+        // mpdavy 2022.11.27 --
+        // The variables names need to remain the same (ie LeftFront), but the deviceNames need
+        // to be updated to match our hardware configuration (ie left_front_drive)
+        leftFront = hardwareMap.get(DcMotorEx.class, "left_front_drive");
+        leftRear = hardwareMap.get(DcMotorEx.class, "left_back_drive");
+        rightRear = hardwareMap.get(DcMotorEx.class, "right_back_drive");
+        rightFront = hardwareMap.get(DcMotorEx.class, "right_front_drive");
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 
@@ -140,9 +143,19 @@ public class SampleMecanumDrive extends MecanumDrive {
         }
 
         // TODO: reverse any motors using DcMotor.setDirection()
+        // mpdavy 2022.11.27 --
+        // We figured out which encoders to reverse by running our drive code which included
+        // telemetry for the encoders and then manually moved the robot to see if the encoders
+        // reported + or - value and compared this to the picture/diagram provided in the Dead
+        // Wheel section
+        rightFront.setDirection(DcMotor.Direction.REVERSE);
+        rightRear.setDirection(DcMotor.Direction.REVERSE);
 
         // TODO: if desired, use setLocalizer() to change the localization method
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
+        // mpdavy 2022.11.27 --
+        // This was copied directly from the instructions
+        setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
 
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
     }
