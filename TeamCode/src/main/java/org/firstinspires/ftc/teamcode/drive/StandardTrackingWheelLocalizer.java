@@ -36,11 +36,14 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
 
     public static double LATERAL_DISTANCE = 10.41; // in; distance between the left and right wheels
+
+
     // mpdavy 2022.11.27 --
     // Use a tape measure to find the center point between front and back wheels. Mark this point
     // then measure the distance from center point to the middle of the rear odometry wheel. If the
     // wheel is behind the center point, use the negative value
-    public static double FORWARD_OFFSET = -8; // in; offset of the lateral wheel
+    // public static double FORWARD_OFFSET = -8; // in; offset of the lateral wheel
+    public static double FORWARD_OFFSET = -7.5; // in; offset of the lateral wheel
 
     // mpdavy 2022.11.27 --
     // These values are calculated by measuring a fixed distance (ie 90 inches), manually pushing

@@ -55,7 +55,10 @@ public class SampleMecanumDrive extends MecanumDrive {
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0, 0, 0);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(0, 0, 0);
 
-    public static double LATERAL_MULTIPLIER = 1;
+    // mpdavy 2022.11.29:
+    // Tuned with a bad right rear wheel. This was definitely negatively impacting this tuning
+    // TODO: Need to run again and retune after fixing the wheel
+    public static double LATERAL_MULTIPLIER = 1.55;
 
     public static double VX_WEIGHT = 1;
     public static double VY_WEIGHT = 1;
@@ -88,11 +91,13 @@ public class SampleMecanumDrive extends MecanumDrive {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
 
+        // mpdavy 2022.11.29:
+        // Commented out IMU to improve load times since it's not being used
         // TODO: adjust the names of the following hardware devices to match your configuration
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
-        imu.initialize(parameters);
+        // imu = hardwareMap.get(BNO055IMU.class, "imu");
+        // BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        // parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+        // imu.initialize(parameters);
 
         // TODO: If the hub containing the IMU you are using is mounted so that the "REV" logo does
         // not face up, remap the IMU axes so that the z-axis points upward (normal to the floor.)
