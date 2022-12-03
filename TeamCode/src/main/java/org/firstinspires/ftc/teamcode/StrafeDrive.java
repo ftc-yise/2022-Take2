@@ -65,6 +65,9 @@ public class StrafeDrive extends LinearOpMode {
 
     public boolean canSwitchModes = true;
 
+    public boolean leftBumperWasPressed = false;
+
+    public boolean rightBumperWasPressed = false;
     @Override
     public void runOpMode() {
 
@@ -159,24 +162,31 @@ public class StrafeDrive extends LinearOpMode {
                 rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 leftSlide.setPower(1);
                 rightSlide.setPower(1);
-            } if (cone < 1 ) {  //checks to see if the arm is already at zero and doesn't try to move down anymore
-                cone = 0;
-            }else if (gamepad2.left_bumper) {
-                cone = cone - 8;
+            } if (cone < 0 ) {  //checks to see if the arm is already at zero and doesn't try to move down anymore
+                cone = 1;
+            }else if (gamepad2.left_bumper && !leftBumperWasPressed) {
+                cone = cone - 15;
                 leftSlide.setTargetPosition((int) (cone + 50));  //stack incrementally move arm down by 50 on each press
                 rightSlide.setTargetPosition((int) (cone + 50));
                 leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 leftSlide.setPower(1);
                 rightSlide.setPower(1);
-            }else if (gamepad2.right_bumper) {
+                leftBumperWasPressed = true;
+            }else if (gamepad2.right_bumper && !rightBumperWasPressed) {
                 cone = 300;
                 leftSlide.setTargetPosition((int) (300));  //stack height for 5 cones
                 rightSlide.setTargetPosition((int) (300));
                 leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 leftSlide.setPower(1);
-                rightSlide.setPower(1); }
+                rightSlide.setPower(1);
+                rightBumperWasPressed=true;
+            } else if (!gamepad2.left_bumper){
+                leftBumperWasPressed=false;
+            } else if (!gamepad2.right_bumper){
+                leftBumperWasPressed=false;
+            }
 
 
 
