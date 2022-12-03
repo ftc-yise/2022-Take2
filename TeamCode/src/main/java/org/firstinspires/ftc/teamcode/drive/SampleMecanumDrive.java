@@ -52,12 +52,13 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
  */
 @Config
 public class SampleMecanumDrive extends MecanumDrive {
+    // mpdavy 2022.12.02
+    // These values were manually tuned using BackAndForth and FollowPIDTuner
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(8, 0, 1);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(8, 0, 1);
 
     // mpdavy 2022.11.29:
-    // Tuned with a bad right rear wheel. This was definitely negatively impacting this tuning
-    // TODO: Need to run again and retune after fixing the wheel
+    // These values were manually tuned using TrackingWheelLateralDistanceTuner
     public static double LATERAL_MULTIPLIER = 1.55;
 
     public static double VX_WEIGHT = 1;
@@ -147,7 +148,6 @@ public class SampleMecanumDrive extends MecanumDrive {
             setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID);
         }
 
-        // TODO: reverse any motors using DcMotor.setDirection()
         // mpdavy 2022.11.27 --
         // We figured out which encoders to reverse by running our drive code which included
         // telemetry for the encoders and then manually moved the robot to see if the encoders
@@ -156,7 +156,6 @@ public class SampleMecanumDrive extends MecanumDrive {
         rightFront.setDirection(DcMotor.Direction.REVERSE);
         rightRear.setDirection(DcMotor.Direction.REVERSE);
 
-        // TODO: if desired, use setLocalizer() to change the localization method
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
         // mpdavy 2022.11.27 --
         // This was copied directly from the instructions

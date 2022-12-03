@@ -43,12 +43,14 @@ public class DriveConstants {
      * angular distances although most angular parameters are wrapped in Math.toRadians() for
      * convenience. Make sure to exclude any gear ratio included in MOTOR_CONFIG from GEAR_RATIO.
      */
-    //public static double WHEEL_RADIUS = 1.968504; // in
+    // mpdavy 2022.12.02:
+    // This value came from the vendor-provided size of the wheel - converted from mm to inches
     public static double WHEEL_RADIUS = 1.8898; // in
 
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (motor) speed
-    // public static double TRACK_WIDTH = 10.41; // in
-    // public static double TRACK_WIDTH = 15.5; // in
+    // mpdavy 2022.12.02
+    // This value came from both auto-tuning with TrackWidthTuner and manually adjusting until
+    // the robot turned exactly 180 degrees
     public static double TRACK_WIDTH = 16.5; // in
 
     /*
@@ -57,7 +59,8 @@ public class DriveConstants {
      * motor encoders or have elected not to use them for velocity control, these values should be
      * empirically tuned.
      */
-    // public static double kV = 1.08 / rpmToVelocity(MAX_RPM);
+    // mdavy 2022.12.02
+    // These values were tuned while running the ManualFeedforwardTuner
     public static double kV = 1.06 / rpmToVelocity(MAX_RPM);
     public static double kA = 0.003;
     public static double kStatic = 0.015;
@@ -69,13 +72,14 @@ public class DriveConstants {
      * small and gradually increase them later after everything is working. All distance units are
      * inches.
      */
+    // mpdavy 2022.12.02
+    // These values were calculated using:
+    //     max_velocity = max_rpm / 60 * gear_ratio * wheel_radius * 2(pi)
     public static double MAX_VEL = 49.44;
     public static double MAX_ACCEL = 49.44;
     // public static double MAX_ANG_VEL = Math.toRadians(60);
     // mpdavy 2022.11.29:
     // This was calculated for us using MaxAngularVeloTuner
-    // public static double MAX_ANG_VEL = 4.7728;
-    // public static double MAX_ANG_VEL = 4.9886;
     public static double MAX_ANG_VEL = 3.9302;
     public static double MAX_ANG_ACCEL = Math.toRadians(60);
 

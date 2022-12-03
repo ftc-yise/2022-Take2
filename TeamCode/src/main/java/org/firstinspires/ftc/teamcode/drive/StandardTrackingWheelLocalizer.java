@@ -36,8 +36,6 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
 
     public static double LATERAL_DISTANCE = 10.43557; // in; distance between the left and right wheels
-    // public static double LATERAL_DISTANCE = 10.41; // in; distance between the left and right wheels
-
 
     // mpdavy 2022.11.27 --
     // Use a tape measure to find the center point between front and back wheels. Mark this point
@@ -51,8 +49,6 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
     // the robot the measured distance at least 3 times, finding the average calculated distance
     // recorded in the telemetry and dividing the measured distance (ie 90) by the average
     // calculated distance
-    //public static double X_MULTIPLIER = 0.999; // Multiplier in the X direction
-    //public static double Y_MULTIPLIER = 0.977; // Multiplier in the Y direction
     public static double X_MULTIPLIER = 0.996457041629761; // Multiplier in the X direction
     public static double Y_MULTIPLIER = 0.966979446196474; // Multiplier in the Y direction
 
