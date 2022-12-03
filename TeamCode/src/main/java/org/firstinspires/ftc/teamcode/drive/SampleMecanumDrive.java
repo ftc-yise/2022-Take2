@@ -52,8 +52,8 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
  */
 @Config
 public class SampleMecanumDrive extends MecanumDrive {
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0, 0, 0);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(0, 0, 0);
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(8, 0, 1);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(8, 0, 1);
 
     // mpdavy 2022.11.29:
     // Tuned with a bad right rear wheel. This was definitely negatively impacting this tuning
