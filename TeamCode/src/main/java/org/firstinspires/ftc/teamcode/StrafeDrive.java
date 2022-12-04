@@ -1,32 +1,3 @@
-/* Copyright (c) 2021 FIRST. All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted (subject to the limitations in the disclaimer below) provided that
- * the following conditions are met:
- *
- * Redistributions of source code must retain the above copyright notice, this list
- * of conditions and the following disclaimer.
- *
- * Redistributions in binary form must reproduce the above copyright notice, this
- * list of conditions and the following disclaimer in the documentation and/or
- * other materials provided with the distribution.
- *
- * Neither the name of FIRST nor the names of its contributors may be used to endorse or
- * promote products derived from this software without specific prior written permission.
- *
- * NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS
- * LICENSE. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
- * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
@@ -54,16 +25,20 @@ public class StrafeDrive extends LinearOpMode {
     private DcMotor leftSlide = null;
     private DcMotor rightSlide = null;
 
-    private Rev2mDistanceSensor distanceSensorRight = null;
-    private Rev2mDistanceSensor distanceSensorLeft = null;
+    //private Rev2mDistanceSensor distanceSensorRight = null;
+    //private Rev2mDistanceSensor distanceSensorLeft = null;
 
     private Servo coneGrabber = null;
 
     public float speedMultiplier = 1;
 
-    public float cone = 1;  // variable used to set the value for the cone heights and incremental down values
+    public int cone = 0;  // variable used to set the value for the cone heights and incremental down values
+
+    boolean hasReset = true;
 
     public boolean canSwitchModes = true;
+
+    public boolean leftBumperWasPressed = false;
 
     @Override
     public void runOpMode() {
@@ -91,8 +66,8 @@ public class StrafeDrive extends LinearOpMode {
         leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        distanceSensorRight = hardwareMap.get(Rev2mDistanceSensor.class, "distance_sensor_right");
-        distanceSensorLeft = hardwareMap.get(Rev2mDistanceSensor.class, "distance_sensor_left");
+        //distanceSensorRight = hardwareMap.get(Rev2mDistanceSensor.class, "distance_sensor_right");
+        //distanceSensorLeft = hardwareMap.get(Rev2mDistanceSensor.class, "distance_sensor_left");
 
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Status", "Initialized");
@@ -104,8 +79,8 @@ public class StrafeDrive extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             double max;
-            double distanceRight = distanceSensorRight.getDistance(DistanceUnit.CM);
-            double distanceLeft = distanceSensorLeft.getDistance(DistanceUnit.CM);
+            //double distanceRight = distanceSensorRight.getDistance(DistanceUnit.CM);
+            //double distanceLeft = distanceSensorLeft.getDistance(DistanceUnit.CM);
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
             double vertical = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
             double horizontal = gamepad1.left_stick_x;
@@ -159,79 +134,95 @@ public class StrafeDrive extends LinearOpMode {
                 rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 leftSlide.setPower(1);
                 rightSlide.setPower(1);
-            } if (cone < 1 ) {  //checks to see if the arm is already at zero and doesn't try to move down anymore
-                cone = 0;
-            }else if (gamepad2.left_bumper) {
-                cone = cone - 8;
-                leftSlide.setTargetPosition((int) (cone + 50));  //stack incrementally move arm down by 50 on each press
-                rightSlide.setTargetPosition((int) (cone + 50));
+            }
+
+            // Cone Stack Code - Go up to core 5 and step down 1 cone at a time
+            if (!gamepad2.left_bumper && leftBumperWasPressed){
+                leftBumperWasPressed = false;
+            }
+            if (cone < 0 ) {  //checks to see if the arm is already at zero and doesn't try to move down anymore
+                cone = 1;
+            } else if (gamepad2.left_bumper && !leftBumperWasPressed) {
+                cone = cone - 60;
+                leftSlide.setTargetPosition(cone);  //stack incrementally move arm down by 50 on each press
+                rightSlide.setTargetPosition(cone );
                 leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 leftSlide.setPower(1);
                 rightSlide.setPower(1);
-            }else if (gamepad2.right_bumper) {
+                leftBumperWasPressed = true;
+            } else if (gamepad2.right_bumper) {
                 cone = 300;
-                leftSlide.setTargetPosition((int) (300));  //stack height for 5 cones
-                rightSlide.setTargetPosition((int) (300));
+                leftSlide.setTargetPosition(cone);  //stack height for 5 cones
+                rightSlide.setTargetPosition(cone);
                 leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 leftSlide.setPower(1);
-                rightSlide.setPower(1); }
+                rightSlide.setPower(1);
+            }
 
+            if ((gamepad1.right_stick_button || gamepad2.right_stick_button) && !hasReset){
+                leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                leftSlide.setPower(-0.5);
+                rightSlide.setPower(-0.5);
+                hasReset = true;
+            } else if ((!gamepad1.right_stick_button || !gamepad2.right_stick_button)  && hasReset) {
+                leftSlide.setPower(0);
+                rightSlide.setPower(0);
+                leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                hasReset = false;
+            }
 
+            if ((!leftSlide.isBusy() || !rightSlide.isBusy()) && !hasReset) {
+                //stop the slide and keep it from holding position
+                leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                leftSlide.setPower(0.05);
+                rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                rightSlide.setPower(0.05);
+            }
 
+            // Normalize the values so no wheel power exceeds 100%
+            // This ensures that the robot maintains the desired motion.
+            max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
+            max = Math.max(max, Math.abs(leftBackPower));
+            max = Math.max(max, Math.abs(rightBackPower));
 
+            if (max > 1.0) {
+                leftFrontPower /= max;
+                rightFrontPower /= max;
+                leftBackPower /= max;
+                rightBackPower /= max;
+            }
 
+            if (gamepad1.a || gamepad2.a) {
+                coneGrabber.setPosition(Servo.MIN_POSITION);
+            } else if (gamepad1.b || gamepad2.b) {
+                coneGrabber.setPosition(Servo.MAX_POSITION);
+            }
 
+            // Send calculated power to wheels
+            if (gamepad1.y && (speedMultiplier == 1) && canSwitchModes) {
+                speedMultiplier = 0.75f;
+            } else if (gamepad1.y && (speedMultiplier == 0.75f) && canSwitchModes) {
+                speedMultiplier = 1f;
+            }
 
-                if (!leftSlide.isBusy() || !rightSlide.isBusy()) {
-                    //stop the slide and keep it from holding position
-                    leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                    leftSlide.setPower(0.05);
-                    rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                    rightSlide.setPower(0.05);
-                }
+            if (gamepad1.y) {
+                canSwitchModes = false;
+            } else {
+                canSwitchModes = true;
+            }
 
-                // Normalize the values so no wheel power exceeds 100%
-                // This ensures that the robot maintains the desired motion.
-                max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
-                max = Math.max(max, Math.abs(leftBackPower));
-                max = Math.max(max, Math.abs(rightBackPower));
-
-                if (max > 1.0) {
-                    leftFrontPower /= max;
-                    rightFrontPower /= max;
-                    leftBackPower /= max;
-                    rightBackPower /= max;
-                }
-
-                if (gamepad1.a || gamepad2.a) {
-                    coneGrabber.setPosition(Servo.MIN_POSITION);
-                } else if (gamepad1.b || gamepad2.b) {
-                    coneGrabber.setPosition(Servo.MAX_POSITION);
-                }
-
-                // Send calculated power to wheels
-                if (gamepad1.y && (speedMultiplier == 1) && canSwitchModes) {
-                    speedMultiplier = 0.75f;
-                } else if (gamepad1.y && (speedMultiplier == 0.75f) && canSwitchModes) {
-                    speedMultiplier = 1f;
-                }
-
-                if (gamepad1.y) {
-                    canSwitchModes = false;
-                } else {
-                    canSwitchModes = true;
-                }
-
-                leftFrontDrive.setPower(leftFrontPower * speedMultiplier);
-                rightFrontDrive.setPower(rightFrontPower * speedMultiplier);
-                leftBackDrive.setPower(leftBackPower * speedMultiplier);
-                rightBackDrive.setPower(rightBackPower * speedMultiplier);
+            leftFrontDrive.setPower(leftFrontPower * speedMultiplier);
+            rightFrontDrive.setPower(rightFrontPower * speedMultiplier);
+            leftBackDrive.setPower(leftBackPower * speedMultiplier);
+            rightBackDrive.setPower(rightBackPower * speedMultiplier);
 
             //CAUSING LAG AND WHEN DISCONNECTS IT STOPS THE CODE BRING THIS OUT TO ANOTHER
             // CLASS AND ADD ERROR CODE HANDLING
-            if (gamepad1.left_trigger >= 0.8) {
+            /*if (gamepad1.left_trigger >= 0.8) {
                     // if both sides are < 20cm, stop
                     if (distanceLeft < 20 && distanceRight < 20) {
                         leftFrontDrive.setPower(0);
@@ -257,22 +248,22 @@ public class StrafeDrive extends LinearOpMode {
                         leftBackDrive.setPower(0.4);
                         rightFrontDrive.setPower(0.4);
                     }
-                }
+                }*/
 
-                // Show the elapsed game time and wheel power.
-                telemetry.addData("Status", "Run Time: " + runtime.toString());
-                // telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
-                // telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
-                telemetry.addData("HeightL: ", leftSlide.getCurrentPosition());
-                telemetry.addData("HeightR: ", rightSlide.getCurrentPosition());
-                telemetry.addData("Left Encoder:", leftFrontDrive.getCurrentPosition());
-                telemetry.addData("Rear Encoder:", rightFrontDrive.getCurrentPosition());
-                telemetry.addData(" Right Encoder:", -rightBackDrive.getCurrentPosition());
-                telemetry.addData("Distance left: ", distanceLeft);
-                telemetry.addData("Distance right: ", distanceRight);
-                telemetry.update();
-                telemetry.addData("cone: ", cone);
-            }
+            // Show the elapsed game time and wheel power.
+            telemetry.addData("Status", "Run Time: " + runtime.toString());
+            // telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
+            // telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
+            telemetry.addData("HeightL: ", leftSlide.getCurrentPosition());
+            telemetry.addData("HeightR: ", rightSlide.getCurrentPosition());
+            telemetry.addData("Left Encoder:", leftFrontDrive.getCurrentPosition());
+            telemetry.addData("Rear Encoder:", rightFrontDrive.getCurrentPosition());
+            telemetry.addData(" Right Encoder:", -rightBackDrive.getCurrentPosition());
+            //telemetry.addData("Distance left: ", distanceLeft);
+            //telemetry.addData("Distance right: ", distanceRight);
+            telemetry.update();
+            telemetry.addData("cone: ", cone);
         }
     }
+}
 
