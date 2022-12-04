@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
@@ -42,6 +43,15 @@ public class StrafeDrive extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+
+        TouchSensor limit;
+        String limitSwitchState;
+        limit = hardwareMap.get(TouchSensor.class, "limit");
+        if (limit.isPressed()) {
+            limitSwitchState = "pressed";
+        } else {
+            limitSwitchState = "not_pressed";
+        }
 
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
@@ -97,7 +107,11 @@ public class StrafeDrive extends LinearOpMode {
             rightSlide.setPower(-gamepad2.left_stick_y);*/
 
 
-            //Encoder slide
+            /*
+            ---------------------------------------------------------------------------------------
+            3 Position Lift Arm Code
+            ---------------------------------------------------------------------------------------
+             */
             if (gamepad1.dpad_up || gamepad2.dpad_up) {
                 leftSlide.setTargetPosition(1950); // high pole position based on string length
                 rightSlide.setTargetPosition(1950);
@@ -261,6 +275,7 @@ public class StrafeDrive extends LinearOpMode {
             telemetry.addData(" Right Encoder:", -rightBackDrive.getCurrentPosition());
             //telemetry.addData("Distance left: ", distanceLeft);
             //telemetry.addData("Distance right: ", distanceRight);
+            telemetry.addData("limitSwitchState", limitSwitchState);
             telemetry.update();
             telemetry.addData("cone: ", cone);
         }
