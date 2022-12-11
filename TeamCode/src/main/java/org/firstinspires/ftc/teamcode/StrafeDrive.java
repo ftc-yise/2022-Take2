@@ -10,11 +10,21 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.TouchSensor;
-
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+
 
 @TeleOp(name="Drive program", group="Linear Opmode")
 public class StrafeDrive extends LinearOpMode {
+
+    private static final String VUFORIA_KEY = "AYvN/Qn/////AAABmTaYCa1SUkR7v5u6+3uR8CkLP9DKgYYzF/zz/slKnKktetT5kD2UyolBbzcRUiOv5ve/Bo+wJ5V01NzDGkWOqbwCwdrrwIau2aTGiVuF+nclQtuaZrp5qnMiWm4G2FUpgmQgoIbKZF2jrtyKfA957eIT6TxfN6CmPuFCjq/hd9FUMg5NjBZKOB3MmsxkgclcDW1U7YfPdVSTZURhXrg705CVtRFtwwy5TPfWCn9fYPLCFihlQpmQrg1D/hvTmlWtqA2edw0u7LaEhzZtFjmgB/O98qlZPqFixSX0yOIpmY04434VJO7uF9+9NAjGnfgtX207yf2TwNm9S4mfe4hCuka1WdNUzdJUkxfciaBtn2BJ"
+    /**
+     * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
+     * localization engine.
+     */
+    private VuforiaLocalizer vuforia;
 
     // Declare OpMode members for each of the 4 motors.
     private ElapsedTime runtime = new ElapsedTime();
@@ -43,6 +53,8 @@ public class StrafeDrive extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+
+        initVuforia();
 
         TouchSensor limit;
         String limitSwitchState;
@@ -280,5 +292,24 @@ public class StrafeDrive extends LinearOpMode {
             telemetry.addData("cone: ", cone);
         }
     }
+
+    /**
+     * Initialize the Vuforia localization engine.
+     */
+    private void initVuforia() {
+        /*
+         * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
+         */
+        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
+
+        parameters.vuforiaLicenseKey = VUFORIA_KEY;
+        parameters.cameraName = hardwareMap.get(WebcamName.class, "webcam_1");
+
+        //  Instantiate the Vuforia engine
+        vuforia = ClassFactory.getInstance().createVuforia(parameters);
+
+        // Loading trackables is not necessary for the TensorFlow Object Detection engine.
+    }
+
 }
 
