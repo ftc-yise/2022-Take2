@@ -32,7 +32,7 @@ public class mecanumDrive {
         rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
 
-        // Set default motor speeds
+        // Set default power for motors
         leftFrontPower = 0.5;
         leftBackPower = 0.5;
         rightFrontPower = 0.5;

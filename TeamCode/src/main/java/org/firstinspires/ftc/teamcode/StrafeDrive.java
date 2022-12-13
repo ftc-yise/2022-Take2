@@ -82,6 +82,7 @@ public class StrafeDrive extends LinearOpMode {
             }
 
             // If we have any Dpad input, update the motor power based on Dpad
+            // Note: Dpad overrides the stick
             if (gamepad1.dpad_right || gamepad1.dpad_left || gamepad1.dpad_up || gamepad1.dpad_down) {
                 drive.updateMotorsFromDpad(gamepad1);
             // Otherwise update motor power based on stick input
