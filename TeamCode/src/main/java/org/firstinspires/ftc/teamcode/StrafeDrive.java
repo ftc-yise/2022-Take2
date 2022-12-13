@@ -96,14 +96,14 @@ public class StrafeDrive extends LinearOpMode {
             /*leftSlide.setPower(-gamepad2.left_stick_y);
             rightSlide.setPower(-gamepad2.left_stick_y);*/
 
-            if (gamepad1.dpad_up || gamepad2.dpad_up) {
+            if (gamepad2.dpad_up) {
                 leftSlide.setTargetPosition(1950); // high pole position based on string length
                 rightSlide.setTargetPosition(1950);
                 leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 leftSlide.setPower(1);
                 rightSlide.setPower(1);
-            } else if (gamepad1.dpad_down || gamepad2.dpad_down) {
+            } else if (gamepad2.dpad_down) {
                 leftSlide.setTargetPosition(0);
                 rightSlide.setTargetPosition(0);
                 leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -111,21 +111,21 @@ public class StrafeDrive extends LinearOpMode {
                 leftSlide.setPower(1);
                 rightSlide.setPower(1);
                 cone = 0;
-            } else if (gamepad1.dpad_right || gamepad2.dpad_right) {
+            } else if (gamepad2.dpad_right) {
                 leftSlide.setTargetPosition(850);  //low pole position
                 rightSlide.setTargetPosition(850);
                 leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 leftSlide.setPower(1);
                 rightSlide.setPower(1);
-            } else if (gamepad1.dpad_left || gamepad2.dpad_left) {
+            } else if (gamepad2.dpad_left) {
                 leftSlide.setTargetPosition(1400);  //mid pole position
                 rightSlide.setTargetPosition(1400);
                 leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 leftSlide.setPower(1);
                 rightSlide.setPower(1);
-            } else if (gamepad1.x || gamepad2.x) {
+            } else if (gamepad2.x) {
                 leftSlide.setTargetPosition(75);  //GROUND JUNCTION hover
                 rightSlide.setTargetPosition(75);
                 leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -137,7 +137,6 @@ public class StrafeDrive extends LinearOpMode {
             // -----------------------------------------------------------------------------------
             // Cone Stack Code - Go up to core 5 and step down 1 cone at a time
             // -----------------------------------------------------------------------------------
-
             if (!gamepad2.left_bumper && leftBumperWasPressed){
                 leftBumperWasPressed = false;
             }
@@ -162,6 +161,9 @@ public class StrafeDrive extends LinearOpMode {
                 rightSlide.setPower(1);
             }
 
+            // -----------------------------------------------------------------------------------
+            // Nudge lift arm down by force (ignore encoders
+            // -----------------------------------------------------------------------------------
             if ((gamepad1.right_stick_button || gamepad2.right_stick_button) && !hasReset){
                 leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -176,14 +178,19 @@ public class StrafeDrive extends LinearOpMode {
                 hasReset = false;
             }
 
+            // -----------------------------------------------------------------------------------
+            // Stop the slide and keep it from holding position
+            // -----------------------------------------------------------------------------------
             if ((!leftSlide.isBusy() || !rightSlide.isBusy()) && !hasReset) {
-                //stop the slide and keep it from holding position
                 leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 leftSlide.setPower(0.05);
                 rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 rightSlide.setPower(0.05);
             }
 
+            // -----------------------------------------------------------------------------------
+            // Open and Close the Grabber
+            // -----------------------------------------------------------------------------------
             if (gamepad1.a || gamepad2.a) {
                 coneGrabber.setPosition(Servo.MIN_POSITION);
             } else if (gamepad1.b || gamepad2.b) {
