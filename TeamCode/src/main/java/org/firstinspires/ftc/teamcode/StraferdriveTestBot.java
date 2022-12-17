@@ -1,18 +1,21 @@
 package org.firstinspires.ftc.teamcode;
+import android.view.View;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 
 @TeleOp(name="S" +
         "TBot Drive", group="Linear Opmode")
 public class StraferdriveTestBot extends LinearOpMode {
 
-    public boolean limitswitch = false;
 
+    
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -22,8 +25,8 @@ public class StraferdriveTestBot extends LinearOpMode {
         DcMotor motorBackLeft = hardwareMap.dcMotor.get("motorBackLeft");
         DcMotor motorFrontRight = hardwareMap.dcMotor.get("motorFrontRight");
         DcMotor motorBackRight = hardwareMap.dcMotor.get("motorBackRight");
+        TouchSensor limit = hardwareMap.touchSensor.get("Limit");
         //TouchSensor limit = hardwareMap.touchSensor.get("Limit");
-        TouchSensor touch = hardwareMap.touchSensor.get("Touch");
 
 
         // Reverse the right side motors
@@ -34,17 +37,17 @@ public class StraferdriveTestBot extends LinearOpMode {
         waitForStart();
 
         if (isStopRequested()) return;
-
-
+        
 
         while (opModeIsActive()) {
 
 
-            if(touch.isPressed()) {
-            limitswitch = true;
 
-            }else
-                limitswitch = false;
+            if (limit.isPressed()) {
+                motorBackLeft.setPower(0);
+            } else { // Otherwise, run the motor
+                motorBackLeft.setPower(1);
+            }
 
 
 
@@ -71,8 +74,7 @@ public class StraferdriveTestBot extends LinearOpMode {
             motorFrontRight.setPower(frontRightPower);
             motorBackRight.setPower(backRightPower);
 
-            telemetry.addData("limitswitch: ", limitswitch);
-            telemetry.addData( "touch: ", touch);
+            telemetry.addData("Motor Power:", motorBackLeft.getPower());
             telemetry.update();
         }
     }

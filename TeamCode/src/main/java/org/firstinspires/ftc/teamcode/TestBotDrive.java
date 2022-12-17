@@ -9,6 +9,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
+
+
 @TeleOp(name="TBot Drive", group="Linear Opmode")
 public class TestBotDrive extends LinearOpMode {
 
@@ -19,9 +21,10 @@ public class TestBotDrive extends LinearOpMode {
     private DcMotor leftBackDrive = null;
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
+
     //private Servo fireServo = null;
     //private CRServo barrel = null;
-
+    TouchSensor limit;
 
     @Override
     public void runOpMode() {
@@ -46,6 +49,14 @@ public class TestBotDrive extends LinearOpMode {
 
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Status", "Initialized");
+
+        if (limit.isPressed()) {
+            leftFrontDrive.setPower(0);
+        } else { // Otherwise, run the motor
+            leftFrontDrive.setPower(1);
+        }
+
+
         telemetry.update();
 
         waitForStart();
@@ -56,14 +67,15 @@ public class TestBotDrive extends LinearOpMode {
             //Updated upstream
             //Manual slide
 
-            TouchSensor limit;
-            String limitSwitchState;
-            limit = hardwareMap.get(TouchSensor.class, "limit");
+            TouchSensor limit = null;
+
             if (limit.isPressed()) {
-                limitSwitchState = "pressed";
-            } else {
-                limitSwitchState = "not_pressed";
+                leftBackDrive.setPower(0);
+            } else { // Otherwise, run the motor
+                leftBackDrive.setPower(1);
             }
+
+            telemetry.addData("motor Power:", leftBackDrive.getPower());
 
 
             double max;
@@ -147,7 +159,8 @@ public class TestBotDrive extends LinearOpMode {
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
-            telemetry.addData("limitSwitchState", limitSwitchState);
+            //telemetry.addData("limitSwitchState", limitSwitchState);
+
 
             //telemetry.addData("CR positon",fireServo.getPosition());
             //telemetry.addData("CR class",fireServo.getClass());
