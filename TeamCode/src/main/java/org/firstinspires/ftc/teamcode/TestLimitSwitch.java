@@ -1,19 +1,15 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
-import com.qualcomm.hardware.rev.RevColorSensorV3;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-@TeleOp(name="Drive program", group="Linear Opmode")
-public class StrafeDrive extends LinearOpMode {
+@TeleOp(name="Test Limit Switch", group="Linear Opmode")
+public class TestLimitSwitch extends LinearOpMode {
 
     // Declare OpMode members for each of the 4 motors.
     private ElapsedTime runtime = new ElapsedTime();
@@ -42,6 +38,22 @@ public class StrafeDrive extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+
+        /*
+        ---------------------------------------------------------------------------------------
+        Code to Test Limit Switch
+        ---------------------------------------------------------------------------------------
+         */
+        TouchSensor limit;
+        String limitSwitchState;
+        limit = hardwareMap.get(TouchSensor.class, "limit");
+        if (limit.isPressed()) {
+            limitSwitchState = "pressed";
+        } else {
+            limitSwitchState = "not_pressed";
+        }
+        telemetry.addData("limitSwitchState", limitSwitchState);
+        telemetry.update();
 
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
@@ -96,8 +108,11 @@ public class StrafeDrive extends LinearOpMode {
             /*leftSlide.setPower(-gamepad2.left_stick_y);
             rightSlide.setPower(-gamepad2.left_stick_y);*/
 
-
-            //Encoder slide
+            /*
+            ---------------------------------------------------------------------------------------
+            3 Position Lift Arm Code
+            ---------------------------------------------------------------------------------------
+             */
             if (gamepad1.dpad_up || gamepad2.dpad_up) {
                 leftSlide.setTargetPosition(1950); // high pole position based on string length
                 rightSlide.setTargetPosition(1950);
@@ -251,18 +266,20 @@ public class StrafeDrive extends LinearOpMode {
                 }*/
 
             // Show the elapsed game time and wheel power.
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
+            // telemetry.addData("Status", "Run Time: " + runtime.toString());
             // telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
             // telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
-            telemetry.addData("HeightL: ", leftSlide.getCurrentPosition());
-            telemetry.addData("HeightR: ", rightSlide.getCurrentPosition());
-            telemetry.addData("Left Encoder:", leftFrontDrive.getCurrentPosition());
-            telemetry.addData("Rear Encoder:", rightFrontDrive.getCurrentPosition());
-            telemetry.addData(" Right Encoder:", -rightBackDrive.getCurrentPosition());
+            // telemetry.addData("HeightL: ", leftSlide.getCurrentPosition());
+            // telemetry.addData("HeightR: ", rightSlide.getCurrentPosition());
+            // telemetry.addData("Left Encoder:", leftFrontDrive.getCurrentPosition());
+            // telemetry.addData("Rear Encoder:", rightFrontDrive.getCurrentPosition());
+            // telemetry.addData(" Right Encoder:", -rightBackDrive.getCurrentPosition());
             //telemetry.addData("Distance left: ", distanceLeft);
             //telemetry.addData("Distance right: ", distanceRight);
-            telemetry.update();
-            telemetry.addData("cone: ", cone);
+            // telemetry.addData("cone: ", cone);
+            // telemetry.update();
+
         }
     }
 }
+
