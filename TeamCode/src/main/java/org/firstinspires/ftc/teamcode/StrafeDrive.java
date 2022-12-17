@@ -1,60 +1,48 @@
 package org.firstinspires.ftc.teamcode;
 
-
+// opmode packages
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
-import org.firstinspires.ftc.teamcode.yise.mecanumDrive;
-
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
+// hardware packages
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 
+// other packages
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
+// team packages
+import org.firstinspires.ftc.teamcode.yise.mecanumDrive;
+import org.firstinspires.ftc.teamcode.yise.liftArm;
 
 @TeleOp(name="Drive program", group="Linear Opmode")
 public class StrafeDrive extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
 
-    private DcMotor leftSlide = null;
-    private DcMotor rightSlide = null;
-
     //private Rev2mDistanceSensor distanceSensorRight = null;
     //private Rev2mDistanceSensor distanceSensorLeft = null;
 
     private Servo coneGrabber = null;
 
-    public int cone = 0;  // variable used to set the value for the cone heights and incremental down values
-
-    boolean hasReset = true;
-
-    public boolean canSwitchModes = true;
-
-    public boolean leftBumperWasPressed = false;
+    // state variables that track if buttons were released
+    public boolean armResetButtonWasReleased = true;
+    public boolean leftBumperWasReleased = true;
+    public boolean canSwitchModes = false;
 
     @Override
     public void runOpMode() {
 
-        // Initialize the hardware variables. Note that the strings used here must correspond
-        // to the names assigned during the robot configuration step on the DS or RC devices.
+        // create instance of drive class
         mecanumDrive drive = new mecanumDrive(hardwareMap);
 
-        leftSlide = hardwareMap.get(DcMotor.class, "left_slide");
-        rightSlide = hardwareMap.get(DcMotor.class, "right_slide");
+        // create instance of lift arm class
+        liftArm arm = new liftArm(hardwareMap);
 
         coneGrabber = hardwareMap.get(Servo.class, "cone_grabber");
-
-        leftSlide.setDirection(DcMotor.Direction.REVERSE);
-        rightSlide.setDirection(DcMotor.Direction.FORWARD);
-
-        leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         //distanceSensorRight = hardwareMap.get(Rev2mDistanceSensor.class, "distance_sensor_right");
         //distanceSensorLeft = hardwareMap.get(Rev2mDistanceSensor.class, "distance_sensor_left");
@@ -69,123 +57,73 @@ public class StrafeDrive extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
+            // -----------------------------------------------------------------------------------
+            // Drive Code
+            // -----------------------------------------------------------------------------------
+
             // Handle changing between drive modes
+            if (!gamepad1.y) {
+                canSwitchModes = true;
+            }
             if (gamepad1.y && (drive.currentSpeed == mecanumDrive.Speeds.NORMAL) && canSwitchModes) {
                 drive.setSlowMode();
             } else if (gamepad1.y && (drive.currentSpeed == mecanumDrive.Speeds.SLOW) && canSwitchModes) {
                 drive.setNormalMode();
             }
+            /*
             if (gamepad1.y) {
                 canSwitchModes = false;
             } else {
                 canSwitchModes = true;
             }
+            */
 
-            // If we have any Dpad input, update the motor power based on Dpad
-            // Note: Dpad overrides the stick
+            // If we have any Dpad input, update the motor power based on Dpad (ie overright stick)
             if (gamepad1.dpad_right || gamepad1.dpad_left || gamepad1.dpad_up || gamepad1.dpad_down) {
                 drive.updateMotorsFromDpad(gamepad1);
-            // Otherwise update motor power based on stick input
             } else {
                 drive.updateMotorsFromStick(gamepad1);
             }
 
-            // -----------------------------------------------------------------------------------
-            // Lift Arm Positioning Code
-            // -----------------------------------------------------------------------------------
-            /*leftSlide.setPower(-gamepad2.left_stick_y);
-            rightSlide.setPower(-gamepad2.left_stick_y);*/
-
+            // Lift Arm 4 Position Code
             if (gamepad2.dpad_up) {
-                leftSlide.setTargetPosition(1950); // high pole position based on string length
-                rightSlide.setTargetPosition(1950);
-                leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                leftSlide.setPower(1);
-                rightSlide.setPower(1);
-            } else if (gamepad2.dpad_down) {
-                leftSlide.setTargetPosition(0);
-                rightSlide.setTargetPosition(0);
-                leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                leftSlide.setPower(1);
-                rightSlide.setPower(1);
-                cone = 0;
-            } else if (gamepad2.dpad_right) {
-                leftSlide.setTargetPosition(850);  //low pole position
-                rightSlide.setTargetPosition(850);
-                leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                leftSlide.setPower(1);
-                rightSlide.setPower(1);
+                arm.setPoleHeight(liftArm.Heights.HIGH);
             } else if (gamepad2.dpad_left) {
-                leftSlide.setTargetPosition(1400);  //mid pole position
-                rightSlide.setTargetPosition(1400);
-                leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                leftSlide.setPower(1);
-                rightSlide.setPower(1);
+                arm.setPoleHeight(liftArm.Heights.MEDIUM);
+            } else if (gamepad2.dpad_right) {
+                arm.setPoleHeight(liftArm.Heights.LOW);
             } else if (gamepad2.x) {
-                leftSlide.setTargetPosition(75);  //GROUND JUNCTION hover
-                rightSlide.setTargetPosition(75);
-                leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                leftSlide.setPower(1);
-                rightSlide.setPower(1);
+                arm.setPoleHeight(liftArm.Heights.HOVER);
+            } else if (gamepad2.dpad_down) {
+                arm.returnToBottom();
             }
 
-            // -----------------------------------------------------------------------------------
-            // Cone Stack Code - Go up to core 5 and step down 1 cone at a time
-            // -----------------------------------------------------------------------------------
-            if (!gamepad2.left_bumper && leftBumperWasPressed){
-                leftBumperWasPressed = false;
-            }
-            if (cone < 0 ) {  //checks to see if the arm is already at zero and doesn't try to move down anymore
-                cone = 1;
-            } else if (gamepad2.left_bumper && !leftBumperWasPressed) {
-                cone = cone - 60;
-                leftSlide.setTargetPosition(cone);  //stack incrementally move arm down by 50 on each press
-                rightSlide.setTargetPosition(cone );
-                leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                leftSlide.setPower(1);
-                rightSlide.setPower(1);
-                leftBumperWasPressed = true;
-            } else if (gamepad2.right_bumper) {
-                cone = 300;
-                leftSlide.setTargetPosition(cone);  //stack height for 5 cones
-                rightSlide.setTargetPosition(cone);
-                leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                leftSlide.setPower(1);
-                rightSlide.setPower(1);
+            // Force lift arm down (ignoring encoders) - temp until limit switch integrated
+            if ((gamepad1.right_stick_button || gamepad2.right_stick_button) && armResetButtonWasReleased){
+                armResetButtonWasReleased = arm.forceDown();
+            } else if ((!gamepad1.right_stick_button || !gamepad2.right_stick_button)  && !armResetButtonWasReleased) {
+                armResetButtonWasReleased = arm.stopAndReset();
             }
 
-            // -----------------------------------------------------------------------------------
-            // Nudge lift arm down by force (ignore encoders
-            // -----------------------------------------------------------------------------------
-            if ((gamepad1.right_stick_button || gamepad2.right_stick_button) && !hasReset){
-                leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                leftSlide.setPower(-0.5);
-                rightSlide.setPower(-0.5);
-                hasReset = true;
-            } else if ((!gamepad1.right_stick_button || !gamepad2.right_stick_button)  && hasReset) {
-                leftSlide.setPower(0);
-                rightSlide.setPower(0);
-                leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                hasReset = false;
-            }
-
-            // -----------------------------------------------------------------------------------
             // Stop the slide and keep it from holding position
+            if (!arm.slideStatusBusy() && armResetButtonWasReleased) {
+                arm.holdPosition();
+            }
+
+            // ---------------------------------------------------------------------------
+            // Cone Stack Code - Go up to cone 5 and step down 1 cone at a time
             // -----------------------------------------------------------------------------------
-            if ((!leftSlide.isBusy() || !rightSlide.isBusy()) && !hasReset) {
-                leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                leftSlide.setPower(0.05);
-                rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                rightSlide.setPower(0.05);
+
+            // track when left_bumper is released so we only drop 1 position per button press
+            if (!gamepad2.left_bumper){
+                leftBumperWasReleased = true;
+            }
+
+            // either drop 1 cone or go to top cone
+            if (gamepad2.left_bumper && leftBumperWasReleased) {
+                arm.downOneCone();
+            } else if (gamepad2.right_bumper) {
+                arm.getTopCone();
             }
 
             // -----------------------------------------------------------------------------------
@@ -197,11 +135,9 @@ public class StrafeDrive extends LinearOpMode {
                 coneGrabber.setPosition(Servo.MAX_POSITION);
             }
 
-
             // -----------------------------------------------------------------------------------
             // Auto-Centering Code
             // -----------------------------------------------------------------------------------
-
             //CAUSING LAG AND WHEN DISCONNECTS IT STOPS THE CODE BRING THIS OUT TO ANOTHER
             // CLASS AND ADD ERROR CODE HANDLING
             /*if (gamepad1.left_trigger >= 0.8) {
@@ -232,7 +168,9 @@ public class StrafeDrive extends LinearOpMode {
                     }
                 }*/
 
+            // -----------------------------------------------------------------------------------
             // Telemetry Code
+            // -----------------------------------------------------------------------------------
 
             // Show the elapsed run time
             telemetry.addData("Status", "Run Time: " + runtime.toString());
@@ -242,9 +180,9 @@ public class StrafeDrive extends LinearOpMode {
             // telemetry.addData("Back  left/Right", "%4.2f, %4.2f", drive.leftBackPower, drive.rightBackPower);
 
             // Show the position of the arm
-            telemetry.addData("ArmHeightL: ", leftSlide.getCurrentPosition());
-            telemetry.addData("ArmHeightR: ", rightSlide.getCurrentPosition());
-            telemetry.addData("Cone: ", cone);
+            telemetry.addData("ArmHeightL: ", arm.getSlidePosition(liftArm.Sides.LEFT));
+            telemetry.addData("ArmHeightR: ", arm.getSlidePosition(liftArm.Sides.RIGHT));
+            telemetry.addData("Cone: ", arm.cone_position);
 
             // Add odometry wheel position
             telemetry.addData("Left Encoder:", drive.leftFrontDrive.getCurrentPosition());
