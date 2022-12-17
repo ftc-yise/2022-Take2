@@ -126,10 +126,12 @@ public class liftArm {
     }
 
     public double getSlidePosition(Sides side) {
+        double position = 0;
         if (side == Sides.LEFT) {
-            return leftSlide.getCurrentPosition();
+            position = leftSlide.getCurrentPosition();
         } else if (side == Sides.RIGHT) {
-            return rightSlide.getCurrentPosition()
+            position = rightSlide.getCurrentPosition();
         }
+        return position;
     }
 }
