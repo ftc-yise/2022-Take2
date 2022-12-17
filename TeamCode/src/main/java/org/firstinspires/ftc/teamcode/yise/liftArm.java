@@ -14,6 +14,15 @@ public class liftArm {
         HOVER
     }
 
+    // Used to identify left and right slide motors
+    public enum Sides {
+        RIGHT,
+        LEFT
+    }
+
+    // tracks the height of the cone stack
+    public int cone_position;
+
     public liftArm(HardwareMap hardwareMap) {
         leftSlide = hardwareMap.get(DcMotor.class, "left_slide");
         rightSlide = hardwareMap.get(DcMotor.class, "right_slide");
@@ -75,11 +84,52 @@ public class liftArm {
         return true;
     }
 
+    public boolean slideStatusBusy() {
+        boolean busy = false;
+        if (rightSlide.isBusy() || leftSlide.isBusy()) {
+            busy = true;
+        }
+        return busy;
+    }
+
     public void holdPosition() {
         leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         leftSlide.setPower(0.05);
         rightSlide.setPower(0.05);
 
+    }
+
+    // Sets the lift arm height for grabbing the top cone of the 5 cone stack
+    public void getTopCone() {
+        cone_position = 300;
+        leftSlide.setTargetPosition(cone_position);
+        rightSlide.setTargetPosition(cone_position);
+        leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftSlide.setPower(1);
+        rightSlide.setPower(1);
+    }
+
+    public void downOneCone() {
+        if (cone_position < 0) {
+            cone_position = 1;
+        } else {
+            cone_position = cone_position - 60;
+            leftSlide.setTargetPosition(cone_position);
+            rightSlide.setTargetPosition(cone_position);
+            leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            leftSlide.setPower(1);
+            rightSlide.setPower(1);
+        }
+    }
+
+    public double getSlidePosition(Sides side) {
+        if (side == Sides.LEFT) {
+            return leftSlide.getCurrentPosition();
+        } else if (side == Sides.RIGHT) {
+            return rightSlide.getCurrentPosition()
+        }
     }
 }
