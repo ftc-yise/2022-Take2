@@ -61,7 +61,7 @@ public class AutonomousRedRight extends LinearOpMode {
                     arm.getTopCone();
                 })
                 .strafeRight(20)
-                .turn(-90)
+                .turn(Math.toRadians(-90))
                 .build();
 
         // seq_2:
@@ -72,12 +72,20 @@ public class AutonomousRedRight extends LinearOpMode {
         //
         // This is an example of an "inline" displacement marker. Notice there's no distance given
         // This will run immediate after the back() command completes (ie order DOES matter)
+        //
+        // I've also added an example of a Temporal marker.  Displacement markers are based on
+        // total distance traveled by the bot (global) or distance since the last movement (inline)
+        // Temporal markers are based on TIME. These are useful if you are defining turns/sleeps
+        // This is an "inline" temporal marker which simply runs after the previous instruction
         TrajectorySequence seq_2 = drive.trajectorySequenceBuilder(seq_1.end())
                 .back(10)
                 .addDisplacementMarker(() -> {
                     arm.setPoleHeight(liftArm.Heights.HOVER);
                 })
-                .turn(180)
+                .turn(Math.toRadians(180))
+                .addTemporalMarker(() -> {
+                    arm.setPoleHeight(liftArm.Heights.MEDIUM);
+                })
                 .build();
 
         // run my trajectories in order
