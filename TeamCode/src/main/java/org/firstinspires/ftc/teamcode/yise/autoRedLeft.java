@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.yise.liftArm;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
+import org.firstinspires.ftc.teamcode.yise.mecanumDrive;
 
 
 @Autonomous(name = "Auto Red Left", group = "Linear Opmode")
@@ -25,6 +26,8 @@ public class autoRedLeft extends LinearOpMode {
 
         // create instance of roadrunner drive class
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+
+        mecanumDrive yiseDrive = new mecanumDrive(hardwareMap);
 
         // create instance of yise lift arm class
         liftArm arm = new liftArm(hardwareMap);
@@ -71,9 +74,7 @@ public class autoRedLeft extends LinearOpMode {
                 .addDisplacementMarker(() -> {
                     arm.getTopCone();
                     coneGrabber.setPosition(Servo.MIN_POSITION);
-                })
-                .forward(4)
-                .addDisplacementMarker(() -> {
+                    yiseDrive.autoCenter();
                     coneGrabber.setPosition(Servo.MAX_POSITION);
                     sleep(500);
                     arm.setPoleHeight(liftArm.Heights.LOW);
