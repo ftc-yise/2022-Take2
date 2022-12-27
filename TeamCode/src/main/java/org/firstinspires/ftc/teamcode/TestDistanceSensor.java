@@ -32,6 +32,8 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.yise.mecanumDrive;
 
 
@@ -80,10 +82,9 @@ public class TestDistanceSensor extends LinearOpMode {
             }
 
             // Show the elapsed game time and wheel power.
-            // mecanumDrive.updateDistances();
-            // telemetry.addData("Distance right: ", mecanumDrive.distanceLeft);
-            // telemetry.addData("Distance left ", mecanumDrive.distanceRight);
-            // telemetry.update();
+            telemetry.addData("Distance left: ", drive.distanceSensorLeft.getDistance(DistanceUnit.CM));
+            telemetry.addData("Distance right ", drive.distanceSensorRight.getDistance(DistanceUnit.CM));
+            telemetry.update();
         }
     }
 }

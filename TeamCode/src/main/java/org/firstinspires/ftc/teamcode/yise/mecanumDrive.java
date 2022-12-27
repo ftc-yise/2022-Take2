@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.yise;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -11,10 +12,9 @@ public class mecanumDrive {
     public final DcMotor leftFrontDrive, leftBackDrive, rightFrontDrive, rightBackDrive;
     public double leftFrontPower, leftBackPower, rightFrontPower, rightBackPower;
 
-    public final Rev2mDistanceSensor distanceSensorRight;
-    public final Rev2mDistanceSensor distanceSensorLeft;
-    public double distanceLeft;
-    public double distanceRight;
+    public final Rev2mDistanceSensor distanceSensorRight, distanceSensorLeft;
+    public double distanceLeft, distanceRight;
+    private static double startCentering, finishCentering;
 
     // Used to track slow-mode versus normal mode
     public Speeds currentSpeed;
@@ -52,6 +52,9 @@ public class mecanumDrive {
         // initialize the distance measurements using centimeters units
         distanceLeft = distanceSensorLeft.getDistance(DistanceUnit.CM);
         distanceRight = distanceSensorRight.getDistance(DistanceUnit.CM);
+
+        startCentering = 20;
+        finishCentering = 4;
     }
 
     // Updates power to the 4 drive motors based on input from the stick on the first controller
@@ -150,36 +153,30 @@ public class mecanumDrive {
         distanceRight = distanceSensorRight.getDistance(DistanceUnit.CM);
 
         // if both sides are < 20cm, stop
-        if (distanceLeft < 20 && distanceRight < 20) {
+        if (distanceLeft < finishCentering && distanceRight < finishCentering) {
             leftFrontDrive.setPower(0);
             rightBackDrive.setPower(0);
             leftBackDrive.setPower(0);
             rightFrontDrive.setPower(0);
             // if only right side is < 20cm, drive right
-        } else if (distanceRight < 20) {
+        } else if (distanceRight < finishCentering) {
             leftFrontDrive.setPower(0.3);
             rightBackDrive.setPower(0.3);
             leftBackDrive.setPower(-0.3);
             rightFrontDrive.setPower(-0.3);
             // if only the left side is < 20cm, drive left
-        } else if (distanceLeft < 20) {
+        } else if (distanceLeft < finishCentering) {
             leftFrontDrive.setPower(-0.3);
             rightBackDrive.setPower(-0.3);
             leftBackDrive.setPower(0.3);
             rightFrontDrive.setPower(0.3);
             // if either side is between 20cm <> 35cm, drive forward
-        } else if ((distanceRight < 35 && distanceRight > 20) || (distanceLeft < 35 && distanceLeft > 20)) {
+        } else if ((distanceRight < startCentering && distanceRight > finishCentering) || (distanceLeft < startCentering && distanceLeft > finishCentering)) {
             leftFrontDrive.setPower(0.4);
             rightBackDrive.setPower(0.4);
             leftBackDrive.setPower(0.4);
             rightFrontDrive.setPower(0.4);
         }
-    }
-
-    public void updateDistances() {
-        // get a fresh copy of the current sensor readings
-        distanceLeft = distanceSensorLeft.getDistance(DistanceUnit.CM);
-        distanceRight = distanceSensorRight.getDistance(DistanceUnit.CM);
     }
 }
 
