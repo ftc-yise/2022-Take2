@@ -10,6 +10,8 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import org.firstinspires.ftc.teamcode.yise.liftArm;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
+import com.qualcomm.hardware.rev.RevColorSensorV3;
 
 
 @Autonomous(name = "Auto Red Left", group = "Linear Opmode")
@@ -61,19 +63,22 @@ public class autoRedLeft extends LinearOpMode {
                     coneGrabber.setPosition(Servo.MIN_POSITION);
                 })*/
                 .strafeRight(22)
-                .forward(-48)
+                .back(48)
                 .strafeLeft(4)
                 .forward(-2)
-                .turn(Math.toRadians(-98))
+                .turn(Math.toRadians(-93))
+                .forward(.001)
                 .addDisplacementMarker(() -> {
                     arm.getTopCone();
                     coneGrabber.setPosition(Servo.MIN_POSITION);
                 })
-                .forward(3)
+                .forward(4)
                 .addDisplacementMarker(() -> {
-                    arm.setPoleHeight(liftArm.Heights.LOW);
                     coneGrabber.setPosition(Servo.MAX_POSITION);
+                    sleep(500);
+                    arm.setPoleHeight(liftArm.Heights.LOW);
                 })
+                .back(10)
                 .build();
 
         // seq_2:
