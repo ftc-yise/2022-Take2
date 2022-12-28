@@ -73,12 +73,16 @@ public class autoRedLeft extends LinearOpMode {
                 .forward(.001)
                 .addDisplacementMarker(() -> {
                     arm.getTopCone();
+                    sleep(200);
                     coneGrabber.setPosition(Servo.MIN_POSITION);
+                    sleep(500);
                     yiseDrive.autoCenter();
+                    sleep(200);
                     coneGrabber.setPosition(Servo.MAX_POSITION);
                     sleep(500);
                     arm.setPoleHeight(liftArm.Heights.LOW);
                 })
+                .waitSeconds(.5)
                 .back(10)
                 .build();
 
