@@ -1,22 +1,19 @@
-package org.firstinspires.ftc.teamcode.yise;
+package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.Servo;
+
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
-import org.firstinspires.ftc.teamcode.trajectorysequence.sequencesegment.TrajectorySegment;
-import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
 import org.firstinspires.ftc.teamcode.yise.liftArm;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
-import com.qualcomm.hardware.rev.RevColorSensorV3;
 import org.firstinspires.ftc.teamcode.yise.mecanumDrive;
 
 
 @Autonomous(name = "Auto Red Left", group = "Linear Opmode")
-public class autoRedLeft extends LinearOpMode {
+public class AutonomousRedLeft extends LinearOpMode {
     @Override
     public void runOpMode() {
 
@@ -44,7 +41,7 @@ public class autoRedLeft extends LinearOpMode {
         // ------------------------------------------------------------------------------------
 
         // Start by defining our start position
-        Pose2d startPose = new Pose2d(-44, -72, 180);
+        Pose2d startPose = new Pose2d(-36, -62, Math.toRadians(270));
         drive.setPoseEstimate(startPose);
 
         // example trajectory sequences
@@ -61,62 +58,58 @@ public class autoRedLeft extends LinearOpMode {
         // If you change the marker from 10 to 30, it will run in the middle of the stafeRight()
         // Note: 1 marker, when written in this syntax, can include multiple actions
         TrajectorySequence seq_1 = drive.trajectorySequenceBuilder(startPose)
-                /*.addDisplacementMarker(10, () -> {
+                .strafeRight(12)
+                .splineToConstantHeading(new Vector2d(-48, -12), Math.toRadians(270))
+                .addDisplacementMarker(20, () -> {
                     arm.getTopCone();
-                    coneGrabber.setPosition(Servo.MIN_POSITION);
-                })*/
-                .strafeRight(22)
-                .back(48)
-                .strafeLeft(4)
-                .forward(-2)
-                .turn(Math.toRadians(-93))
-                .forward(.001)
-                .addDisplacementMarker(() -> {
-                    arm.getTopCone();
-                    sleep(200);
-                    coneGrabber.setPosition(Servo.MIN_POSITION);
-                    sleep(500);
-                    yiseDrive.autoCenter();
-                    sleep(200);
-                    coneGrabber.setPosition(Servo.MAX_POSITION);
-                    sleep(500);
-                    arm.setPoleHeight(liftArm.Heights.LOW);
                 })
-                .waitSeconds(.5)
-                .back(10)
+                .addDisplacementMarker(20, () -> {
+                    coneGrabber.setPosition(Servo.MIN_POSITION);
+                })
+                .turn(Math.toRadians(-90))
+                .forward(6)
+                .addTemporalMarker(() -> {
+                    yiseDrive.autoCenter();})
+                .waitSeconds(2)
+                .addTemporalMarker(() -> {
+                    coneGrabber.setPosition(Servo.MAX_POSITION);})
+                .waitSeconds(2)
+                .addTemporalMarker(() -> {
+                    arm.setPoleHeight(liftArm.Heights.HIGH);})
+                .waitSeconds(2)
                 .build();
 
-        // seq_2:
-        // Back up 10 inches, after backup is fully complete, lower arm to ground junction height
-        // Then turn 180 degrees to the left
-        //
-        // Note: starting position for 2nd sequence uses the end() method of the 1st sequence
-        //
-        // This is an example of an "inline" displacement marker. Notice there's no distance given
-        // This will run immediate after the back() command completes (ie order DOES matter)
-        //
-        // I've also added an example of a Temporal marker.  Displacement markers are based on
-        // total distance traveled by the bot (global) or distance since the last movement (inline)
-        // Temporal markers are based on TIME. These are useful if you are defining turns/sleeps
-        // This is an "inline" temporal marker which simply runs after the previous instruction
-        /*TrajectorySequence seq_2 = drive.trajectorySequenceBuilder(seq_1.end())
-                .back(10)
-                .addDisplacementMarker(() -> {
-                    arm.setPoleHeight(liftArm.Heights.HOVER);
-                })
-                .turn(Math.toRadians(180))
+
+        TrajectorySequence seq_2 = drive.trajectorySequenceBuilder(seq_1.end())
+                .splineTo(new Vector2d(11, -14), Math.toRadians(180))
+                .turn(Math.toRadians(315))
                 .addTemporalMarker(() -> {
-                    arm.setPoleHeight(liftArm.Heights.MEDIUM);
+                   yiseDrive.autoCenter();
+                })
+                .waitSeconds(.2)
+                .addTemporalMarker(() -> {
+                  coneGrabber.setPosition(Servo.MIN_POSITION);
                 })
                 .build();
-*/
+
+        TrajectorySequence seq_3 = drive.trajectorySequenceBuilder(seq_2.end())
+                .turn(Math.toRadians(-135))
+                .splineTo(new Vector2d(13, -48), Math.toRadians(-90))
+                .addDisplacementMarker(20, () -> {
+                    arm.getTopCone();
+                    arm.downOneCone();
+                })
+                .addTemporalMarker(() -> {
+                    yiseDrive.autoCenter();
+                })
+                .waitSeconds(.2)
+                .build();
         // run my trajectories in order
 
         // drive to cone stack with arm at cone 5 height
         drive.followTrajectorySequence(seq_1);
-        // close grabber
-        coneGrabber.setPosition(Servo.MIN_POSITION);
-        // back up, turn and lower arm
+        //drive.followTrajectorySequence(seq_2);
+        //drive.followTrajectorySequence(seq_3);
         //drive.followTrajectorySequence(seq_2);
     }
 }

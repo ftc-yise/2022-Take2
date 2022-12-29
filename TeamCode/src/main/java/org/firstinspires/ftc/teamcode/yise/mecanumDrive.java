@@ -53,7 +53,7 @@ public class mecanumDrive {
         distanceLeft = distanceSensorLeft.getDistance(DistanceUnit.CM);
         distanceRight = distanceSensorRight.getDistance(DistanceUnit.CM);
 
-        startCentering = 20;
+        startCentering = 30;
         finishCentering = 4;
     }
 
