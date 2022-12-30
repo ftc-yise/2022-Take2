@@ -20,6 +20,22 @@ public class AutoRedLeftTest {
                                 .turn(Math.toRadians(-90))
                                 .waitSeconds(.2)
                                 .waitSeconds(.2)
+                                .waitSeconds(2)
+                                //.splineToConstantHeading(new Vector2d(-11, -14), Math.toRadians(135))
+                                .lineToConstantHeading(new Vector2d(-5, -20))
+                                .turn(Math.toRadians(140))
+                                /*.waitSeconds(2)
+                                .turn(Math.toRadians(-135))
+                                .lineToConstantHeading(new Vector2d(-52, -12))
+                                .waitSeconds(2)
+                                .splineToConstantHeading(new Vector2d(-11, -14), Math.toRadians(180))
+                                .turn(Math.toRadians(135))
+                                .waitSeconds(2)
+                                .turn(Math.toRadians(-135))
+                                .lineToConstantHeading(new Vector2d(-52, -12))
+                                .waitSeconds(2)
+                                .back(14)
+                                .lineToConstantHeading(new Vector2d(-40, -40))*/
                                 .build()
                 );
         myBot.setDimensions(13, 18);

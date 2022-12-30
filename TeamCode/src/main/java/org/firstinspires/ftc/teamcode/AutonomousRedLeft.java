@@ -67,7 +67,7 @@ public class AutonomousRedLeft extends LinearOpMode {
                     coneGrabber.setPosition(Servo.MIN_POSITION);
                 })
                 .turn(Math.toRadians(-90))
-                .forward(6)
+                .forward(12)
                 .addTemporalMarker(() -> {
                     yiseDrive.autoCenter();})
                 .waitSeconds(2)
@@ -81,8 +81,9 @@ public class AutonomousRedLeft extends LinearOpMode {
 
 
         TrajectorySequence seq_2 = drive.trajectorySequenceBuilder(seq_1.end())
-                .splineTo(new Vector2d(11, -14), Math.toRadians(180))
-                .turn(Math.toRadians(315))
+                .lineToConstantHeading(new Vector2d(-11, -14))
+                .turn(Math.toRadians(135))
+                .forward(6)
                 .addTemporalMarker(() -> {
                    yiseDrive.autoCenter();
                 })
@@ -94,7 +95,7 @@ public class AutonomousRedLeft extends LinearOpMode {
 
         TrajectorySequence seq_3 = drive.trajectorySequenceBuilder(seq_2.end())
                 .turn(Math.toRadians(-135))
-                .splineTo(new Vector2d(13, -48), Math.toRadians(-90))
+                .lineToConstantHeading(new Vector2d(-52, -12))
                 .addDisplacementMarker(20, () -> {
                     arm.getTopCone();
                     arm.downOneCone();
@@ -108,7 +109,7 @@ public class AutonomousRedLeft extends LinearOpMode {
 
         // drive to cone stack with arm at cone 5 height
         drive.followTrajectorySequence(seq_1);
-        //drive.followTrajectorySequence(seq_2);
+        drive.followTrajectorySequence(seq_2);
         //drive.followTrajectorySequence(seq_3);
         //drive.followTrajectorySequence(seq_2);
     }
