@@ -24,14 +24,11 @@ public class AutonomousRedLeft extends LinearOpMode {
         // create instance of roadrunner drive class
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
+        // create instance of YISE drive class - for autoCenterLoop() only
         mecanumDrive yiseDrive = new mecanumDrive(hardwareMap);
 
         // create instance of yise lift arm class
         liftArm arm = new liftArm(hardwareMap);
-
-        // create variable for grabber
-        Servo coneGrabber;
-        coneGrabber = hardwareMap.get(Servo.class, "cone_grabber");
 
         waitForStart();
         if(isStopRequested()) return;
@@ -64,18 +61,21 @@ public class AutonomousRedLeft extends LinearOpMode {
                     arm.getTopCone();
                 })
                 .addDisplacementMarker(20, () -> {
-                    coneGrabber.setPosition(Servo.MIN_POSITION);
+                    arm.openGrabber();
                 })
                 .turn(Math.toRadians(-90))
                 .forward(12)
                 .addTemporalMarker(() -> {
-                    yiseDrive.autoCenterLoop();})
+                    yiseDrive.autoCenterLoop();
+                })
                 .waitSeconds(2)
                 .addTemporalMarker(() -> {
-                    coneGrabber.setPosition(Servo.MAX_POSITION);})
+                    arm.closeGrabber();
+                })
                 .waitSeconds(2)
                 .addTemporalMarker(() -> {
-                    arm.setPoleHeight(liftArm.Heights.HIGH);})
+                    arm.setPoleHeight(liftArm.Heights.HIGH);
+                })
                 .waitSeconds(2)
                 .build();
 
@@ -89,7 +89,7 @@ public class AutonomousRedLeft extends LinearOpMode {
                 })
                 .waitSeconds(.2)
                 .addTemporalMarker(() -> {
-                  coneGrabber.setPosition(Servo.MIN_POSITION);
+                    arm.openGrabber();
                 })
                 .build();
 
