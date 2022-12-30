@@ -53,6 +53,7 @@ public class mecanumDrive {
         distanceLeft = distanceSensorLeft.getDistance(DistanceUnit.CM);
         distanceRight = distanceSensorRight.getDistance(DistanceUnit.CM);
 
+        // set thresholds related to auto-centering
         startCentering = 30;
         finishCentering = 4;
     }
@@ -147,36 +148,66 @@ public class mecanumDrive {
         currentSpeed = Speeds.NORMAL;
     }
 
+    // runs the centering code once
+    // for use in driver control opmode where drive is holding down a button to auto-center
     public void autoCenter() {
+        center();
+    }
+
+    // runs the centering code in a loop until it is centered or it times out
+    // for use in autonomous opmode
+    public void autoCenterLoop() {
+        Boolean centered = false;
+        // set timeout for breaking out of the loop (in milliseconds)
+        long timeout = 3000;
+        long start, current, elapsed;
+
+        start = System.currentTimeMillis();
+        while (!centered) {
+            current = System.currentTimeMillis();
+            elapsed = current - start;
+            if (elapsed > timeout) {
+                break;
+            }
+            centered = center();
+        }
+    }
+
+    // common centering code used for both autoCenter and autoCenterLoop
+    private Boolean center() {
+        Boolean centered = false;
+
         // get a fresh copy of the current sensor readings
         distanceLeft = distanceSensorLeft.getDistance(DistanceUnit.CM);
         distanceRight = distanceSensorRight.getDistance(DistanceUnit.CM);
 
-        // if both sides are < 20cm, stop
         if (distanceLeft < finishCentering && distanceRight < finishCentering) {
+            // if both sides are < target distance, stop
             leftFrontDrive.setPower(0);
             rightBackDrive.setPower(0);
             leftBackDrive.setPower(0);
             rightFrontDrive.setPower(0);
-            // if only right side is < 20cm, drive right
+            centered = true;
         } else if (distanceRight < finishCentering) {
+            // if only right side is < target distance, drive right
             leftFrontDrive.setPower(0.3);
             rightBackDrive.setPower(0.3);
             leftBackDrive.setPower(-0.3);
             rightFrontDrive.setPower(-0.3);
-            // if only the left side is < 20cm, drive left
         } else if (distanceLeft < finishCentering) {
+            // if only the left side is < target distance, drive left
             leftFrontDrive.setPower(-0.3);
             rightBackDrive.setPower(-0.3);
             leftBackDrive.setPower(0.3);
             rightFrontDrive.setPower(0.3);
-            // if either side is between 20cm <> 35cm, drive forward
         } else if ((distanceRight < startCentering && distanceRight > finishCentering) || (distanceLeft < startCentering && distanceLeft > finishCentering)) {
+            // if either side is between target distance <> start distance, drive forward
             leftFrontDrive.setPower(0.4);
             rightBackDrive.setPower(0.4);
             leftBackDrive.setPower(0.4);
             rightFrontDrive.setPower(0.4);
         }
+        return centered;
     }
 }
 

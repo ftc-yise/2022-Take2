@@ -130,43 +130,17 @@ public class StrafeDrive extends LinearOpMode {
             // Open and Close the Grabber
             // -----------------------------------------------------------------------------------
             if (gamepad1.a || gamepad2.a) {
-                coneGrabber.setPosition(Servo.MIN_POSITION);
+                arm.openGrabber();
             } else if (gamepad1.b || gamepad2.b) {
-                coneGrabber.setPosition(Servo.MAX_POSITION);
+                arm.closeGrabber();
             }
 
             // -----------------------------------------------------------------------------------
             // Auto-Centering Code
             // -----------------------------------------------------------------------------------
-            //CAUSING LAG AND WHEN DISCONNECTS IT STOPS THE CODE BRING THIS OUT TO ANOTHER
-            // CLASS AND ADD ERROR CODE HANDLING
             /*if (gamepad1.left_trigger >= 0.8) {
-                    // if both sides are < 20cm, stop
-                    if (distanceLeft < 20 && distanceRight < 20) {
-                        leftFrontDrive.setPower(0);
-                        rightBackDrive.setPower(0);
-                        leftBackDrive.setPower(0);
-                        rightFrontDrive.setPower(0);
-                    // if only right side is < 20cm, drive right
-                    } else if (distanceRight < 20) {
-                        leftFrontDrive.setPower(0.3);
-                        rightBackDrive.setPower(0.3);
-                        leftBackDrive.setPower(-0.3);
-                        rightFrontDrive.setPower(-0.3);
-                    // if only the left side is < 20cm, drive left
-                    } else if (distanceLeft < 20) {
-                        leftFrontDrive.setPower(-0.3);
-                        rightBackDrive.setPower(-0.3);
-                        leftBackDrive.setPower(0.3);
-                        rightFrontDrive.setPower(0.3);
-                    // if either side is between 20cm <> 35cm, drive forward
-                    } else if ((distanceRight < 35 && distanceRight > 20) || (distanceLeft < 35 && distanceLeft > 20)) {
-                        leftFrontDrive.setPower(0.4);
-                        rightBackDrive.setPower(0.4);
-                        leftBackDrive.setPower(0.4);
-                        rightFrontDrive.setPower(0.4);
-                    }
-                }*/
+                   drive.autoCenter()
+            }*/
 
             // -----------------------------------------------------------------------------------
             // Telemetry Code
