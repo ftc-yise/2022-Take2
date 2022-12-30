@@ -130,9 +130,9 @@ public class StrafeDrive extends LinearOpMode {
             // Open and Close the Grabber
             // -----------------------------------------------------------------------------------
             if (gamepad1.a || gamepad2.a) {
-                coneGrabber.setPosition(Servo.MIN_POSITION);
+                arm.openGrabber();
             } else if (gamepad1.b || gamepad2.b) {
-                coneGrabber.setPosition(Servo.MAX_POSITION);
+                arm.closeGrabber();
             }
 
             // -----------------------------------------------------------------------------------
