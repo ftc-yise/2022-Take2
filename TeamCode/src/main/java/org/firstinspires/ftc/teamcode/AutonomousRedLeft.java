@@ -69,7 +69,7 @@ public class AutonomousRedLeft extends LinearOpMode {
                 .turn(Math.toRadians(-90))
                 .forward(12)
                 .addTemporalMarker(() -> {
-                    yiseDrive.autoCenter();})
+                    yiseDrive.autoCenterLoop();})
                 .waitSeconds(2)
                 .addTemporalMarker(() -> {
                     coneGrabber.setPosition(Servo.MAX_POSITION);})
@@ -85,7 +85,7 @@ public class AutonomousRedLeft extends LinearOpMode {
                 .turn(Math.toRadians(135))
                 .forward(6)
                 .addTemporalMarker(() -> {
-                   yiseDrive.autoCenter();
+                   yiseDrive.autoCenterLoop();
                 })
                 .waitSeconds(.2)
                 .addTemporalMarker(() -> {
@@ -101,7 +101,7 @@ public class AutonomousRedLeft extends LinearOpMode {
                     arm.downOneCone();
                 })
                 .addTemporalMarker(() -> {
-                    yiseDrive.autoCenter();
+                    yiseDrive.autoCenterLoop();
                 })
                 .waitSeconds(.2)
                 .build();
