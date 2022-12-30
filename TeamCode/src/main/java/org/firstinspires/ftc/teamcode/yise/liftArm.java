@@ -2,9 +2,11 @@ package org.firstinspires.ftc.teamcode.yise;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 public class liftArm {
     public final DcMotor leftSlide, rightSlide;
+    public final Servo coneGrabber;
 
     // Used to set pole height.
     public enum Heights {
@@ -32,6 +34,8 @@ public class liftArm {
 
         leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        coneGrabber = hardwareMap.get(Servo.class, "cone_grabber");
     }
 
     public void setPoleHeight(Heights targetHeight) {
@@ -133,5 +137,12 @@ public class liftArm {
             position = rightSlide.getCurrentPosition();
         }
         return position;
+    }
+
+    public void closeGrabber() {
+        coneGrabber.setPosition(Servo.MAX_POSITION);
+    }
+    public void openGrabber() {
+        coneGrabber.setPosition(Servo.MIN_POSITION);
     }
 }
