@@ -14,13 +14,17 @@ public class mecanumDrive {
 
     public final Rev2mDistanceSensor distanceSensorRight, distanceSensorLeft;
     public double distanceLeft, distanceRight;
-    private static double startCentering, finishCentering;
 
     // Used to track slow-mode versus normal mode
     public Speeds currentSpeed;
     public enum Speeds {
         SLOW,
         NORMAL
+    }
+
+    public enum centerModes {
+        POLE,
+        CONE
     }
 
     public mecanumDrive(HardwareMap hardwareMap) {
@@ -53,9 +57,6 @@ public class mecanumDrive {
         distanceLeft = distanceSensorLeft.getDistance(DistanceUnit.CM);
         distanceRight = distanceSensorRight.getDistance(DistanceUnit.CM);
 
-        // set thresholds related to auto-centering
-        startCentering = 10;
-        finishCentering = 4;
     }
 
     // Updates power to the 4 drive motors based on input from the stick on the first controller
@@ -150,13 +151,13 @@ public class mecanumDrive {
 
     // runs the centering code once
     // for use in driver control opmode where drive is holding down a button to auto-center
-    public void autoCenter() {
-        center();
+    public void autoCenter(centerModes mode) {
+        center(mode);
     }
 
     // runs the centering code in a loop until it is centered or it times out
     // for use in autonomous opmode
-    public void autoCenterLoop() {
+    public void autoCenterLoop(centerModes mode) {
         Boolean centered = false;
         // set timeout for breaking out of the loop (in milliseconds)
         long timeout = 1000;
@@ -169,13 +170,23 @@ public class mecanumDrive {
             if (elapsed > timeout) {
                 break;
             }
-            centered = center();
+            centered = center(mode);
         }
     }
 
     // common centering code used for both autoCenter and autoCenterLoop
-    private Boolean center() {
+    private Boolean center(centerModes mode) {
         Boolean centered = false;
+        double startCentering, finishCentering;
+
+        // default values are for centermodes.CONE
+        startCentering = 10;
+        finishCentering = 4;
+
+        if (mode == centerModes.POLE) {
+            startCentering = 10;
+            finishCentering = 6;
+        }
 
         // get a fresh copy of the current sensor readings
         distanceLeft = distanceSensorLeft.getDistance(DistanceUnit.CM);
