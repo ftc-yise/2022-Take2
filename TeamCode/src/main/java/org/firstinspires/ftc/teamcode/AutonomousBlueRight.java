@@ -59,7 +59,7 @@ public class AutonomousBlueRight extends LinearOpMode {
         // Note: 1 marker, when written in this syntax, can include multiple actions
         TrajectorySequence seq_1 = drive.trajectorySequenceBuilder(startPose)
                 .strafeRight(-12)
-                .splineToConstantHeading(new Vector2d(-48, 12), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(-50, 12), Math.toRadians(90))
                 .addDisplacementMarker(20, () -> {
                     arm.getTopCone();
                 })
@@ -67,9 +67,9 @@ public class AutonomousBlueRight extends LinearOpMode {
                     coneGrabber.setPosition(Servo.MIN_POSITION);
                 })
                 .turn(Math.toRadians(90))
-                .forward(12)
+                .forward(5)
                 .addTemporalMarker(() -> {
-                    yiseDrive.autoCenter();
+                    yiseDrive.autoCenterLoop();
                 })
                 .addTemporalMarker(() -> {
                     coneGrabber.setPosition(Servo.MAX_POSITION);
@@ -82,11 +82,9 @@ public class AutonomousBlueRight extends LinearOpMode {
 
 
         TrajectorySequence seq_2 = drive.trajectorySequenceBuilder(seq_1.end())
-                .lineToConstantHeading(new Vector2d(-10.5, 14))
-                .turn(Math.toRadians(-140))
-                .forward(4)
+                .lineToLinearHeading(new Pose2d(-24, 12, Math.toRadians(-90)))
                 .addTemporalMarker(() -> {
-                   yiseDrive.autoCenter();
+                   yiseDrive.autoCenterLoop();
                 })
                 .waitSeconds(.2)
                 .addTemporalMarker(() -> {
@@ -96,11 +94,10 @@ public class AutonomousBlueRight extends LinearOpMode {
                 .build();
 
         TrajectorySequence seq_3 = drive.trajectorySequenceBuilder(seq_2.end())
-                .lineToConstantHeading(new Vector2d(-11, 14))
-                .turn(Math.toRadians(-135))
+                .lineToLinearHeading(new Pose2d(-52, 12, Math.toRadians(180)))
                 .forward(6)
                 .addTemporalMarker(() -> {
-                    yiseDrive.autoCenter();
+                    yiseDrive.autoCenterLoop();
                 })
                 //.waitSeconds(.2)
                 .addTemporalMarker(() -> {

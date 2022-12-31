@@ -54,7 +54,7 @@ public class mecanumDrive {
         distanceRight = distanceSensorRight.getDistance(DistanceUnit.CM);
 
         // set thresholds related to auto-centering
-        startCentering = 30;
+        startCentering = 10;
         finishCentering = 4;
     }
 
@@ -159,7 +159,7 @@ public class mecanumDrive {
     public void autoCenterLoop() {
         Boolean centered = false;
         // set timeout for breaking out of the loop (in milliseconds)
-        long timeout = 3000;
+        long timeout = 1000;
         long start, current, elapsed;
 
         start = System.currentTimeMillis();
