@@ -78,7 +78,7 @@ public class TestDistanceSensor extends LinearOpMode {
 
             // Auto-Centering Code
             if (gamepad1.left_trigger >= 0.8) {
-                drive.autoCenter();
+                drive.autoCenter(mecanumDrive.centerModes.CONE);
             }
 
             // Show the elapsed game time and wheel power.
