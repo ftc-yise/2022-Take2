@@ -4,7 +4,6 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
@@ -14,6 +13,7 @@ import org.firstinspires.ftc.teamcode.yise.mecanumDrive;
 
 @Autonomous(name = "Auto Red Left", group = "Linear Opmode")
 public class AutonomousRedLeft extends LinearOpMode {
+
     @Override
     public void runOpMode() {
 
@@ -24,11 +24,17 @@ public class AutonomousRedLeft extends LinearOpMode {
         // create instance of roadrunner drive class
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
+        TensorFlow tensor = new TensorFlow(hardwareMap);
+
         // create instance of YISE drive class - for autoCenterLoop() only
         mecanumDrive yiseDrive = new mecanumDrive(hardwareMap);
 
         // create instance of yise lift arm class
         liftArm arm = new liftArm(hardwareMap);
+
+        //Initialize TensorFlow
+        tensor.initVuforia();
+        tensor.initTfod();
 
         waitForStart();
         if(isStopRequested()) return;
@@ -64,15 +70,15 @@ public class AutonomousRedLeft extends LinearOpMode {
                     arm.openGrabber();
                 })
                 .turn(Math.toRadians(-90))
-                .forward(12)
+                //.forward(6)
                 .addTemporalMarker(() -> {
                     yiseDrive.autoCenterLoop();
                 })
-                .waitSeconds(2)
+                .waitSeconds(1)
                 .addTemporalMarker(() -> {
                     arm.closeGrabber();
                 })
-                .waitSeconds(2)
+                .waitSeconds(1)
                 .addTemporalMarker(() -> {
                     arm.setPoleHeight(liftArm.Heights.HIGH);
                 })
@@ -81,9 +87,7 @@ public class AutonomousRedLeft extends LinearOpMode {
 
 
         TrajectorySequence seq_2 = drive.trajectorySequenceBuilder(seq_1.end())
-                .lineToConstantHeading(new Vector2d(-11, -14))
-                .turn(Math.toRadians(135))
-                .forward(6)
+                .lineToLinearHeading(new Pose2d(0, -12, Math.toRadians(270)))
                 .addTemporalMarker(() -> {
                    yiseDrive.autoCenterLoop();
                 })
@@ -94,8 +98,7 @@ public class AutonomousRedLeft extends LinearOpMode {
                 .build();
 
         TrajectorySequence seq_3 = drive.trajectorySequenceBuilder(seq_2.end())
-                .turn(Math.toRadians(-135))
-                .lineToConstantHeading(new Vector2d(-52, -12))
+                .lineToLinearHeading(new Pose2d(-48, -12, Math.toRadians(180)))
                 .addDisplacementMarker(20, () -> {
                     arm.getTopCone();
                     arm.downOneCone();
@@ -108,9 +111,17 @@ public class AutonomousRedLeft extends LinearOpMode {
         // run my trajectories in order
 
         // drive to cone stack with arm at cone 5 height
-        drive.followTrajectorySequence(seq_1);
+
+        //Check for cone
+        //1 is PurpleY, 2 is GreenS, 3 is RedE
+
+        int cone = tensor.readCone();
+        telemetry.addData("Cone read: ", cone);
+        telemetry.update();
+
+        /*drive.followTrajectorySequence(seq_1);
         drive.followTrajectorySequence(seq_2);
-        //drive.followTrajectorySequence(seq_3);
-        //drive.followTrajectorySequence(seq_2);
+        drive.followTrajectorySequence(seq_3);
+        drive.followTrajectorySequence(seq_2);*/
     }
 }

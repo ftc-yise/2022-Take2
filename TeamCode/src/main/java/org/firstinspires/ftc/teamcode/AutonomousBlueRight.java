@@ -82,9 +82,7 @@ public class AutonomousBlueRight extends LinearOpMode {
 
 
         TrajectorySequence seq_2 = drive.trajectorySequenceBuilder(seq_1.end())
-                .lineToConstantHeading(new Vector2d(-10.5, 14))
-                .turn(Math.toRadians(-140))
-                .forward(4)
+                .lineToLinearHeading(new Pose2d(0, 12, Math.toRadians(90)))
                 .addTemporalMarker(() -> {
                    yiseDrive.autoCenter();
                 })
@@ -96,9 +94,7 @@ public class AutonomousBlueRight extends LinearOpMode {
                 .build();
 
         TrajectorySequence seq_3 = drive.trajectorySequenceBuilder(seq_2.end())
-                .lineToConstantHeading(new Vector2d(-11, 14))
-                .turn(Math.toRadians(-135))
-                .forward(6)
+                .lineToLinearHeading(new Pose2d(-60, 12, Math.toRadians(180)))
                 .addTemporalMarker(() -> {
                     yiseDrive.autoCenter();
                 })
@@ -112,7 +108,9 @@ public class AutonomousBlueRight extends LinearOpMode {
         // drive to cone stack with arm at cone 5 height
         drive.followTrajectorySequence(seq_1);
         drive.followTrajectorySequence(seq_2);
-        //drive.followTrajectorySequence(seq_3);
+        drive.followTrajectorySequence(seq_3);
         //drive.followTrajectorySequence(seq_2);
+
+
     }
 }

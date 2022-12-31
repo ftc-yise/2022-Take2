@@ -34,9 +34,7 @@ public class AutoBlueRight {
                                 .addTemporalMarker(2, () -> {
                                     //arm.setPoleHeight(liftArm.Heights.HIGH);
                                 })
-                                .lineToConstantHeading(new Vector2d(-11, 14))
-                                .turn(Math.toRadians(-135))
-                                .forward(6)
+                                .lineToLinearHeading(new Pose2d(0, 12, Math.toRadians(90)))
                                 .addTemporalMarker(.2,() -> {
                                    // yiseDrive.autoCenter();
                                 })
@@ -44,8 +42,7 @@ public class AutoBlueRight {
                                 .addTemporalMarker(.2, () -> {
                                     //coneGrabber.setPosition(Servo.MIN_POSITION);
                                 })
-                                .turn(Math.toRadians(135))
-                                .lineToConstantHeading(new Vector2d(-52, 12))
+                                .lineToLinearHeading(new Pose2d(-60, 12, Math.toRadians(180)))
                                 .addDisplacementMarker(20, () -> {
                                     //arm.getTopCone();
                                     //arm.downOneCone();

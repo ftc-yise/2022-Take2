@@ -16,7 +16,7 @@ public class MeepMeepTesting {
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(new Pose2d(0, 0, 0))
                                 .splineTo(new Vector2d(11, -14), Math.toRadians(180))
-                                .turn(Math.toRadians(315))
+                                //.turn(Math.toRadians(315))
                                 .build()
                 );
 

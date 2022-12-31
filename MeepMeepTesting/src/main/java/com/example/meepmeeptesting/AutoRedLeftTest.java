@@ -38,9 +38,7 @@ public class AutoRedLeftTest {
                                 })
                                 //.waitSeconds(2)
                                 //SEQ2
-                                .lineToConstantHeading(new Vector2d(-11, -14))
-                                .turn(Math.toRadians(135))
-                                .forward(6)
+                                .lineToLinearHeading(new Pose2d(0, -12, Math.toRadians(270)))
                                 .addTemporalMarker(.2,() -> {
                                    // yiseDrive.autoCenter();
                                 })
@@ -49,8 +47,7 @@ public class AutoRedLeftTest {
                                     //coneGrabber.setPosition(Servo.MIN_POSITION);
                                 })
                                 //SEQ3
-                                .turn(Math.toRadians(-135))
-                                .lineToConstantHeading(new Vector2d(-52, -12))
+                                .lineToLinearHeading(new Pose2d(-52, -12, Math.toRadians(180)))
                                 .addDisplacementMarker(20, () -> {
                                    // arm.getTopCone();
                                    // arm.downOneCone();
