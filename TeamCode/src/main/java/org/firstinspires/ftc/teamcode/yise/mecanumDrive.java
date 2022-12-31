@@ -22,7 +22,10 @@ public class mecanumDrive {
         SLOW,
         NORMAL
     }
-
+    public enum centerModes {
+        POLE,
+        CONE
+    }
     public mecanumDrive(HardwareMap hardwareMap) {
         // set default value for speed
         currentSpeed = Speeds.NORMAL;
@@ -150,16 +153,16 @@ public class mecanumDrive {
 
     // runs the centering code once
     // for use in driver control opmode where drive is holding down a button to auto-center
-    public void autoCenter() {
-        center();
+    public void autoCenter(centerModes mode) {
+        center(mode);
     }
 
     // runs the centering code in a loop until it is centered or it times out
     // for use in autonomous opmode
-    public void autoCenterLoop() {
+    public void autoCenterLoop(centerModes mode) {
         Boolean centered = false;
         // set timeout for breaking out of the loop (in milliseconds)
-        long timeout = 3000;
+        long timeout = 1000;
         long start, current, elapsed;
 
         start = System.currentTimeMillis();
@@ -169,13 +172,23 @@ public class mecanumDrive {
             if (elapsed > timeout) {
                 break;
             }
-            centered = center();
+            centered = center(mode);
         }
     }
 
     // common centering code used for both autoCenter and autoCenterLoop
-    private Boolean center() {
+    private Boolean center(centerModes mode) {
         Boolean centered = false;
+        double startCentering, finishCentering;
+
+        // default values are for centerModes.CONE
+        startCentering = 10;
+        finishCentering = 4;
+
+        if (mode == centerModes.POLE) {
+            startCentering = 10;
+            finishCentering = 6;
+        }
 
         // get a fresh copy of the current sensor readings
         distanceLeft = distanceSensorLeft.getDistance(DistanceUnit.CM);

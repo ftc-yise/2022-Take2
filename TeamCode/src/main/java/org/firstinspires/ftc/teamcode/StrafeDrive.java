@@ -138,9 +138,9 @@ public class StrafeDrive extends LinearOpMode {
             // -----------------------------------------------------------------------------------
             // Auto-Centering Code
             // -----------------------------------------------------------------------------------
-            /*if (gamepad1.left_trigger >= 0.8) {
-                   drive.autoCenter()
-            }*/
+            if (gamepad1.left_trigger >= 0.8) {
+                   drive.autoCenter(mecanumDrive.centerModes.CONE);
+            }
 
             // -----------------------------------------------------------------------------------
             // Telemetry Code
