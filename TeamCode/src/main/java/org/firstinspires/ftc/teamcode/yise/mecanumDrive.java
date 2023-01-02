@@ -182,12 +182,12 @@ public class mecanumDrive {
         double startCentering, finishCentering;
 
         // default values are for centerModes.CONE
-        startCentering = 10;
+        startCentering = 20;
         finishCentering = 4;
 
         if (mode == centerModes.POLE) {
-            startCentering = 10;
-            finishCentering = 6;
+            startCentering = 20;
+            finishCentering = 4;
         }
 
         // get a fresh copy of the current sensor readings
