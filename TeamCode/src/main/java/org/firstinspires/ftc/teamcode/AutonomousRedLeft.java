@@ -4,11 +4,11 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.yise.liftArm;
 import org.firstinspires.ftc.teamcode.yise.mecanumDrive;
+import org.firstinspires.ftc.teamcode.yise.tensorFlow;
 
 
 @Autonomous(name = "Auto Red Left", group = "Linear Opmode")
@@ -21,15 +21,16 @@ public class AutonomousRedLeft extends LinearOpMode {
         // Initialize Class Instances and Variables
         // ------------------------------------------------------------------------------------
 
-        // create instance of roadrunner drive class
+        // create instance of RoadRunner drive class
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
-        TensorFlow tensor = new TensorFlow(hardwareMap);
+        // create instance of YISE tensorFlow class
+        tensorFlow tensor = new tensorFlow(hardwareMap);
 
         // create instance of YISE drive class - for autoCenterLoop() only
         mecanumDrive yiseDrive = new mecanumDrive(hardwareMap);
 
-        // create instance of yise lift arm class
+        // create instance of YISE lift arm class
         liftArm arm = new liftArm(hardwareMap);
 
         //Initialize TensorFlow
