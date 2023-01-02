@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.archive;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -6,8 +6,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name = "Epik Autonomous Blue Forward", group = "Linear Opmode")
-public class AutoBlueLameProgram extends LinearOpMode {
+@Autonomous(name = "Epik Autonomous Blue", group = "Linear Opmode")
+public class AutoBlue extends LinearOpMode {
     private DcMotor leftFrontDrive = null;
     private DcMotor leftBackDrive = null;
     private DcMotor rightFrontDrive = null;
@@ -41,6 +41,27 @@ public class AutoBlueLameProgram extends LinearOpMode {
                 leftFrontDrive.setPower(0.5);
                 rightFrontDrive.setPower(0.5);
                 rightBackDrive.setPower(0.5);
+                leftBackDrive.setPower(0.5);
+            }
+
+            leftFrontDrive.setPower(0);
+            rightFrontDrive.setPower(0);
+            rightBackDrive.setPower(0);
+            leftBackDrive.setPower(0);
+
+            runtime.reset();
+            while (runtime.seconds() < 0.1) {
+                leftFrontDrive.setPower(-0.5);
+                rightFrontDrive.setPower(-0.5);
+                rightBackDrive.setPower(-0.5);
+                leftBackDrive.setPower(-0.5);
+            }
+
+            runtime.reset();
+            while (runtime.seconds() < 1.7) {
+                leftFrontDrive.setPower(-0.5);
+                rightFrontDrive.setPower(0.5);
+                rightBackDrive.setPower(-0.5);
                 leftBackDrive.setPower(0.5);
             }
 
