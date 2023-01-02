@@ -18,44 +18,93 @@ public class AutoRedLeftTest {
                                 .strafeRight(12)
                                 .splineToConstantHeading(new Vector2d(-48, -12), Math.toRadians(270))
                                 .addDisplacementMarker(20, () -> {
-                                   // arm.getTopCone();
+                                  //  arm.getTopCone();
                                 })
                                 .addDisplacementMarker(20, () -> {
-                                   // coneGrabber.setPosition(Servo.MIN_POSITION);
+                                    //arm.openGrabber();
                                 })
                                 .turn(Math.toRadians(-90))
                                 .forward(12)
-                                .addTemporalMarker(2, () -> {
-                                    //yiseDrive.autoCenter();
+                                .addTemporalMarker(() -> {
+                                   // yiseDrive.autoCenterLoop();
                                 })
-                                //.waitSeconds(2)
-                                .addTemporalMarker(2,() -> {
-                                    //coneGrabber.setPosition(Servo.MAX_POSITION);
+                                .waitSeconds(1)
+                                .addTemporalMarker(() -> {
+                                    //arm.closeGrabber();
                                 })
-                                //.waitSeconds(2)
-                                .addTemporalMarker(2, () -> {
+                                .waitSeconds(.2)
+                                .addTemporalMarker(() -> {
                                     //arm.setPoleHeight(liftArm.Heights.HIGH);
                                 })
-                                //.waitSeconds(2)
+                                .waitSeconds(.2)
+
                                 //SEQ2
-                                .lineToLinearHeading(new Pose2d(0, -12, Math.toRadians(270)))
-                                .addTemporalMarker(.2,() -> {
-                                   // yiseDrive.autoCenter();
+                                .lineToConstantHeading(new Vector2d(-11, -14))
+                                .turn(Math.toRadians(135))
+                                .forward(5)
+                                .addTemporalMarker(() -> {
+                                    // yiseDrive.autoCenterLoop();
+
                                 })
-                                //.waitSeconds(.2)
-                                .addTemporalMarker(.2, () -> {
-                                    //coneGrabber.setPosition(Servo.MIN_POSITION);
+                                .waitSeconds(1)
+                                .addTemporalMarker(() -> {
+                                   // arm.openGrabber();
                                 })
+                                .back(6)
+
                                 //SEQ3
-                                .lineToLinearHeading(new Pose2d(-52, -12, Math.toRadians(180)))
+                                .turn(Math.toRadians(-135))
+                                .lineToConstantHeading(new Vector2d(-55, -12))
                                 .addDisplacementMarker(20, () -> {
-                                   // arm.getTopCone();
-                                   // arm.downOneCone();
+                                    //arm.getTopCone();
+                                    //arm.downOneCone();
                                 })
                                 .addTemporalMarker(() -> {
-                                    //yiseDrive.autoCenter();
+                                    //yiseDrive.autoCenterLoop();
                                 })
-                                //.waitSeconds(.2)
+                                .waitSeconds(1)
+                                .addTemporalMarker(() ->{
+                                    //arm.closeGrabber();
+                                })
+                                .waitSeconds(.2)
+
+                                //SEQ4
+                                .lineToConstantHeading(new Vector2d(-11, -14))
+                                .turn(Math.toRadians(135))
+                                .forward(6)
+                                .addTemporalMarker(() -> {
+                                    // yiseDrive.autoCenterLoop();
+                                })
+                                .waitSeconds(1)
+                                .addTemporalMarker(() -> {
+                                    //arm.openGrabber();
+                                })
+                                .back(6)
+
+                                //seq5
+                                .turn(Math.toRadians(-135))
+                                .lineToConstantHeading(new Vector2d(-52, -12))
+
+                                .addDisplacementMarker(20, () -> {
+                                    //arm.getTopCone();
+                                    //arm.downOneCone();
+                                })
+                                .addTemporalMarker(() -> {
+                                    //yiseDrive.autoCenterLoop();
+                                })
+                                .waitSeconds(1)
+                                .addTemporalMarker(() ->{
+                                    //arm.closeGrabber();
+                                })
+                                .waitSeconds(.2)
+
+                                //END SEQ
+
+                                //.lineToLinearHeading(new Pose2d(-12, -16, Math.toRadians(-90)))  //location = 3
+                                .lineToLinearHeading(new Pose2d(-34, -16, Math.toRadians(-90))) // location = 2
+                                //.lineToLinearHeading(new Pose2d(-59, -16, Math.toRadians(-90)))  //location = 1
+
+                                .waitSeconds(3)  //added only to see ending spot in meep meep
                                 .build()
 
                 );

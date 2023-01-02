@@ -14,7 +14,6 @@ public class mecanumDrive {
 
     public final Rev2mDistanceSensor distanceSensorRight, distanceSensorLeft;
     public double distanceLeft, distanceRight;
-    private static double startCentering, finishCentering;
 
     // Used to track slow-mode versus normal mode
     public Speeds currentSpeed;
@@ -22,10 +21,12 @@ public class mecanumDrive {
         SLOW,
         NORMAL
     }
+    
     public enum centerModes {
         POLE,
         CONE
     }
+
     public mecanumDrive(HardwareMap hardwareMap) {
         // set default value for speed
         currentSpeed = Speeds.NORMAL;
@@ -56,9 +57,6 @@ public class mecanumDrive {
         distanceLeft = distanceSensorLeft.getDistance(DistanceUnit.CM);
         distanceRight = distanceSensorRight.getDistance(DistanceUnit.CM);
 
-        // set thresholds related to auto-centering
-        startCentering = 30;
-        finishCentering = 4;
     }
 
     // Updates power to the 4 drive motors based on input from the stick on the first controller

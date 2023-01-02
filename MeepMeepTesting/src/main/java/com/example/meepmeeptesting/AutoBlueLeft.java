@@ -6,7 +6,7 @@ import com.noahbres.meepmeep.MeepMeep;
 import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
 import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
-public class AutoBlueRight {
+public class AutoBlueLeft {
     public static void main(String[] args) {
         MeepMeep meepMeep = new MeepMeep(800);
 
@@ -14,16 +14,16 @@ public class AutoBlueRight {
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(49.44, 49.44, Math.toRadians(180), Math.toRadians(180), 10.5)
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(new Pose2d(-36, 62, Math.toRadians(90)))
-                                .strafeRight(-12)
-                                .splineToConstantHeading(new Vector2d(-48, 12), Math.toRadians(90))
+                        drive.trajectorySequenceBuilder(new Pose2d(36, 62, Math.toRadians(90)))
+                                .strafeRight(12)
+                                .splineToConstantHeading(new Vector2d(48, 12), Math.toRadians(90))
                                 .addDisplacementMarker(20, () -> {
-                                    // arm.getTopCone();
+                                   // arm.getTopCone();
                                 })
                                 .addDisplacementMarker(20, () -> {
-                                    // coneGrabber.setPosition(Servo.MIN_POSITION);
+                                   // coneGrabber.setPosition(Servo.MIN_POSITION);
                                 })
-                                .turn(Math.toRadians(90))
+                                .turn(Math.toRadians(-90))
                                 .forward(12)
                                 .addTemporalMarker(2, () -> {
                                     //yiseDrive.autoCenter();
@@ -34,19 +34,18 @@ public class AutoBlueRight {
                                 .addTemporalMarker(2, () -> {
                                     //arm.setPoleHeight(liftArm.Heights.HIGH);
                                 })
-                                .lineToLinearHeading(new Pose2d(-24, 12, Math.toRadians(90)))
+                                .lineToLinearHeading(new Pose2d(24, 12, Math.toRadians(-90)))
                                 //.turn(Math.toRadians(135))
                                 //.forward(6)
                                 .addTemporalMarker(.2,() -> {
-                                    // yiseDrive.autoCenter();
+                                   // yiseDrive.autoCenter();
                                 })
                                 //.waitSeconds(.2)
                                 .addTemporalMarker(.2, () -> {
                                     //coneGrabber.setPosition(Servo.MIN_POSITION);
                                 })
                                 //.turn(Math.toRadians(-135))
-                                .lineToLinearHeading(new Pose2d(-52, 12, Math.toRadians(180)))
-
+                                .lineToLinearHeading(new Pose2d(52, 12, Math.toRadians(0)))
                                 .addDisplacementMarker(20, () -> {
                                     //arm.getTopCone();
                                     //arm.downOneCone();
