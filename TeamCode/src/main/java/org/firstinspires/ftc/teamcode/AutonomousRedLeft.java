@@ -15,7 +15,9 @@ import org.firstinspires.ftc.teamcode.yise.mecanumDrive;
 @Autonomous(name = "Auto Red Left", group = "Linear Opmode")
 public class AutonomousRedLeft extends LinearOpMode {
 
-    public float endLocation = 0;
+    public float endLocation_X = 0;
+    public float endLocation_Y = -16;
+    public float endHeading_Z = -90;
 
     @Override
     public void runOpMode() {
@@ -50,7 +52,7 @@ public class AutonomousRedLeft extends LinearOpMode {
         // example trajectory sequences
         // based on testing, there's no problem doing forward and strafeRight in a row
 
-        // seq_1:
+        // startpath_1:
         // Drive forward 20 inches (after first 10 inches, start raising arm to top cone height)
         // Then strafe right 20 inches and turn right 90 degrees
         //
@@ -60,7 +62,9 @@ public class AutonomousRedLeft extends LinearOpMode {
         //
         // If you change the marker from 10 to 30, it will run in the middle of the stafeRight()
         // Note: 1 marker, when written in this syntax, can include multiple actions
-        TrajectorySequence seq_1 = drive.trajectorySequenceBuilder(startPose)
+
+        // Sequence 1 is start of program ending at cone pickup.
+        TrajectorySequence startpath_1 = drive.trajectorySequenceBuilder(startPose)
                 .strafeRight(12)
                 .splineToConstantHeading(new Vector2d(-48, -12), Math.toRadians(270))
                 .addDisplacementMarker(20, () -> {
@@ -86,7 +90,7 @@ public class AutonomousRedLeft extends LinearOpMode {
                 .build();
 
 
-        TrajectorySequence seq_2 = drive.trajectorySequenceBuilder(seq_1.end())
+        TrajectorySequence scorecone_2 = drive.trajectorySequenceBuilder(startpath_1.end())
                 .lineToConstantHeading(new Vector2d(-11, -14))
                 .turn(Math.toRadians(135))
                 .forward(5)
@@ -100,7 +104,7 @@ public class AutonomousRedLeft extends LinearOpMode {
                 .back(6)
                 .build();
 
-        TrajectorySequence seq_3 = drive.trajectorySequenceBuilder(seq_2.end())
+        TrajectorySequence grabcone_3 = drive.trajectorySequenceBuilder(scorecone_2.end())
                 .turn(Math.toRadians(-135))
                 .lineToConstantHeading(new Vector2d(-52, -12))
                 .addDisplacementMarker(20, () -> {
@@ -119,8 +123,8 @@ public class AutonomousRedLeft extends LinearOpMode {
 
         //Need to add in additional trajectories becuase you can't repeat the motions and pick up a cone a different height
 
-        TrajectorySequence seq_4 = drive.trajectorySequenceBuilder(seq_2.end())
-
+        TrajectorySequence endposition_4 = drive.trajectorySequenceBuilder(scorecone_2.end())
+                .lineToLinearHeading(new Pose2d( endLocation_X, endLocation_Y, endHeading_Z))
                /* if (endLocation == 3) {
                     .lineToLinearHeading(new Pose2d(-12, -16, Math.toRadians(-90))) ;
                 }
@@ -136,13 +140,13 @@ public class AutonomousRedLeft extends LinearOpMode {
         // run my trajectories in order
 
         // drive to cone stack with arm at cone 5 height
-        drive.followTrajectorySequence(seq_1);
-        drive.followTrajectorySequence(seq_2);
-        drive.followTrajectorySequence(seq_3);
-        drive.followTrajectorySequence(seq_2);
-        drive.followTrajectorySequence(seq_3);
-        drive.followTrajectorySequence(seq_2);
-        drive.followTrajectorySequence(seq_4);
+        drive.followTrajectorySequence(startpath_1);
+        drive.followTrajectorySequence(scorecone_2);
+        drive.followTrajectorySequence(grabcone_3);
+        drive.followTrajectorySequence(scorecone_2);
+        drive.followTrajectorySequence(grabcone_3);
+        drive.followTrajectorySequence(scorecone_2);
+        drive.followTrajectorySequence(endposition_4);
         //Location 3 x =-12  y =-16
         //location 2 x =-34  y =-16
         //location 1 1x =-59  y =-16
