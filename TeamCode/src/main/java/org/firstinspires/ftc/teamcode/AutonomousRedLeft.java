@@ -4,12 +4,11 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.Servo;
-
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.yise.liftArm;
 import org.firstinspires.ftc.teamcode.yise.mecanumDrive;
+import org.firstinspires.ftc.teamcode.yise.tensorFlow;
 
 
 @Autonomous(name = "Auto Red Left", group = "Linear Opmode")
@@ -19,6 +18,7 @@ public class AutonomousRedLeft extends LinearOpMode {
     public float endLocation_Y = -16;
     public float endHeading_Z = -90;
 
+
     @Override
     public void runOpMode() {
 
@@ -26,13 +26,16 @@ public class AutonomousRedLeft extends LinearOpMode {
         // Initialize Class Instances and Variables
         // ------------------------------------------------------------------------------------
 
-        // create instance of roadrunner drive class
+        // create instance of RoadRunner drive class
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+
+        // create instance of YISE tensorFlow class
+        tensorFlow tensor = new tensorFlow(hardwareMap);
 
         // create instance of YISE drive class - for autoCenterLoop() only
         mecanumDrive yiseDrive = new mecanumDrive(hardwareMap);
 
-        // create instance of yise lift arm class
+        // create instance of YISE lift arm class
         liftArm arm = new liftArm(hardwareMap);
 
         // set variable for holding the signal beacon detection for end placment
@@ -74,11 +77,12 @@ public class AutonomousRedLeft extends LinearOpMode {
                     arm.openGrabber();
                 })
                 .turn(Math.toRadians(-90))
-                .forward(12)
+                //.forward(6)
                 .addTemporalMarker(() -> {
                     yiseDrive.autoCenterLoop();
                 })
                 //.waitSeconds(2)
+
                 .addTemporalMarker(() -> {
                     arm.closeGrabber();
                 })
@@ -150,5 +154,6 @@ public class AutonomousRedLeft extends LinearOpMode {
         //Location 3 x =-12  y =-16
         //location 2 x =-34  y =-16
         //location 1 1x =-59  y =-16
+
     }
 }

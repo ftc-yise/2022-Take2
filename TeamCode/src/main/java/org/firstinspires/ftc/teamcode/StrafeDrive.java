@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 // hardware packages
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
-import com.qualcomm.hardware.rev.RevColorSensorV3;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 
 // other packages
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -22,16 +22,14 @@ import org.firstinspires.ftc.teamcode.yise.liftArm;
 public class StrafeDrive extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
-
-    //private Rev2mDistanceSensor distanceSensorRight = null;
-    //private Rev2mDistanceSensor distanceSensorLeft = null;
-
     private Servo coneGrabber = null;
+    private ColorSensor color = null;
 
     // state variables that track if buttons were released
     public boolean armResetButtonWasReleased = true;
     public boolean leftBumperWasReleased = true;
     public boolean canSwitchModes = false;
+    public boolean closed = false;
 
     @Override
     public void runOpMode() {
@@ -42,10 +40,7 @@ public class StrafeDrive extends LinearOpMode {
         // create instance of lift arm class
         liftArm arm = new liftArm(hardwareMap);
 
-        coneGrabber = hardwareMap.get(Servo.class, "cone_grabber");
-
-        //distanceSensorRight = hardwareMap.get(Rev2mDistanceSensor.class, "distance_sensor_right");
-        //distanceSensorLeft = hardwareMap.get(Rev2mDistanceSensor.class, "distance_sensor_left");
+        color = hardwareMap.get(ColorSensor.class, "Color");
 
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Status", "Initialized");
@@ -70,13 +65,13 @@ public class StrafeDrive extends LinearOpMode {
             } else if (gamepad1.y && (drive.currentSpeed == mecanumDrive.Speeds.SLOW) && canSwitchModes) {
                 drive.setNormalMode();
             }
-            /*
+
             if (gamepad1.y) {
                 canSwitchModes = false;
             } else {
                 canSwitchModes = true;
             }
-            */
+
 
             // If we have any Dpad input, update the motor power based on Dpad (ie overright stick)
             if (gamepad1.dpad_right || gamepad1.dpad_left || gamepad1.dpad_up || gamepad1.dpad_down) {
@@ -129,18 +124,29 @@ public class StrafeDrive extends LinearOpMode {
             // -----------------------------------------------------------------------------------
             // Open and Close the Grabber
             // -----------------------------------------------------------------------------------
-            if (gamepad1.a || gamepad2.a) {
-                arm.openGrabber();
-            } else if (gamepad1.b || gamepad2.b) {
+            if (color.red() > 400 && !closed) {
                 arm.closeGrabber();
+                closed = true;
+            } else if (color.blue() > 400 && !closed) {
+                arm.closeGrabber();
+                closed = true;
+            } else if (gamepad2.a && closed) {
+                arm.openGrabber();
+                closed = false;
+            } else if (gamepad2.b && !closed) {
+                arm.closeGrabber();
+                closed = true;
             }
+
 
             // -----------------------------------------------------------------------------------
             // Auto-Centering Code
             // -----------------------------------------------------------------------------------
-            /*if (gamepad1.left_trigger >= 0.8) {
-                   drive.autoCenter()
-            }*/
+            if (gamepad1.left_trigger >= 0.8) {
+                drive.autoCenter(mecanumDrive.centerModes.CONE);
+            } else if (gamepad1.right_trigger >= 0.8) {
+                drive.autoCenter(mecanumDrive.centerModes.POLE);
+            }
 
             // -----------------------------------------------------------------------------------
             // Telemetry Code
@@ -167,6 +173,9 @@ public class StrafeDrive extends LinearOpMode {
             //telemetry.addData("Distance left: ", distanceLeft);
             //telemetry.addData("Distance right: ", distanceRight);
 
+            telemetry.addData("Red", color.red());
+            telemetry.addData("Green", color.green());
+            telemetry.addData("Blue", color.blue());
             telemetry.update();
         }
     }

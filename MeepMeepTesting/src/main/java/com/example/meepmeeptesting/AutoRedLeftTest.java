@@ -44,6 +44,7 @@ public class AutoRedLeftTest {
                                 .forward(5)
                                 .addTemporalMarker(() -> {
                                     // yiseDrive.autoCenterLoop();
+
                                 })
                                 .waitSeconds(1)
                                 .addTemporalMarker(() -> {
@@ -83,6 +84,7 @@ public class AutoRedLeftTest {
                                 //seq5
                                 .turn(Math.toRadians(-135))
                                 .lineToConstantHeading(new Vector2d(-52, -12))
+
                                 .addDisplacementMarker(20, () -> {
                                     //arm.getTopCone();
                                     //arm.downOneCone();

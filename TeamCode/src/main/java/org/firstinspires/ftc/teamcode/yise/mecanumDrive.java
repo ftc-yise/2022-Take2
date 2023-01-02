@@ -21,7 +21,7 @@ public class mecanumDrive {
         SLOW,
         NORMAL
     }
-
+    
     public enum centerModes {
         POLE,
         CONE
@@ -179,13 +179,13 @@ public class mecanumDrive {
         Boolean centered = false;
         double startCentering, finishCentering;
 
-        // default values are for centermodes.CONE
-        startCentering = 10;
+        // default values are for centerModes.CONE
+        startCentering = 20;
         finishCentering = 4;
 
         if (mode == centerModes.POLE) {
-            startCentering = 10;
-            finishCentering = 6;
+            startCentering = 20;
+            finishCentering = 4;
         }
 
         // get a fresh copy of the current sensor readings
