@@ -57,7 +57,7 @@ public class mecanumDrive {
         distanceRight = distanceSensorRight.getDistance(DistanceUnit.CM);
 
         // set thresholds related to auto-centering
-        startCentering = 20;
+        startCentering = 30;
         finishCentering = 4;
     }
 
