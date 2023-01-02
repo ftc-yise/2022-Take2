@@ -39,7 +39,8 @@ public class AutonomousRedLeft extends LinearOpMode {
         liftArm arm = new liftArm(hardwareMap);
 
         // set variable for holding the signal beacon detection for end placment
-
+        tensor.initVuforia();
+        tensor.initTfod();
 
         waitForStart();
         if (isStopRequested()) return;
@@ -79,7 +80,7 @@ public class AutonomousRedLeft extends LinearOpMode {
                 .turn(Math.toRadians(-90))
                 //.forward(6)
                 .addTemporalMarker(() -> {
-                    yiseDrive.autoCenterLoop();
+                    yiseDrive.autoCenterLoop(mecanumDrive.centerModes.CONE);
                 })
                 //.waitSeconds(2)
 
@@ -116,7 +117,7 @@ public class AutonomousRedLeft extends LinearOpMode {
                     arm.downOneCone();
                 })
                 .addTemporalMarker(() -> {
-                    yiseDrive.autoCenterLoop();
+                    yiseDrive.autoCenterLoop(mecanumDrive.centerModes.CONE);
                 })
                 .waitSeconds(.2)
                 .addTemporalMarker(() ->{
@@ -142,6 +143,10 @@ public class AutonomousRedLeft extends LinearOpMode {
 
 
         // run my trajectories in order
+
+        // set default code number to 3
+        int coneNumber = 3;
+        coneNumber = tensor.readCone();
 
         // drive to cone stack with arm at cone 5 height
         drive.followTrajectorySequence(startpath_1);
