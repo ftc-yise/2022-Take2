@@ -1,8 +1,10 @@
+
 package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -11,7 +13,7 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.yise.liftArm;
 import org.firstinspires.ftc.teamcode.yise.mecanumDrive;
 
-
+@Disabled
 @Autonomous(name = "Auto Blue Left", group = "Linear Opmode")
 public class AutonomousBlueLeft extends LinearOpMode {
     @Override
@@ -69,7 +71,7 @@ public class AutonomousBlueLeft extends LinearOpMode {
                 .turn(Math.toRadians(-90))
                 .forward(12)
                 .addTemporalMarker(() -> {
-                    yiseDrive.autoCenterLoop();
+                    yiseDrive.autoCenterLoop(mecanumDrive.centerModes.CONE);
                 })
                 .addTemporalMarker(() -> {
                     coneGrabber.setPosition(Servo.MAX_POSITION);
@@ -84,7 +86,7 @@ public class AutonomousBlueLeft extends LinearOpMode {
         TrajectorySequence seq_2 = drive.trajectorySequenceBuilder(seq_1.end())
                 .lineToLinearHeading(new Pose2d(24, 12, Math.toRadians(-90)))
                 .addTemporalMarker(() -> {
-                    yiseDrive.autoCenterLoop();
+                    yiseDrive.autoCenterLoop(mecanumDrive.centerModes.POLE);
                 })
                 .waitSeconds(.2)
                 .addTemporalMarker(() -> {
@@ -100,7 +102,7 @@ public class AutonomousBlueLeft extends LinearOpMode {
                     arm.downOneCone();
                 })
                 .addTemporalMarker(() -> {
-                    yiseDrive.autoCenterLoop();
+                    yiseDrive.autoCenterLoop(mecanumDrive.centerModes.CONE);
                 })
                 .waitSeconds(.2)
                 .build();

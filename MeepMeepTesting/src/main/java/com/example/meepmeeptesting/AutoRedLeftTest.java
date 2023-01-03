@@ -16,93 +16,58 @@ public class AutoRedLeftTest {
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(new Pose2d(-36, -62, Math.toRadians(270)))
                                 .strafeRight(12)
-                                .splineToConstantHeading(new Vector2d(-48, -12), Math.toRadians(270))
+                                .splineToConstantHeading(new Vector2d(-48, -14), Math.toRadians(270))
                                 .addDisplacementMarker(20, () -> {
-                                  //  arm.getTopCone();
+                                    //arm.getTopCone();
                                 })
                                 .addDisplacementMarker(20, () -> {
                                     //arm.openGrabber();
                                 })
                                 .turn(Math.toRadians(-90))
-                                .forward(12)
+                                .forward(6)
                                 .addTemporalMarker(() -> {
-                                   // yiseDrive.autoCenterLoop();
+                                   // yiseDrive.autoCenterLoop(mecanumDrive.centerModes.CONE);
+                                })
+                                //.waitSeconds(2)
+
+                                .addTemporalMarker(() -> {
+                                   // arm.closeGrabber();
                                 })
                                 .waitSeconds(1)
-                                .addTemporalMarker(() -> {
-                                    //arm.closeGrabber();
-                                })
-                                .waitSeconds(.2)
                                 .addTemporalMarker(() -> {
                                     //arm.setPoleHeight(liftArm.Heights.HIGH);
                                 })
-                                .waitSeconds(.2)
+                                .waitSeconds(2)
+
 
                                 //SEQ2
                                 .lineToConstantHeading(new Vector2d(-11, -14))
-                                .turn(Math.toRadians(135))
-                                .forward(5)
+                                .turn(Math.toRadians(130))
+                                .forward(8)
                                 .addTemporalMarker(() -> {
-                                    // yiseDrive.autoCenterLoop();
-
-                                })
-                                .waitSeconds(1)
-                                .addTemporalMarker(() -> {
-                                   // arm.openGrabber();
-                                })
-                                .back(6)
-
-                                //SEQ3
-                                .turn(Math.toRadians(-135))
-                                .lineToConstantHeading(new Vector2d(-55, -12))
-                                .addDisplacementMarker(20, () -> {
-                                    //arm.getTopCone();
-                                    //arm.downOneCone();
-                                })
-                                .addTemporalMarker(() -> {
-                                    //yiseDrive.autoCenterLoop();
-                                })
-                                .waitSeconds(1)
-                                .addTemporalMarker(() ->{
-                                    //arm.closeGrabber();
+                                    //yiseDrive.autoCenterLoop(mecanumDrive.centerModes.POLE);
                                 })
                                 .waitSeconds(.2)
-
-                                //SEQ4
-                                .lineToConstantHeading(new Vector2d(-11, -14))
-                                .turn(Math.toRadians(135))
-                                .forward(6)
-                                .addTemporalMarker(() -> {
-                                    // yiseDrive.autoCenterLoop();
-                                })
-                                .waitSeconds(1)
                                 .addTemporalMarker(() -> {
                                     //arm.openGrabber();
                                 })
+                                .waitSeconds(.4)
                                 .back(6)
+                                //.build();
+
+                                //SEQ3
+
+
+                                //SEQ4
+
 
                                 //seq5
-                                .turn(Math.toRadians(-135))
-                                .lineToConstantHeading(new Vector2d(-52, -12))
-
-                                .addDisplacementMarker(20, () -> {
-                                    //arm.getTopCone();
-                                    //arm.downOneCone();
-                                })
-                                .addTemporalMarker(() -> {
-                                    //yiseDrive.autoCenterLoop();
-                                })
-                                .waitSeconds(1)
-                                .addTemporalMarker(() ->{
-                                    //arm.closeGrabber();
-                                })
-                                .waitSeconds(.2)
 
                                 //END SEQ
 
-                                //.lineToLinearHeading(new Pose2d(-12, -16, Math.toRadians(-90)))  //location = 3
-                                .lineToLinearHeading(new Pose2d(-34, -16, Math.toRadians(-90))) // location = 2
-                                //.lineToLinearHeading(new Pose2d(-59, -16, Math.toRadians(-90)))  //location = 1
+                                //.lineToLinearHeading(new Pose2d(-12, -16, Math.toRadians(0)))  //location = 3
+                                //.lineToLinearHeading(new Pose2d(-34, -16, Math.toRadians(0))) // location = 2
+                                .lineToLinearHeading(new Pose2d(-59, -16, Math.toRadians(0)))  //location = 1
 
                                 .waitSeconds(3)  //added only to see ending spot in meep meep
                                 .build()
