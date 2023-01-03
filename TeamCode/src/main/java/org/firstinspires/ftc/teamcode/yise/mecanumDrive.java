@@ -185,7 +185,7 @@ public class mecanumDrive {
 
         if (mode == centerModes.POLE) {
             startCentering = 20;
-            finishCentering = 4;
+            finishCentering = 12;
         }
 
         // get a fresh copy of the current sensor readings
