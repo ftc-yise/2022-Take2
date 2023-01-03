@@ -19,6 +19,7 @@ public class AutonomousRedRight extends LinearOpMode {
     SampleMecanumDrive drive;
     liftArm arm;
     tensorFlow tfod;
+    int loop = 1;
 
     @Override
     public void runOpMode() {
@@ -39,6 +40,7 @@ public class AutonomousRedRight extends LinearOpMode {
         // create instance of yise lift arm class
         arm = new liftArm(hardwareMap);
 
+
         waitForStart();
         if(isStopRequested()) return;
 
@@ -57,36 +59,43 @@ public class AutonomousRedRight extends LinearOpMode {
                     arm.openGrabber();
                     arm.getTopCone();
                 })
-                .forward(12)
+                .forward(26)
                 .build();
 
         //Drive with cone to pole
         TrajectorySequence driveToPole = drive.trajectorySequenceBuilder(driveForward.end())
-                .lineToLinearHeading(new Pose2d(36, -12, Math.toRadians(135)))
-                .addDisplacementMarker(() -> {
-                    yiseDrive.autoCenterLoop(mecanumDrive.centerModes.POLE);
+                .back(10)
+                .lineToLinearHeading(new Pose2d(37, -13, Math.toRadians(125)))
+                .addDisplacementMarker(10, () -> {
+                    arm.setPoleHeight(liftArm.Heights.HIGH);
+                    //yiseDrive.autoCenterLoop(mecanumDrive.centerModes.POLE);
                 })
-                .forward(8)
+                .forward(9.5)
                 .build();
 
         //Drive back to stack to get another cone
         TrajectorySequence driveToStack = drive.trajectorySequenceBuilder(driveToPole.end())
-                .back(8)
+                .back(10)
                 .addDisplacementMarker(() -> {
                     arm.openGrabber();
                     arm.getTopCone();
+                    for (int i = 0; i < loop; i++) {
+                        arm.downOneCone();
+                    }
+                    loop++;
                 })
                 .lineToLinearHeading(new Pose2d(48, -12, Math.toRadians(0)))
+                .forward(14)
                 .build();
 
         //Finishing positions
         TrajectorySequence driveTo1pos = drive.trajectorySequenceBuilder(driveToPole.end())
-                .back(8)
-                .lineToLinearHeading(new Pose2d(12, -12, Math.toRadians(0)))
+                .back(9)
+                .lineToLinearHeading(new Pose2d(12, -12, Math.toRadians(90)))
                 .build();
         TrajectorySequence driveTo2pos = drive.trajectorySequenceBuilder(driveToPole.end())
-                .back(8)
-                .lineToLinearHeading(new Pose2d(36, -12, Math.toRadians(0)))
+                .back(10)
+                .lineToLinearHeading(new Pose2d(36, -14, Math.toRadians(90)))
                 .build();
 
         //Sense cones
@@ -105,6 +114,12 @@ public class AutonomousRedRight extends LinearOpMode {
         //Run method to pick up cone and drop it on pole
         coneLoop(driveToPole);
 
+        //Drive back to get another cone
+        drive.followTrajectorySequence(driveToStack);
+
+        //Run method to pick up cone and drop it on pole
+        coneLoop(driveToPole);
+
         //Drive to right position based on Tensorflow input
         if (cone == 1) {
             drive.followTrajectorySequence(driveTo1pos);
@@ -113,21 +128,24 @@ public class AutonomousRedRight extends LinearOpMode {
         } else {
             drive.followTrajectorySequence(driveToStack);
         }
+        arm.returnToBottom();
 
     }
 
     public void coneLoop(TrajectorySequence poleTrajectory) {
         //Auto center on cones
-        yiseDrive.autoCenterLoop(mecanumDrive.centerModes.CONE);
+        //yiseDrive.autoCenterLoop(mecanumDrive.centerModes.CONE);
 
         //Grab and lift cone
         arm.closeGrabber();
         sleep(200);
-        arm.setPoleHeight(liftArm.Heights.HIGH);
+        arm.setPoleHeight(liftArm.Heights.LOW);
+        sleep(300);
 
         //Drive to pole
         drive.followTrajectorySequence(poleTrajectory);
         //Center on pole and drop cone
         arm.openGrabber();
+        sleep(100);
     }
 }
