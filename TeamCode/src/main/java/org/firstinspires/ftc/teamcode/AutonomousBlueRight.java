@@ -4,16 +4,23 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.Servo;
-
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.yise.liftArm;
 import org.firstinspires.ftc.teamcode.yise.mecanumDrive;
+import org.firstinspires.ftc.teamcode.yise.tensorFlow;
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 
 @Autonomous(name = "Auto Blue Right", group = "Linear Opmode")
 public class AutonomousBlueRight extends LinearOpMode {
+
+    public float endLocation_X = 0;
+    public float endLocation_Y = 16;
+    public float endHeading_Z = 90;
+
+
     @Override
     public void runOpMode() {
 
@@ -21,17 +28,21 @@ public class AutonomousBlueRight extends LinearOpMode {
         // Initialize Class Instances and Variables
         // ------------------------------------------------------------------------------------
 
-        // create instance of roadrunner drive class
+        // create instance of RoadRunner drive class
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
+        // create instance of YISE tensorFlow class
+        tensorFlow tensor = new tensorFlow(hardwareMap);
+
+        // create instance of YISE drive class - for autoCenterLoop() only
         mecanumDrive yiseDrive = new mecanumDrive(hardwareMap);
 
-        // create instance of yise lift arm class
+        // create instance of YISE lift arm class
         liftArm arm = new liftArm(hardwareMap);
 
-        // create variable for grabber
-        Servo coneGrabber;
-        coneGrabber = hardwareMap.get(Servo.class, "cone_grabber");
+        // set variable for holding the signal beacon detection for end placment
+        tensor.initVuforia();
+        tensor.initTfod();
 
         waitForStart();
         if(isStopRequested()) return;
@@ -41,11 +52,29 @@ public class AutonomousBlueRight extends LinearOpMode {
         // ------------------------------------------------------------------------------------
 
         // Start by defining our start position
-        Pose2d startPose = new Pose2d(-36, 62, Math.toRadians(90));
+        Pose2d startPose = new Pose2d(-38, 62, Math.toRadians(90));
         drive.setPoseEstimate(startPose);
+
+        int coneNumber = 3;
+        coneNumber = tensor.readCone();
+
+        if (coneNumber == 3){
+            endLocation_X = -66;
+            endLocation_Y = 14;
+            endHeading_Z = 0;
+        } else if (coneNumber == 2){
+            endLocation_X = -40;
+            endLocation_Y = 16;
+            endHeading_Z = 0;
+        } else if (coneNumber == 1){
+            endLocation_X = -15;
+            endLocation_Y = 16;
+            endHeading_Z = 0;
+        }
 
         // example trajectory sequences
         // based on testing, there's no problem doing forward and strafeRight in a row
+
 
         // seq_1:
         // Drive forward 20 inches (after first 10 inches, start raising arm to top cone height)
@@ -57,61 +86,90 @@ public class AutonomousBlueRight extends LinearOpMode {
         //
         // If you change the marker from 10 to 30, it will run in the middle of the stafeRight()
         // Note: 1 marker, when written in this syntax, can include multiple actions
+        //Seq 1 = Start Path
         TrajectorySequence seq_1 = drive.trajectorySequenceBuilder(startPose)
-                .strafeRight(-12)
-                .splineToConstantHeading(new Vector2d(-50, 12), Math.toRadians(90))
+                .strafeRight(-13)
+                .splineToConstantHeading(new Vector2d(-50, 14), Math.toRadians(90))
                 .addDisplacementMarker(20, () -> {
                     arm.getTopCone();
                 })
                 .addDisplacementMarker(20, () -> {
-                    coneGrabber.setPosition(Servo.MIN_POSITION);
+                    arm.openGrabber();
                 })
                 .turn(Math.toRadians(90))
-                .forward(5)
+                .forward(10)
                 .addTemporalMarker(() -> {
                     yiseDrive.autoCenterLoop(mecanumDrive.centerModes.CONE);
                 })
+
+
                 .addTemporalMarker(() -> {
-                    coneGrabber.setPosition(Servo.MAX_POSITION);
+                    arm.closeGrabber();
                 })
-                .waitSeconds(2)
+                .waitSeconds(1.5)
                 .addTemporalMarker(() -> {
                     arm.setPoleHeight(liftArm.Heights.HIGH);
                 })
                 .build();
 
 
-        TrajectorySequence seq_2 = drive.trajectorySequenceBuilder(seq_1.end())
-                .lineToLinearHeading(new Pose2d(-24, 12, Math.toRadians(-90)))
-
+        TrajectorySequence scorecone_2 = drive.trajectorySequenceBuilder(seq_1.end())
+                .lineToLinearHeading(new Pose2d(-10, 14, 45))
+                .forward(2)
                 .addTemporalMarker(() -> {
-                   yiseDrive.autoCenterLoop(mecanumDrive.centerModes.POLE);
+                    arm.openGrabber();
+                })
+                .waitSeconds(.6)
+                .back(4)
+                .build();
+
+        TrajectorySequence seq_3 = drive.trajectorySequenceBuilder(scorecone_2.end())
+                .turn(Math.toRadians(130))
+               .lineToLinearHeading(new Pose2d(-52, 12, 0))
+                .addDisplacementMarker(20, () -> {
+                    arm.getTopCone();
+                    arm.downOneCone();
+                })
+               .addTemporalMarker(() -> {
+                    yiseDrive.autoCenterLoop(mecanumDrive.centerModes.CONE);
+               })
+                .waitSeconds(.2)
+                .addTemporalMarker(() ->{
+                    arm.closeGrabber();
                 })
                 .waitSeconds(.2)
-                .addTemporalMarker(() -> {
-                  coneGrabber.setPosition(Servo.MIN_POSITION);
+                .addTemporalMarker(() ->{
+                    arm.setPoleHeight(liftArm.Heights.HIGH);
                 })
-                .waitSeconds(1)
+               .build();
+
+        TrajectorySequence endposition_4 = drive.trajectorySequenceBuilder(scorecone_2.end())
+                .lineToLinearHeading(new Pose2d( endLocation_X, endLocation_Y,  Math.toRadians(endHeading_Z)))
+                .addTemporalMarker(() ->{
+                    arm.closeGrabber();
+                })
+                .addTemporalMarker(() ->{
+                    arm.returnToBottom();
+                })
+                .turn(Math.toRadians(90))
                 .build();
 
-        TrajectorySequence seq_3 = drive.trajectorySequenceBuilder(seq_2.end())
-                .lineToLinearHeading(new Pose2d(-52, 12, Math.toRadians(180)))
-                .forward(6)
 
-                .addTemporalMarker(() -> {
-                    yiseDrive.autoCenterLoop(mecanumDrive.centerModes.CONE);
-                })
-                //.waitSeconds(.2)
-                .addTemporalMarker(() -> {
-                    coneGrabber.setPosition(Servo.MIN_POSITION);
-                })
-                .build();
         // run my trajectories in order
+
+        telemetry.addData("cone#", coneNumber);
+        telemetry.addData("Distance S Left", yiseDrive.distanceSensorLeft);
+        telemetry.addData("Distance S Right", yiseDrive.distanceSensorRight);
+        telemetry.update();
 
         // drive to cone stack with arm at cone 5 height
         drive.followTrajectorySequence(seq_1);
-        drive.followTrajectorySequence(seq_2);
-        drive.followTrajectorySequence(seq_3);
+        drive.followTrajectorySequence(scorecone_2);
+            telemetry.addData("Distance S Left", yiseDrive.distanceSensorLeft);
+            telemetry.addData ("Distance S Right", yiseDrive.distanceSensorRight);
+            telemetry.update();
+        drive.followTrajectorySequence(endposition_4);
+
         //drive.followTrajectorySequence(seq_2);
 
 

@@ -16,45 +16,68 @@ public class AutoBlueRight {
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(new Pose2d(-36, 62, Math.toRadians(90)))
                                 .strafeRight(-12)
-                                .splineToConstantHeading(new Vector2d(-48, 12), Math.toRadians(90))
-                                .addDisplacementMarker(20, () -> {
-                                    // arm.getTopCone();
-                                })
-                                .addDisplacementMarker(20, () -> {
-                                    // coneGrabber.setPosition(Servo.MIN_POSITION);
-                                })
-                                .turn(Math.toRadians(90))
-                                .forward(12)
-                                .addTemporalMarker(2, () -> {
-                                    //yiseDrive.autoCenter();
-                                })
-                                .addTemporalMarker(2,() -> {
-                                    //coneGrabber.setPosition(Servo.MAX_POSITION);
-                                })
-                                .addTemporalMarker(2, () -> {
-                                    //arm.setPoleHeight(liftArm.Heights.HIGH);
-                                })
-                                .lineToLinearHeading(new Pose2d(-24, 12, Math.toRadians(90)))
-                                //.turn(Math.toRadians(135))
-                                //.forward(6)
-                                .addTemporalMarker(.2,() -> {
-                                    // yiseDrive.autoCenter();
-                                })
-                                //.waitSeconds(.2)
-                                .addTemporalMarker(.2, () -> {
-                                    //coneGrabber.setPosition(Servo.MIN_POSITION);
-                                })
-                                //.turn(Math.toRadians(-135))
-                                .lineToLinearHeading(new Pose2d(-52, 12, Math.toRadians(180)))
-
+                                .splineToConstantHeading(new Vector2d(-48, 14), Math.toRadians(90))
                                 .addDisplacementMarker(20, () -> {
                                     //arm.getTopCone();
-                                    //arm.downOneCone();
+                                })
+                                .addDisplacementMarker(20, () -> {
+                                    //arm.openGrabber();
+                                })
+                                .turn(Math.toRadians(90))
+                                .forward(10)
+                                .addTemporalMarker(() -> {
+                                    //yiseDrive.autoCenterLoop(mecanumDrive.centerModes.CONE);
                                 })
                                 .addTemporalMarker(() -> {
-                                    //yiseDrive.autoCenter();
+                                    //arm.closeGrabber();
+                                })
+                                .waitSeconds(1.5)
+                                .addTemporalMarker(() -> {
+                                    //arm.setPoleHeight(liftArm.Heights.HIGH);
+                                })
+
+                                //SEQ_2
+                                .lineToConstantHeading(new Vector2d(-11, 14))
+                                .turn(Math.toRadians(-140))
+                                .forward(8)
+                                .addTemporalMarker(() -> {
+                                    //yiseDrive.autoCenterLoop(mecanumDrive.centerModes.POLE);
                                 })
                                 .waitSeconds(.2)
+                                .addTemporalMarker(() -> {
+                                    //arm.openGrabber();
+                                })
+                                .waitSeconds(.4)
+                                .back(8)
+
+                                //END SEQ
+                                /* if (coneNumber == 3){
+                                     endLocation_X = -58;
+                                     endLocation_Y = 14;
+                                     endHeading_Z = 180;
+                                 } else if (coneNumber == 2){
+                                     endLocation_X = -34;
+                                     endLocation_Y = 16;
+                                     endHeading_Z = 0;
+                                 } else if (coneNumber == 1){
+                                     endLocation_X = -12;
+                                     endLocation_Y = 16;
+                                     endHeading_Z = 0;
+ }*/
+                                //.lineToLinearHeading(new Pose2d( endLocation_X, endLocation_Y,  Math.toRadians(endHeading_Z)))
+                                //.lineToLinearHeading(new Pose2d(-58, 14, Math.toRadians(-0)))  //location = 3
+                                .lineToLinearHeading(new Pose2d(-34, 16, Math.toRadians(0))) // location = 2
+                                //.lineToLinearHeading(new Pose2d(-12, 16, Math.toRadians(0)))  //location = 1
+                                .addTemporalMarker(() ->{
+                                    //arm.closeGrabber();
+                                })
+                                .addTemporalMarker(() ->{
+                                    //arm.returnToBottom();
+                                })
+                                .turn(Math.toRadians(90))
+
+                                //to see end point in meep meep
+                                .waitSeconds(5)
                                 .build()
 
                 );

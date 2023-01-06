@@ -24,7 +24,7 @@ public class AutoRedLeftTest {
                                     //arm.openGrabber();
                                 })
                                 .turn(Math.toRadians(-90))
-                                .forward(6)
+                                .forward(10)
                                 .addTemporalMarker(() -> {
                                    // yiseDrive.autoCenterLoop(mecanumDrive.centerModes.CONE);
                                 })
@@ -33,16 +33,15 @@ public class AutoRedLeftTest {
                                 .addTemporalMarker(() -> {
                                    // arm.closeGrabber();
                                 })
-                                .waitSeconds(1)
+                                .waitSeconds(1.5)
                                 .addTemporalMarker(() -> {
                                     //arm.setPoleHeight(liftArm.Heights.HIGH);
                                 })
-                                .waitSeconds(2)
 
 
                                 //SEQ2
                                 .lineToConstantHeading(new Vector2d(-11, -14))
-                                .turn(Math.toRadians(130))
+                                .turn(Math.toRadians(140))
                                 .forward(8)
                                 .addTemporalMarker(() -> {
                                     //yiseDrive.autoCenterLoop(mecanumDrive.centerModes.POLE);
@@ -52,7 +51,7 @@ public class AutoRedLeftTest {
                                     //arm.openGrabber();
                                 })
                                 .waitSeconds(.4)
-                                .back(6)
+                                .back(8)
                                 //.build();
 
                                 //SEQ3
@@ -65,10 +64,10 @@ public class AutoRedLeftTest {
 
                                 //END SEQ
 
-                                //.lineToLinearHeading(new Pose2d(-12, -16, Math.toRadians(0)))  //location = 3
-                                //.lineToLinearHeading(new Pose2d(-34, -16, Math.toRadians(0))) // location = 2
-                                .lineToLinearHeading(new Pose2d(-59, -16, Math.toRadians(0)))  //location = 1
-
+                                //.lineToLinearHeading(new Pose2d(-12, -16, Math.toRadians(-0)))  //location = 3
+                                //.lineToLinearHeading(new Pose2d(-35, -16, Math.toRadians(0))) // location = 2
+                                .lineToLinearHeading(new Pose2d(-58, -14, Math.toRadians(0)))  //location = 1
+                                .turn(Math.toRadians(-90))
                                 .waitSeconds(3)  //added only to see ending spot in meep meep
                                 .build()
 
