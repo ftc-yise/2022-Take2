@@ -20,6 +20,10 @@ public class AutonomousRedLeft extends LinearOpMode {
     public float endLocation_Y = -16;
     public float endHeading_Z = -90;
 
+    RevBlinkinLedDriver lights;
+    RevBlinkinLedDriver.BlinkinPattern startPattern;
+    RevBlinkinLedDriver.BlinkinPattern mainPattern;
+
 
     @Override
     public void runOpMode() {
@@ -202,6 +206,10 @@ public class AutonomousRedLeft extends LinearOpMode {
         //Location 3 x =-12  y =-16
         //location 2 x =-34  y =-16
         //location 1 1x =-59  y =-16
+
+        startPattern = RevBlinkinLedDriver.BlinkinPattern.WHITE;
+        mainPattern = RevBlinkinLedDriver.BlinkinPattern.BLUE;
+        lights.setPattern(startPattern);
 
     }
 }
