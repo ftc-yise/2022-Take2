@@ -14,7 +14,6 @@ import org.firstinspires.ftc.teamcode.yise.tensorFlow;
 import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.yise.mecanumDrive;
 
-@Disabled
 @Autonomous(name = "Auto Blue Left", group = "Linear Opmode")
 public class AutonomousBlueLeft extends LinearOpMode {
     mecanumDrive yiseDrive;
