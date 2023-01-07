@@ -5,16 +5,23 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
-import org.firstinspires.ftc.teamcode.trajectorysequence.sequencesegment.TrajectorySegment;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import org.firstinspires.ftc.teamcode.yise.liftArm;
+import org.firstinspires.ftc.teamcode.yise.tensorFlow;
 import com.qualcomm.robotcore.hardware.Servo;
+import org.firstinspires.ftc.teamcode.yise.mecanumDrive;
 
 @Disabled
 @Autonomous(name = "Auto Red Right", group = "Linear Opmode")
 public class AutonomousRedRight extends LinearOpMode {
+    mecanumDrive yiseDrive;
+    SampleMecanumDrive drive;
+    liftArm arm;
+    tensorFlow tfod;
+    int loop = 1;
+
     @Override
     public void runOpMode() {
 
@@ -23,14 +30,17 @@ public class AutonomousRedRight extends LinearOpMode {
         // ------------------------------------------------------------------------------------
 
         // create instance of roadrunner drive class
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        drive = new SampleMecanumDrive(hardwareMap);
+
+        yiseDrive = new mecanumDrive(hardwareMap);
+
+        tfod = new tensorFlow(hardwareMap);
+        tfod.initVuforia();
+        tfod.initTfod();
 
         // create instance of yise lift arm class
-        liftArm arm = new liftArm(hardwareMap);
+        arm = new liftArm(hardwareMap);
 
-        // create variable for grabber
-        Servo coneGrabber;
-        coneGrabber = hardwareMap.get(Servo.class, "cone_grabber");
 
         waitForStart();
         if(isStopRequested()) return;
@@ -40,62 +50,103 @@ public class AutonomousRedRight extends LinearOpMode {
         // ------------------------------------------------------------------------------------
 
         // Start by defining our start position
-        Pose2d startPose = new Pose2d(0, 0, 0);
+        Pose2d startPose = new Pose2d(36, -62, Math.toRadians(270));
         drive.setPoseEstimate(startPose);
 
-        // example trajectory sequences
-        // based on testing, there's no problem doing forward and strafeRight in a row
-
-        // seq_1:
-        // Drive forward 20 inches (after first 10 inches, start raising arm to top cone height)
-        // Then strafe right 20 inches and turn right 90 degrees
-        //
-        // This is an example of a "global" displacement marker, it actually doesn't matter where
-        // it is placed in the order of the sequence. It will run after the bot has moved
-        // a total of 10 inches.
-        //
-        // If you change the marker from 10 to 30, it will run in the middle of the stafeRight()
-        // Note: 1 marker, when written in this syntax, can include multiple actions
-        TrajectorySequence seq_1 = drive.trajectorySequenceBuilder(startPose)
-                .forward(20)
+        //Drive from starting pos to stack
+        TrajectorySequence driveForward = drive.trajectorySequenceBuilder(startPose)
+                .lineToLinearHeading(new Pose2d(36, -12, Math.toRadians(0)))
                 .addDisplacementMarker(10, () -> {
+                    arm.openGrabber();
                     arm.getTopCone();
                 })
-                .strafeRight(20)
-                .turn(Math.toRadians(-90))
+                .forward(26)
                 .build();
 
-        // seq_2:
-        // Back up 10 inches, after backup is fully complete, lower arm to ground junction height
-        // Then turn 180 degrees to the left
-        //
-        // Note: starting position for 2nd sequence uses the end() method of the 1st sequence
-        //
-        // This is an example of an "inline" displacement marker. Notice there's no distance given
-        // This will run immediate after the back() command completes (ie order DOES matter)
-        //
-        // I've also added an example of a Temporal marker.  Displacement markers are based on
-        // total distance traveled by the bot (global) or distance since the last movement (inline)
-        // Temporal markers are based on TIME. These are useful if you are defining turns/sleeps
-        // This is an "inline" temporal marker which simply runs after the previous instruction
-        TrajectorySequence seq_2 = drive.trajectorySequenceBuilder(seq_1.end())
+        //Drive with cone to pole
+        TrajectorySequence driveToPole = drive.trajectorySequenceBuilder(driveForward.end())
+                .back(10)
+                .lineToLinearHeading(new Pose2d(37, -13, Math.toRadians(125)))
+                .addDisplacementMarker(10, () -> {
+                    arm.setPoleHeight(liftArm.Heights.HIGH);
+                    //yiseDrive.autoCenterLoop(mecanumDrive.centerModes.POLE);
+                })
+                .forward(9.5)
+                .build();
+
+        //Drive back to stack to get another cone
+        TrajectorySequence driveToStack = drive.trajectorySequenceBuilder(driveToPole.end())
                 .back(10)
                 .addDisplacementMarker(() -> {
-                    arm.setPoleHeight(liftArm.Heights.HOVER);
+                    arm.openGrabber();
+                    arm.getTopCone();
+                    for (int i = 0; i < loop; i++) {
+                        arm.downOneCone();
+                    }
+                    loop++;
                 })
-                .turn(Math.toRadians(180))
-                .addTemporalMarker(() -> {
-                    arm.setPoleHeight(liftArm.Heights.MEDIUM);
-                })
+                .lineToLinearHeading(new Pose2d(48, -12, Math.toRadians(0)))
+                .forward(14)
                 .build();
 
-        // run my trajectories in order
+        //Finishing positions
+        TrajectorySequence driveTo1pos = drive.trajectorySequenceBuilder(driveToPole.end())
+                .back(9)
+                .lineToLinearHeading(new Pose2d(12, -12, Math.toRadians(90)))
+                .build();
+        TrajectorySequence driveTo2pos = drive.trajectorySequenceBuilder(driveToPole.end())
+                .back(10)
+                .lineToLinearHeading(new Pose2d(36, -14, Math.toRadians(90)))
+                .build();
 
-        // drive to cone stack with arm at cone 5 height
-        drive.followTrajectorySequence(seq_1);
-        // close grabber
-        coneGrabber.setPosition(Servo.MIN_POSITION);
-        // back up, turn and lower arm
-        drive.followTrajectorySequence(seq_2);
+        //Sense cones
+        int cone = tfod.readCone();
+        telemetry.addData("Cone: ", cone);
+        telemetry.update();
+        //Drive to cone stack with arm at cone 5 height
+        drive.followTrajectorySequence(driveForward);
+
+        //Run method to pick up cone and drop it on pole
+        coneLoop(driveToPole);
+
+        //Drive back to get another cone
+        drive.followTrajectorySequence(driveToStack);
+
+        //Run method to pick up cone and drop it on pole
+        coneLoop(driveToPole);
+
+        //Drive back to get another cone
+        drive.followTrajectorySequence(driveToStack);
+
+        //Run method to pick up cone and drop it on pole
+        coneLoop(driveToPole);
+
+        //Drive to right position based on Tensorflow input
+        if (cone == 1) {
+            drive.followTrajectorySequence(driveTo1pos);
+        } else if (cone == 2) {
+            drive.followTrajectorySequence(driveTo2pos);
+        } else {
+            drive.followTrajectorySequence(driveToStack);
+        }
+        arm.returnToBottom();
+
+    }
+
+    public void coneLoop(TrajectorySequence poleTrajectory) {
+        //Auto center on cones
+        //yiseDrive.autoCenterLoop(mecanumDrive.centerModes.CONE);
+
+        //Grab and lift cone
+        arm.closeGrabber();
+        sleep(200);
+        arm.setPoleHeight(liftArm.Heights.LOW);
+        sleep(300);
+
+        //Drive to pole
+        drive.followTrajectorySequence(poleTrajectory);
+        //Center on pole and drop cone
+        arm.openGrabber();
+        sleep(100);
     }
 }
