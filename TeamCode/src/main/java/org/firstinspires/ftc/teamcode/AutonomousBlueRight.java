@@ -69,7 +69,7 @@ public class AutonomousBlueRight extends LinearOpMode {
                 .turn(Math.toRadians(90))
                 .forward(5)
                 .addTemporalMarker(() -> {
-                    yiseDrive.autoCenterLoop();
+                    yiseDrive.autoCenterLoop(mecanumDrive.centerModes.CONE);
                 })
                 .addTemporalMarker(() -> {
                     coneGrabber.setPosition(Servo.MAX_POSITION);
@@ -85,7 +85,7 @@ public class AutonomousBlueRight extends LinearOpMode {
                 .lineToLinearHeading(new Pose2d(-24, 12, Math.toRadians(-90)))
 
                 .addTemporalMarker(() -> {
-                   yiseDrive.autoCenterLoop();
+                   yiseDrive.autoCenterLoop(mecanumDrive.centerModes.POLE);
                 })
                 .waitSeconds(.2)
                 .addTemporalMarker(() -> {
@@ -99,7 +99,7 @@ public class AutonomousBlueRight extends LinearOpMode {
                 .forward(6)
 
                 .addTemporalMarker(() -> {
-                    yiseDrive.autoCenterLoop();
+                    yiseDrive.autoCenterLoop(mecanumDrive.centerModes.CONE);
                 })
                 //.waitSeconds(.2)
                 .addTemporalMarker(() -> {

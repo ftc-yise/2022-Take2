@@ -3,20 +3,17 @@ package org.firstinspires.ftc.teamcode;
 // opmode packages
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 // hardware packages
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 
 // other packages
 import com.qualcomm.robotcore.util.ElapsedTime;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 // team packages
-import org.firstinspires.ftc.teamcode.yise.mecanumDrive;
 import org.firstinspires.ftc.teamcode.yise.liftArm;
+import org.firstinspires.ftc.teamcode.yise.mecanumDrive;
 
 @TeleOp(name="Drive program", group="Linear Opmode")
 public class StrafeDrive extends LinearOpMode {
