@@ -78,6 +78,7 @@ public class mecanumDrive {
         vertical = -gamepad.left_stick_y;
         horizontal = gamepad.left_stick_x;
         turn = gamepad.right_stick_x;
+        turn = turn * .85;
 
         // Calculate individual motor power base on the stick input values
         leftFrontPower = vertical + horizontal + turn;

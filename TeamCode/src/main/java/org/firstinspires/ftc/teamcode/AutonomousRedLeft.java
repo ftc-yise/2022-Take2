@@ -8,7 +8,9 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.yise.liftArm;
 import org.firstinspires.ftc.teamcode.yise.tensorFlow;
-import org.firstinspires.ftc.teamcode.yise.mecanumDrive;
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 
 @Autonomous(name = "Auto Red Left", group = "Linear Opmode")
 public class AutonomousRedLeft extends LinearOpMode {
@@ -16,6 +18,10 @@ public class AutonomousRedLeft extends LinearOpMode {
     public float endLocation_X = 0;
     public float endLocation_Y = -16;
     public float endHeading_Z = -90;
+
+    RevBlinkinLedDriver lights;
+    RevBlinkinLedDriver.BlinkinPattern startPattern;
+    RevBlinkinLedDriver.BlinkinPattern mainPattern;
 
 
     @Override
@@ -52,6 +58,23 @@ public class AutonomousRedLeft extends LinearOpMode {
         Pose2d startPose = new Pose2d(-36, -62, Math.toRadians(270));
         drive.setPoseEstimate(startPose);
 
+        int coneNumber = 3;
+        coneNumber = tensor.readCone();
+
+        if (coneNumber == 1){
+            endLocation_X = -58;
+            endLocation_Y = -14;
+            endHeading_Z = 0;
+        } else if (coneNumber == 2){
+            endLocation_X = -35;
+            endLocation_Y = -16;
+            endHeading_Z = 0;
+        } else if (coneNumber == 3){
+            endLocation_X = -12;
+            endLocation_Y = -16;
+            endHeading_Z = -0;
+        }
+
         // example trajectory sequences
         // based on testing, there's no problem doing forward and strafeRight in a row
 
@@ -69,7 +92,7 @@ public class AutonomousRedLeft extends LinearOpMode {
         // Sequence 1 is start of program ending at cone pickup.
         TrajectorySequence startpath_1 = drive.trajectorySequenceBuilder(startPose)
                 .strafeRight(12)
-                .splineToConstantHeading(new Vector2d(-48, -12), Math.toRadians(270))
+                .splineToConstantHeading(new Vector2d(-48, -14), Math.toRadians(270))
                 .addDisplacementMarker(20, () -> {
                     arm.getTopCone();
                 })
@@ -77,7 +100,7 @@ public class AutonomousRedLeft extends LinearOpMode {
                     arm.openGrabber();
                 })
                 .turn(Math.toRadians(-90))
-                //.forward(6)
+                .forward(10)
                 .addTemporalMarker(() -> {
                     yiseDrive.autoCenterLoop(mecanumDrive.centerModes.CONE);
                 })
@@ -86,31 +109,31 @@ public class AutonomousRedLeft extends LinearOpMode {
                 .addTemporalMarker(() -> {
                     arm.closeGrabber();
                 })
-                .waitSeconds(1)
+                .waitSeconds(1.5)
                 .addTemporalMarker(() -> {
                     arm.setPoleHeight(liftArm.Heights.HIGH);
                 })
-                .waitSeconds(2)
                 .build();
 
 
         TrajectorySequence scorecone_2 = drive.trajectorySequenceBuilder(startpath_1.end())
                 .lineToConstantHeading(new Vector2d(-11, -14))
-                .turn(Math.toRadians(135))
-                .forward(5)
+                .turn(Math.toRadians(130))
+                .forward(8)
                 .addTemporalMarker(() -> {
-                    // yiseDrive.autoCenterLoop();
+                    //yiseDrive.autoCenterLoop(mecanumDrive.centerModes.POLE);
                 })
                 .waitSeconds(.2)
                 .addTemporalMarker(() -> {
-                    arm.openGrabber();
+                   arm.openGrabber();
                 })
-                .back(6)
+                .waitSeconds(.4)
+                .back(8)
                 .build();
 
         TrajectorySequence grabcone_3 = drive.trajectorySequenceBuilder(scorecone_2.end())
                 .turn(Math.toRadians(-135))
-                .lineToConstantHeading(new Vector2d(-52, -12))
+                .lineToConstantHeading(new Vector2d(-56, -12))
                 .addDisplacementMarker(20, () -> {
                     arm.getTopCone();
                     arm.downOneCone();
@@ -123,41 +146,69 @@ public class AutonomousRedLeft extends LinearOpMode {
                     arm.closeGrabber();
                 })
                 .waitSeconds(.2)
+                .addTemporalMarker(() ->{
+                    arm.setPoleHeight(liftArm.Heights.HIGH);
+                })
+                .build();
+
+        TrajectorySequence grabcone_4 = drive.trajectorySequenceBuilder(scorecone_2.end())
+                .turn(Math.toRadians(-135))
+                .lineToConstantHeading(new Vector2d(-52, -12))
+                .addDisplacementMarker(20, () -> {
+                    arm.getTopCone();
+                    arm.downOneCone();
+                    arm.downOneCone();
+                })
+                .addTemporalMarker(() -> {
+                    yiseDrive.autoCenterLoop(mecanumDrive.centerModes.CONE);
+                })
+                .waitSeconds(.2)
+                .addTemporalMarker(() ->{
+                    arm.closeGrabber();
+                })
+                .waitSeconds(.5)
+                .build();
+
+        TrajectorySequence testWait_5 = drive.trajectorySequenceBuilder(scorecone_2.end())
+                .waitSeconds(10)
                 .build();
 
         //Need to add in additional trajectories becuase you can't repeat the motions and pick up a cone a different height
 
         TrajectorySequence endposition_4 = drive.trajectorySequenceBuilder(scorecone_2.end())
-                .lineToLinearHeading(new Pose2d( endLocation_X, endLocation_Y, endHeading_Z))
-               /* if (endLocation == 3) {
-                    .lineToLinearHeading(new Pose2d(-12, -16, Math.toRadians(-90))) ;
-                }
-            else if (endLocation == 2) {
-                .lineToLinearHeading(new Pose2d(-12, -34, Math.toRadians(-90)))
-                }
-                else if (endLocation == 1) {
-                .lineToLinearHeading(new Pose2d(-12, -16, Math.toRadians(-90)))
-                }
-               */ .build();
+                .lineToLinearHeading(new Pose2d( endLocation_X, endLocation_Y,  Math.toRadians(endHeading_Z)))
+                .addTemporalMarker(() ->{
+                    arm.closeGrabber();
+                })
+                .addTemporalMarker(() ->{
+                    arm.returnToBottom();
+                })
+                .turn(Math.toRadians(-90))
+                .build();
 
 
         // run my trajectories in order
 
-        // set default code number to 3
-        int coneNumber = 3;
-        coneNumber = tensor.readCone();
+        telemetry.addData("cone#", coneNumber);
+        telemetry.addData("Distance S Left", yiseDrive.distanceSensorLeft);
+        telemetry.addData("Distance S Right", yiseDrive.distanceSensorRight);
+        telemetry.update();
 
-        // drive to cone stack with arm at cone 5 height
+        //                drive to cone stack with arm at cone 5 height
         drive.followTrajectorySequence(startpath_1);
         drive.followTrajectorySequence(scorecone_2);
-        drive.followTrajectorySequence(grabcone_3);
-        drive.followTrajectorySequence(scorecone_2);
-        drive.followTrajectorySequence(grabcone_3);
-        drive.followTrajectorySequence(scorecone_2);
+        telemetry.update();
+        //drive.followTrajectorySequence(grabcone_3);
+        //drive.followTrajectorySequence(scorecone_2);
         drive.followTrajectorySequence(endposition_4);
+       // drive.followTrajectorySequence(testWait_5);
         //Location 3 x =-12  y =-16
         //location 2 x =-34  y =-16
         //location 1 1x =-59  y =-16
+
+        startPattern = RevBlinkinLedDriver.BlinkinPattern.WHITE;
+        mainPattern = RevBlinkinLedDriver.BlinkinPattern.BLUE;
+        lights.setPattern(startPattern);
 
     }
 }

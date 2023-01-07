@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
@@ -12,7 +13,7 @@ import org.firstinspires.ftc.teamcode.yise.tensorFlow;
 import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.yise.mecanumDrive;
 
-
+@Disabled
 @Autonomous(name = "Auto Red Right", group = "Linear Opmode")
 public class AutonomousRedRight extends LinearOpMode {
     mecanumDrive yiseDrive;

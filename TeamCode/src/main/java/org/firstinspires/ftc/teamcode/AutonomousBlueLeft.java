@@ -1,6 +1,8 @@
+
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
@@ -12,7 +14,7 @@ import org.firstinspires.ftc.teamcode.yise.tensorFlow;
 import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.yise.mecanumDrive;
 
-
+@Disabled
 @Autonomous(name = "Auto Blue Left", group = "Linear Opmode")
 public class AutonomousBlueLeft extends LinearOpMode {
     mecanumDrive yiseDrive;
@@ -59,6 +61,7 @@ public class AutonomousBlueLeft extends LinearOpMode {
                     arm.openGrabber();
                     arm.getTopCone();
                 })
+
                 .forward(26)
                 .build();
 
