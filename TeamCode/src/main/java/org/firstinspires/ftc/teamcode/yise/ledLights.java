@@ -36,7 +36,7 @@ public class ledLights {
                 currentState = state;
                 break;
             case CLOSE:
-                lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.GRAY);
+                lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.HOT_PINK);
                 currentState = state;
                 break;
         }
