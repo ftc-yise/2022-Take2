@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.yise.liftArm;
 import org.firstinspires.ftc.teamcode.yise.tensorFlow;
 import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.yise.mecanumDrive;
+import org.firstinspires.ftc.teamcode.yise.ledLights;
 
 @Autonomous(name = "Auto Blue Left", group = "Linear Opmode")
 public class AutonomousBlueLeft extends LinearOpMode {
@@ -31,8 +32,8 @@ public class AutonomousBlueLeft extends LinearOpMode {
 
         // create instance of roadrunner drive class
         drive = new SampleMecanumDrive(hardwareMap);
-
         yiseDrive = new mecanumDrive(hardwareMap);
+        ledLights leds = new ledLights(hardwareMap);
 
         tfod = new tensorFlow(hardwareMap);
         tfod.initVuforia();
@@ -44,6 +45,8 @@ public class AutonomousBlueLeft extends LinearOpMode {
 
         waitForStart();
         if(isStopRequested()) return;
+
+        leds.setLed(ledLights.ledStates.BLUE);
 
         // ------------------------------------------------------------------------------------
         // Define Trajectories and Arm/Grabber Actions

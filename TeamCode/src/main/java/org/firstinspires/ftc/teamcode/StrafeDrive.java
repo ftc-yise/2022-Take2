@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 // team packages
 import org.firstinspires.ftc.teamcode.yise.liftArm;
 import org.firstinspires.ftc.teamcode.yise.mecanumDrive;
+import org.firstinspires.ftc.teamcode.yise.ledLights;
 
 @TeleOp(name="Drive program", group="Linear Opmode")
 public class StrafeDrive extends LinearOpMode {
@@ -37,6 +38,8 @@ public class StrafeDrive extends LinearOpMode {
         // create instance of lift arm class
         liftArm arm = new liftArm(hardwareMap);
 
+        ledLights leds = new ledLights(hardwareMap);
+
         color = hardwareMap.get(ColorSensor.class, "Color");
 
         // Wait for the game to start (driver presses PLAY)
@@ -48,6 +51,8 @@ public class StrafeDrive extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
+
+            leds.setLed(ledLights.ledStates.OPEN);
 
             // -----------------------------------------------------------------------------------
             // Drive Code
@@ -123,15 +128,19 @@ public class StrafeDrive extends LinearOpMode {
             // -----------------------------------------------------------------------------------
             if (color.red() > 400 && !closed) {
                 arm.closeGrabber();
+                leds.setLed(ledLights.ledStates.CLOSE);
                 closed = true;
             } else if (color.blue() > 400 && !closed) {
                 arm.closeGrabber();
+                leds.setLed(ledLights.ledStates.CLOSE);
                 closed = true;
             } else if (gamepad2.a && closed) {
                 arm.openGrabber();
+                leds.setLed(ledLights.ledStates.OPEN);
                 closed = false;
             } else if (gamepad2.b && !closed) {
                 arm.closeGrabber();
+                leds.setLed(ledLights.ledStates.CLOSE);
                 closed = true;
             }
 

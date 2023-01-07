@@ -5,13 +5,12 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
-
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
 import org.firstinspires.ftc.teamcode.yise.liftArm;
 import org.firstinspires.ftc.teamcode.yise.tensorFlow;
-import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.yise.mecanumDrive;
+import org.firstinspires.ftc.teamcode.yise.ledLights;
+
 
 @Autonomous(name = "Auto Red Right", group = "Linear Opmode")
 public class AutonomousRedRight extends LinearOpMode {
@@ -30,8 +29,8 @@ public class AutonomousRedRight extends LinearOpMode {
 
         // create instance of roadrunner drive class
         drive = new SampleMecanumDrive(hardwareMap);
-
         yiseDrive = new mecanumDrive(hardwareMap);
+        ledLights leds = new ledLights(hardwareMap);
 
         tfod = new tensorFlow(hardwareMap);
         tfod.initVuforia();
@@ -43,6 +42,8 @@ public class AutonomousRedRight extends LinearOpMode {
 
         waitForStart();
         if(isStopRequested()) return;
+
+        leds.setLed(ledLights.ledStates.RED);
 
         // ------------------------------------------------------------------------------------
         // Define Trajectories and Arm/Grabber Actions

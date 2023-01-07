@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.yise.liftArm;
 import org.firstinspires.ftc.teamcode.yise.mecanumDrive;
 import org.firstinspires.ftc.teamcode.yise.tensorFlow;
+import org.firstinspires.ftc.teamcode.yise.ledLights;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -40,12 +41,16 @@ public class AutonomousBlueRight extends LinearOpMode {
         // create instance of YISE lift arm class
         liftArm arm = new liftArm(hardwareMap);
 
+        ledLights leds = new ledLights(hardwareMap);
+
         // set variable for holding the signal beacon detection for end placment
         tensor.initVuforia();
         tensor.initTfod();
 
         waitForStart();
         if(isStopRequested()) return;
+
+        leds.setLed(ledLights.ledStates.BLUE);
 
         // ------------------------------------------------------------------------------------
         // Define Trajectories and Arm/Grabber Actions

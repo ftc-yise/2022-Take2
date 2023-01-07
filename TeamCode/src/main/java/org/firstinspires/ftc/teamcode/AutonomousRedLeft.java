@@ -6,9 +6,10 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.yise.mecanumDrive;
 import org.firstinspires.ftc.teamcode.yise.liftArm;
 import org.firstinspires.ftc.teamcode.yise.tensorFlow;
-import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
+import org.firstinspires.ftc.teamcode.yise.ledLights;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 
@@ -18,11 +19,6 @@ public class AutonomousRedLeft extends LinearOpMode {
     public float endLocation_X = 0;
     public float endLocation_Y = -16;
     public float endHeading_Z = -90;
-
-    RevBlinkinLedDriver lights;
-    RevBlinkinLedDriver.BlinkinPattern startPattern;
-    RevBlinkinLedDriver.BlinkinPattern mainPattern;
-
 
     @Override
     public void runOpMode() {
@@ -43,12 +39,16 @@ public class AutonomousRedLeft extends LinearOpMode {
         // create instance of YISE lift arm class
         liftArm arm = new liftArm(hardwareMap);
 
+        ledLights leds = new ledLights(hardwareMap);
+
         // set variable for holding the signal beacon detection for end placment
         tensor.initVuforia();
         tensor.initTfod();
 
         waitForStart();
         if (isStopRequested()) return;
+
+        leds.setLed(ledLights.ledStates.RED);
 
         // ------------------------------------------------------------------------------------
         // Define Trajectories and Arm/Grabber Actions
@@ -206,9 +206,6 @@ public class AutonomousRedLeft extends LinearOpMode {
         //location 2 x =-34  y =-16
         //location 1 1x =-59  y =-16
 
-        startPattern = RevBlinkinLedDriver.BlinkinPattern.WHITE;
-        mainPattern = RevBlinkinLedDriver.BlinkinPattern.BLUE;
-        lights.setPattern(startPattern);
 
     }
 }
