@@ -2,14 +2,19 @@ package org.firstinspires.ftc.teamcode.yise;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class mecanumDrive {
     // Note: we make these public so the calling code can access and use these variables
     public final DcMotor leftFrontDrive, leftBackDrive, rightFrontDrive, rightBackDrive;
+    private List<DcMotor> motors;
     public double leftFrontPower, leftBackPower, rightFrontPower, rightBackPower;
 
     public final Rev2mDistanceSensor distanceSensorRight, distanceSensorLeft;
@@ -36,6 +41,8 @@ public class mecanumDrive {
         leftBackDrive = hardwareMap.get(DcMotor.class, "left_back_drive");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
         rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
+
+        motors = Arrays.asList(leftFrontDrive, leftBackDrive, rightBackDrive, rightFrontDrive);
 
         // Set the direction of the motors
         leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
@@ -161,8 +168,11 @@ public class mecanumDrive {
     public void autoCenterLoop(centerModes mode) {
         Boolean centered = false;
         // set timeout for breaking out of the loop (in milliseconds)
-        long timeout = 1000;
+        long timeout = 3000;
         long start, current, elapsed;
+
+        // need to set zero power behavior to brake for more accuracy
+        setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         start = System.currentTimeMillis();
         while (!centered) {
@@ -178,41 +188,46 @@ public class mecanumDrive {
     // common centering code used for both autoCenter and autoCenterLoop
     private Boolean center(centerModes mode) {
         Boolean centered = false;
-        double startCentering, finishCentering;
+        double startCentering, finishCentering, stopDistance;
 
         // default values are for centerModes.CONE
         startCentering = 20;
-        finishCentering = 4;
+        finishCentering = 14;
+        stopDistance = 4;
 
         if (mode == centerModes.POLE) {
-            startCentering = 20;
-            finishCentering = 6;
+            stopDistance = 6;
         }
 
         // get a fresh copy of the current sensor readings
         distanceLeft = distanceSensorLeft.getDistance(DistanceUnit.CM);
         distanceRight = distanceSensorRight.getDistance(DistanceUnit.CM);
 
-        if (distanceLeft < finishCentering && distanceRight < finishCentering) {
-            // if both sides are < target distance, stop
+        if (distanceLeft <= stopDistance && distanceRight <= stopDistance) {
             leftFrontDrive.setPower(0);
             rightBackDrive.setPower(0);
             leftBackDrive.setPower(0);
             rightFrontDrive.setPower(0);
             centered = true;
-        } else if (distanceRight < finishCentering) {
+        } else if (distanceLeft <= finishCentering && distanceRight <= finishCentering) {
+            // if both sides are < target distance, stop
+            leftFrontDrive.setPower(0.4);
+            rightBackDrive.setPower(0.4);
+            leftBackDrive.setPower(0.4);
+            rightFrontDrive.setPower(0.4);
+        } else if (distanceRight <= finishCentering) {
             // if only right side is < target distance, drive right
             leftFrontDrive.setPower(0.3);
             rightBackDrive.setPower(0.3);
             leftBackDrive.setPower(-0.3);
             rightFrontDrive.setPower(-0.3);
-        } else if (distanceLeft < finishCentering) {
+        } else if (distanceLeft <= finishCentering) {
             // if only the left side is < target distance, drive left
             leftFrontDrive.setPower(-0.3);
             rightBackDrive.setPower(-0.3);
             leftBackDrive.setPower(0.3);
             rightFrontDrive.setPower(0.3);
-        } else if ((distanceRight < startCentering && distanceRight > finishCentering) || (distanceLeft < startCentering && distanceLeft > finishCentering)) {
+        } else if ((distanceRight <= startCentering && distanceRight > finishCentering) || (distanceLeft <= startCentering && distanceLeft > finishCentering)) {
             // if either side is between target distance <> start distance, drive forward
             leftFrontDrive.setPower(0.4);
             rightBackDrive.setPower(0.4);
@@ -220,6 +235,13 @@ public class mecanumDrive {
             rightFrontDrive.setPower(0.4);
         }
         return centered;
+    }
+
+    // used to change the zero power behavior between BRAKE and FLOAT
+    public void setZeroPowerBehavior(DcMotor.ZeroPowerBehavior zeroPowerBehavior) {
+        for (DcMotor motor : motors) {
+            motor.setZeroPowerBehavior(zeroPowerBehavior);
+        }
     }
 }
 
