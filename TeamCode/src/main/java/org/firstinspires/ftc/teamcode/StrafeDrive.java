@@ -21,13 +21,11 @@ public class StrafeDrive extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
     private Servo coneGrabber = null;
-    private ColorSensor color = null;
 
     // state variables that track if buttons were released
     public boolean armResetButtonWasReleased = true;
     public boolean leftBumperWasReleased = true;
     public boolean canSwitchModes = false;
-    public boolean closed = false;
 
     @Override
     public void runOpMode() {
@@ -39,8 +37,6 @@ public class StrafeDrive extends LinearOpMode {
         liftArm arm = new liftArm(hardwareMap);
 
         ledLights leds = new ledLights(hardwareMap);
-
-        color = hardwareMap.get(ColorSensor.class, "Color");
 
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Status", "Initialized");
@@ -81,6 +77,10 @@ public class StrafeDrive extends LinearOpMode {
             } else {
                 drive.updateMotorsFromStick(gamepad1);
             }
+
+            // -----------------------------------------------------------------------------------
+            // Lift Arm Code
+            // -----------------------------------------------------------------------------------
 
             // Lift Arm 4 Position Code
             if (gamepad2.dpad_up) {
@@ -124,26 +124,21 @@ public class StrafeDrive extends LinearOpMode {
             }
 
             // -----------------------------------------------------------------------------------
-            // Open and Close the Grabber
+            // Open and Close the Grabber Automatically
             // -----------------------------------------------------------------------------------
-            if (color.red() > 400 && !closed) {
+            if (arm.findRed() && arm.grabber_status == liftArm.grabberPositions.OPEN) {
                 arm.closeGrabber();
                 leds.setLed(ledLights.ledStates.CLOSE);
-                closed = true;
-            } else if (color.blue() > 400 && !closed) {
+            } else if (arm.findBlue() && arm.grabber_status == liftArm.grabberPositions.OPEN) {
                 arm.closeGrabber();
                 leds.setLed(ledLights.ledStates.CLOSE);
-                closed = true;
-            } else if (gamepad2.a && closed) {
+            } else if (gamepad2.b && arm.grabber_status == liftArm.grabberPositions.OPEN) {
+                arm.closeGrabber();
+                leds.setLed(ledLights.ledStates.CLOSE);
+            } else if (gamepad2.a && arm.grabber_status == liftArm.grabberPositions.CLOSED) {
                 arm.openGrabber();
                 leds.setLed(ledLights.ledStates.OPEN);
-                closed = false;
-            } else if (gamepad2.b && !closed) {
-                arm.closeGrabber();
-                leds.setLed(ledLights.ledStates.CLOSE);
-                closed = true;
             }
-
 
             // -----------------------------------------------------------------------------------
             // Auto-Centering Code
@@ -151,7 +146,9 @@ public class StrafeDrive extends LinearOpMode {
             if (gamepad1.left_trigger >= 0.8) {
                 drive.autoCenter(mecanumDrive.centerModes.CONE);
             } else if (gamepad1.right_trigger >= 0.8) {
-                drive.autoCenter(mecanumDrive.centerModes.POLE);
+                if (drive.autoCenter(mecanumDrive.centerModes.STACK)){
+                    drive.driveUntilClosed(arm);
+                }
             }
 
             // -----------------------------------------------------------------------------------
@@ -179,9 +176,9 @@ public class StrafeDrive extends LinearOpMode {
             //telemetry.addData("Distance left: ", distanceLeft);
             //telemetry.addData("Distance right: ", distanceRight);
 
-            telemetry.addData("Red", color.red());
-            telemetry.addData("Green", color.green());
-            telemetry.addData("Blue", color.blue());
+            telemetry.addData("Red", arm.color.red());
+            telemetry.addData("Green", arm.color.green());
+            telemetry.addData("Blue", arm.color.blue());
             telemetry.update();
         }
     }
