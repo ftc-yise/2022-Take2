@@ -18,7 +18,8 @@ public class ledLights {
     public ledLights(HardwareMap hardwareMap) {
         lights = hardwareMap.get(RevBlinkinLedDriver.class, "led");
         currentState = ledStates.INIT;
-        lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.WHITE);
+        lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.BREATH_RED);
+
     }
 
     public void setLed(ledStates state) {

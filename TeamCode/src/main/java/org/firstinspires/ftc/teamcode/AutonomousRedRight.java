@@ -50,28 +50,32 @@ public class AutonomousRedRight extends LinearOpMode {
         // ------------------------------------------------------------------------------------
 
         // Start by defining our start position
-        Pose2d startPose = new Pose2d(36, -62, Math.toRadians(270));
+        Pose2d startPose = new Pose2d(36, -61, Math.toRadians(270));
         drive.setPoseEstimate(startPose);
 
         //Drive from starting pos to stack
         TrajectorySequence driveForward = drive.trajectorySequenceBuilder(startPose)
-                .lineToLinearHeading(new Pose2d(36, -12, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(36, -13, Math.toRadians(0)))
                 .addDisplacementMarker(10, () -> {
                     arm.openGrabber();
                     arm.getTopCone();
                 })
-                .forward(26)
+                .forward(27)
                 .build();
 
         //Drive with cone to pole
         TrajectorySequence driveToPole = drive.trajectorySequenceBuilder(driveForward.end())
                 .back(10)
-                .lineToLinearHeading(new Pose2d(37, -13, Math.toRadians(125)))
+                .addDisplacementMarker(0.2, () -> {
+                    arm.setPoleHeight(liftArm.Heights.LOW);
+                    //yiseDrive.autoCenterLoop(mecanumDrive.centerModes.POLE);
+                })
+                .lineToLinearHeading(new Pose2d(37, -13.5, Math.toRadians(125)))
                 .addDisplacementMarker(10, () -> {
                     arm.setPoleHeight(liftArm.Heights.HIGH);
                     //yiseDrive.autoCenterLoop(mecanumDrive.centerModes.POLE);
                 })
-                .forward(9.5)
+                .forward(10)
                 .build();
 
         //Drive back to stack to get another cone
@@ -85,14 +89,14 @@ public class AutonomousRedRight extends LinearOpMode {
                     }
                     loop++;
                 })
-                .lineToLinearHeading(new Pose2d(48, -12, Math.toRadians(0)))
-                .forward(14)
+                .lineToLinearHeading(new Pose2d(48, -13.5, Math.toRadians(0)))
+                .forward(15)
                 .build();
 
         //Finishing positions
         TrajectorySequence driveTo1pos = drive.trajectorySequenceBuilder(driveToPole.end())
                 .back(9)
-                .lineToLinearHeading(new Pose2d(12, -12, Math.toRadians(90)))
+                .lineToLinearHeading(new Pose2d(13, -12, Math.toRadians(0)))
                 .build();
         TrajectorySequence driveTo2pos = drive.trajectorySequenceBuilder(driveToPole.end())
                 .back(10)
@@ -141,12 +145,11 @@ public class AutonomousRedRight extends LinearOpMode {
         arm.closeGrabber();
         sleep(200);
         arm.setPoleHeight(liftArm.Heights.LOW);
-        sleep(300);
+        //sleep(50);
 
         //Drive to pole
         drive.followTrajectorySequence(poleTrajectory);
         //Center on pole and drop cone
         arm.openGrabber();
-        sleep(100);
     }
 }

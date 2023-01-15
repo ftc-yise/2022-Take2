@@ -52,7 +52,7 @@ public class StrafeDrive extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
-            leds.setLed(ledLights.ledStates.OPEN);
+            //leds.setLed(ledLights.ledStates.CLOSE);
 
             // -----------------------------------------------------------------------------------
             // Drive Code

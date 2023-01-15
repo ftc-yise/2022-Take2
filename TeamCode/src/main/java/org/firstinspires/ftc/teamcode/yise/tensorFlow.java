@@ -30,6 +30,8 @@ public class tensorFlow {
 
     public AutonomousRedLeft auto = new AutonomousRedLeft();
 
+    public boolean isInitialized = false;
+
     //public List<Recognition> updatedRecognitions;
 
     public tensorFlow(HardwareMap hw) {
@@ -68,6 +70,8 @@ public class tensorFlow {
         /*
          * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
          */
+        isInitialized = true;
+
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
         parameters.vuforiaLicenseKey = VUFORIA_KEY;
