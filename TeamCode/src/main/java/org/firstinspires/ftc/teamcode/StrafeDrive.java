@@ -28,6 +28,7 @@ public class StrafeDrive extends LinearOpMode {
     public boolean leftBumperWasReleased = true;
     public boolean canSwitchModes = false;
     public boolean closed = false;
+    public boolean idle = false;
 
     @Override
     public void runOpMode() {
@@ -52,7 +53,10 @@ public class StrafeDrive extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
-            leds.setLed(ledLights.ledStates.OPEN);
+            if (!idle){
+                leds.setLed(ledLights.ledStates.OPEN);
+                idle = true;
+            }
 
             // -----------------------------------------------------------------------------------
             // Drive Code
@@ -83,16 +87,41 @@ public class StrafeDrive extends LinearOpMode {
             }
 
             // Lift Arm 4 Position Code
-            if (gamepad2.dpad_up) {
+            if (gamepad2.dpad_up && closed) {
                 arm.setPoleHeight(liftArm.Heights.HIGH);
-            } else if (gamepad2.dpad_left) {
+                leds.setLed(ledLights.ledStates.HOVER);
+
+            } else if (gamepad2.dpad_up && !closed) {
+                arm.setPoleHeight(liftArm.Heights.HIGH);
+                leds.setLed(ledLights.ledStates.BADHOVER);
+
+            }else if (gamepad2.dpad_left && closed) {
                 arm.setPoleHeight(liftArm.Heights.MEDIUM);
-            } else if (gamepad2.dpad_right) {
+                leds.setLed(ledLights.ledStates.HOVER);
+
+            }else if (gamepad2.dpad_left && !closed) {
+                arm.setPoleHeight(liftArm.Heights.MEDIUM);
+                leds.setLed(ledLights.ledStates.BADHOVER);
+
+            }
+            else if (gamepad2.dpad_right && closed) {
                 arm.setPoleHeight(liftArm.Heights.LOW);
-            } else if (gamepad2.x) {
+                leds.setLed(ledLights.ledStates.HOVER);
+
+            }else if (gamepad2.dpad_right && !closed) {
+                arm.setPoleHeight(liftArm.Heights.LOW);
+                leds.setLed(ledLights.ledStates.BADHOVER);
+
+            }
+            else if (gamepad2.x && closed) {
                 arm.setPoleHeight(liftArm.Heights.HOVER);
-            } else if (gamepad2.dpad_down) {
+                leds.setLed(ledLights.ledStates.HOVER);
+            } else if (gamepad2.x && !closed) {
+                arm.setPoleHeight(liftArm.Heights.HOVER);
+                leds.setLed(ledLights.ledStates.BADHOVER);
+            }else if (gamepad2.dpad_down) {
                 arm.returnToBottom();
+                leds.setLed(ledLights.ledStates.OPEN);
             }
 
             // Force lift arm down (ignoring encoders) - temp until limit switch integrated
