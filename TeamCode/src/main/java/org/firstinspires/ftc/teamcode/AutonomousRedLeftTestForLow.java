@@ -102,14 +102,15 @@ public class AutonomousRedLeftTestForLow extends LinearOpMode {
                 .turn(Math.toRadians(-90))
                 .forward(10)
                 .addTemporalMarker(() -> {
-                    yiseDrive.autoCenterLoop(mecanumDrive.centerModes.CONE);
+                    yiseDrive.autoCenterLoop(mecanumDrive.centerModes.STACK);
+                    yiseDrive.driveUntilClosed(arm);
                 })
-                //.waitSeconds(2)
+                .waitSeconds(1)
 
-                .addTemporalMarker(() -> {
-                    arm.closeGrabber();
-                })
-                .waitSeconds(1.5)
+                //.addTemporalMarker(() -> {
+                //    arm.closeGrabber();
+                //})
+                //.waitSeconds(1.5)
                 .addTemporalMarker(() -> {
                     arm.setPoleHeight(liftArm.Heights.LOW  );
                 })

@@ -213,8 +213,8 @@ public class StrafeDrive extends LinearOpMode {
             telemetry.addData("Green", color.green());
             telemetry.addData("Blue", color.blue());
 
-            telemetry.addData("DistanceLeftV2: ", drive.distanceLeftV2);
-            telemetry.addData("DistanceRightV2: ", drive.distanceRightV2);
+            //telemetry.addData("DistanceLeftV2: ", drive.distanceLeftV2);
+            //telemetry.addData("DistanceRightV2: ", drive.distanceRightV2);
 
             telemetry.update();
         }
