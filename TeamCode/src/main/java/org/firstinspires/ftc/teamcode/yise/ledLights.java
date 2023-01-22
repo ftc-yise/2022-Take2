@@ -22,7 +22,7 @@ public class ledLights {
     public ledLights(HardwareMap hardwareMap) {
         lights = hardwareMap.get(RevBlinkinLedDriver.class, "led");
         currentState = ledStates.INIT;
-        lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.COLOR_WAVES_OCEAN_PALETTE);
+        lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.COLOR_WAVES_LAVA_PALETTE);
     }
 
     public void setLed(ledStates state) {

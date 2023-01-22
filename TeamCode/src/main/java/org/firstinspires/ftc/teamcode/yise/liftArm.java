@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.yise;
 
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -7,6 +8,14 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class liftArm {
     public final DcMotor leftSlide, rightSlide;
     public final Servo coneGrabber;
+    public final ColorSensor color;
+
+    // Tracks whether grabber is currently opened or closed
+    public grabberPositions grabber_status;
+    public enum grabberPositions {
+        OPEN,
+        CLOSED
+    }
 
     // Used to set pole height.
     public enum Heights {
@@ -36,6 +45,11 @@ public class liftArm {
         rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         coneGrabber = hardwareMap.get(Servo.class, "cone_grabber");
+        coneGrabber.setPosition(Servo.MIN_POSITION);
+        grabber_status = grabberPositions.OPEN;
+
+        color = hardwareMap.get(ColorSensor.class, "Color");
+
     }
 
     public void setPoleHeight(Heights targetHeight) {
@@ -141,8 +155,17 @@ public class liftArm {
 
     public void closeGrabber() {
         coneGrabber.setPosition(Servo.MAX_POSITION);
+        grabber_status = grabberPositions.CLOSED;
     }
     public void openGrabber() {
         coneGrabber.setPosition(Servo.MIN_POSITION);
+        grabber_status = grabberPositions.OPEN;
+    }
+
+    public Boolean findRed() {
+        return color.red() > 400;
+    }
+    public Boolean findBlue() {
+        return color.blue() > 400;
     }
 }

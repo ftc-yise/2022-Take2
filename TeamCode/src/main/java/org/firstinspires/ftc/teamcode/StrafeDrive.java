@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 // hardware packages
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 
@@ -180,7 +181,7 @@ public class StrafeDrive extends LinearOpMode {
             if (gamepad1.left_trigger >= 0.8) {
                 drive.autoCenter(mecanumDrive.centerModes.CONE);
             } else if (gamepad1.right_trigger >= 0.8) {
-                drive.autoCenter(mecanumDrive.centerModes.POLE);
+               // drive.autoCenter(mecanumDrive.centerModes.POLE);
             }
 
             // -----------------------------------------------------------------------------------
@@ -211,6 +212,10 @@ public class StrafeDrive extends LinearOpMode {
             telemetry.addData("Red", color.red());
             telemetry.addData("Green", color.green());
             telemetry.addData("Blue", color.blue());
+
+            telemetry.addData("DistanceLeftV2: ", drive.distanceLeftV2);
+            telemetry.addData("DistanceRightV2: ", drive.distanceRightV2);
+
             telemetry.update();
         }
     }
