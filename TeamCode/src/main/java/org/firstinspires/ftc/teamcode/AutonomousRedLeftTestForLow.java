@@ -100,26 +100,19 @@ public class AutonomousRedLeftTestForLow extends LinearOpMode {
                     arm.openGrabber();
                 })
                 .turn(Math.toRadians(-90))
-                .forward(10)
                 .addTemporalMarker(() -> {
                     yiseDrive.autoCenterLoop(mecanumDrive.centerModes.STACK);
                     yiseDrive.driveUntilClosed(arm);
                 })
-                .waitSeconds(1)
-
-                //.addTemporalMarker(() -> {
-                //    arm.closeGrabber();
-                //})
-                //.waitSeconds(1.5)
+                .waitSeconds(0.5)
                 .addTemporalMarker(() -> {
                     arm.setPoleHeight(liftArm.Heights.LOW  );
                 })
+                .back(5)
                 .build();
 
-
-        TrajectorySequence scorecone_2 = drive.trajectorySequenceBuilder(startpath_1.end())
-                .back(11)
-                .turn(Math.toRadians(90))
+        TrajectorySequence scorecone_2 = drive.trajectorySequenceBuilder(startpath_1.end() )
+                .lineToLinearHeading(new Pose2d(-48, -14, Math.toRadians(270)))
                 .forward(4)
                 .addTemporalMarker(() -> {
                     arm.openGrabber();
@@ -128,22 +121,19 @@ public class AutonomousRedLeftTestForLow extends LinearOpMode {
                 .build();
 
         TrajectorySequence grabcone_3 = drive.trajectorySequenceBuilder(scorecone_2.end())
-                .lineToLinearHeading(new Pose2d(-52, -12, Math.toRadians(160)))
-                .addDisplacementMarker(5, () -> {
+                .lineToLinearHeading(new Pose2d(-52, -14, Math.toRadians(180)))
+                .addDisplacementMarker(1,() -> {
                     arm.getTopCone();
                     arm.downOneCone();
                 })
                 .addTemporalMarker(() -> {
-                    yiseDrive.autoCenterLoop(mecanumDrive.centerModes.CONE);
+                    yiseDrive.autoCenterLoop(mecanumDrive.centerModes.STACK);
                 })
-                .forward(1)
-                .addTemporalMarker(() -> {
-                    arm.closeGrabber();
-                })
-                .waitSeconds(2)
+                .waitSeconds(0.5)
                 .addTemporalMarker(() -> {
                     arm.setPoleHeight(liftArm.Heights.LOW  );
                 })
+                .back(5)
                 .build();
 
         TrajectorySequence grabcone_4 = drive.trajectorySequenceBuilder(scorecone_2.end())
@@ -195,8 +185,8 @@ public class AutonomousRedLeftTestForLow extends LinearOpMode {
         telemetry.update();
         drive.followTrajectorySequence(grabcone_3);
         drive.followTrajectorySequence(scorecone_2);
-
         drive.followTrajectorySequence(endposition_4);
+
         // drive.followTrajectorySequence(testWait_5);
         //Location 3 x =-12  y =-16
         //location 2 x =-34  y =-16
