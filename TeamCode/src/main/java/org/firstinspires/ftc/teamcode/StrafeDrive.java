@@ -88,7 +88,9 @@ public class StrafeDrive extends LinearOpMode {
                 drive.updateMotorsFromStick(gamepad1);
             }
 
-            // Lift Arm 4 Position Code
+            // -----------------------------------------------------------------------------------
+            // Lifm Arm Code
+            // -----------------------------------------------------------------------------------
             if (gamepad2.dpad_up && closed) {
                 arm.setPoleHeight(liftArm.Heights.HIGH);
                 leds.setLed(ledLights.ledStates.HOVER);
@@ -123,10 +125,10 @@ public class StrafeDrive extends LinearOpMode {
                 leds.setLed(ledLights.ledStates.OPEN);
             }
 
+            // Pole Distancing Rod Code
             if (!gamepad1.a){
                 gamepadAWasReleased = true;
             }
-
             if (gamepad1.a && gamepadAWasReleased) {
                 gamepadAWasReleased = false;
                 if (arm.pole_status == liftArm.polePositions.DOWN) {
@@ -135,6 +137,7 @@ public class StrafeDrive extends LinearOpMode {
                     arm.poleDown();
                 }
             }
+
             // Force lift arm down (ignoring encoders) - temp until limit switch integrated
             if ((gamepad1.right_stick_button || gamepad2.right_stick_button) && armResetButtonWasReleased) {
                 armResetButtonWasReleased = arm.forceDown();
