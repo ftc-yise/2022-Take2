@@ -199,7 +199,7 @@ public class mecanumDrive {
         double startCentering, finishCentering, stopDistance;
 
         // default values are for centerModes.CONE
-        startCentering = 30;
+        startCentering = 40;
         finishCentering = 14;
         stopDistance = 8;
 
