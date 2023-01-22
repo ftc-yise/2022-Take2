@@ -30,6 +30,7 @@ public class StrafeDrive extends LinearOpMode {
     public boolean canSwitchModes = false;
     public boolean closed = false;
     public boolean idle = false;
+    public boolean gamepadAWasReleased = true;
 
     @Override
     public void runOpMode() {
@@ -54,7 +55,7 @@ public class StrafeDrive extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
-            if (!idle){
+            if (!idle) {
                 leds.setLed(ledLights.ledStates.OPEN);
                 idle = true;
             }
@@ -96,39 +97,48 @@ public class StrafeDrive extends LinearOpMode {
                 arm.setPoleHeight(liftArm.Heights.HIGH);
                 leds.setLed(ledLights.ledStates.BADHOVER);
 
-            }else if (gamepad2.dpad_left && closed) {
+            } else if (gamepad2.dpad_left && closed) {
                 arm.setPoleHeight(liftArm.Heights.MEDIUM);
                 leds.setLed(ledLights.ledStates.HOVER);
 
-            }else if (gamepad2.dpad_left && !closed) {
+            } else if (gamepad2.dpad_left && !closed) {
                 arm.setPoleHeight(liftArm.Heights.MEDIUM);
                 leds.setLed(ledLights.ledStates.BADHOVER);
-
-            }
-            else if (gamepad2.dpad_right && closed) {
+            } else if (gamepad2.dpad_right && closed) {
                 arm.setPoleHeight(liftArm.Heights.LOW);
                 leds.setLed(ledLights.ledStates.HOVER);
 
-            }else if (gamepad2.dpad_right && !closed) {
+            } else if (gamepad2.dpad_right && !closed) {
                 arm.setPoleHeight(liftArm.Heights.LOW);
                 leds.setLed(ledLights.ledStates.BADHOVER);
 
-            }
-            else if (gamepad2.x && closed) {
+            } else if (gamepad2.x && closed) {
                 arm.setPoleHeight(liftArm.Heights.HOVER);
                 leds.setLed(ledLights.ledStates.HOVER);
             } else if (gamepad2.x && !closed) {
                 arm.setPoleHeight(liftArm.Heights.HOVER);
                 leds.setLed(ledLights.ledStates.BADHOVER);
-            }else if (gamepad2.dpad_down) {
+            } else if (gamepad2.dpad_down) {
                 arm.returnToBottom();
                 leds.setLed(ledLights.ledStates.OPEN);
             }
 
+            if (!gamepad1.a){
+                gamepadAWasReleased = true;
+            }
+
+            if (gamepad1.a && gamepadAWasReleased) {
+                gamepadAWasReleased = false;
+                if (arm.pole_status == liftArm.polePositions.DOWN) {
+                    arm.poleUp();
+                } else if (arm.pole_status == liftArm.polePositions.UP) {
+                    arm.poleDown();
+                }
+            }
             // Force lift arm down (ignoring encoders) - temp until limit switch integrated
-            if ((gamepad1.right_stick_button || gamepad2.right_stick_button) && armResetButtonWasReleased){
+            if ((gamepad1.right_stick_button || gamepad2.right_stick_button) && armResetButtonWasReleased) {
                 armResetButtonWasReleased = arm.forceDown();
-            } else if ((!gamepad1.right_stick_button || !gamepad2.right_stick_button)  && !armResetButtonWasReleased) {
+            } else if ((!gamepad1.right_stick_button || !gamepad2.right_stick_button) && !armResetButtonWasReleased) {
                 armResetButtonWasReleased = arm.stopAndReset();
             }
 
@@ -142,7 +152,7 @@ public class StrafeDrive extends LinearOpMode {
             // -----------------------------------------------------------------------------------
 
             // track when left_bumper is released so we only drop 1 position per button press
-            if (!gamepad2.left_bumper){
+            if (!gamepad2.left_bumper) {
                 leftBumperWasReleased = true;
             }
 
@@ -181,7 +191,7 @@ public class StrafeDrive extends LinearOpMode {
             if (gamepad1.left_trigger >= 0.8) {
                 drive.autoCenter(mecanumDrive.centerModes.CONE);
             } else if (gamepad1.right_trigger >= 0.8) {
-               // drive.autoCenter(mecanumDrive.centerModes.POLE);
+                // drive.autoCenter(mecanumDrive.centerModes.POLE);
             }
 
             // -----------------------------------------------------------------------------------
@@ -212,6 +222,7 @@ public class StrafeDrive extends LinearOpMode {
             telemetry.addData("Red", color.red());
             telemetry.addData("Green", color.green());
             telemetry.addData("Blue", color.blue());
+            telemetry.addData("pole", gamepadAWasReleased);
 
             //telemetry.addData("DistanceLeftV2: ", drive.distanceLeftV2);
             //telemetry.addData("DistanceRightV2: ", drive.distanceRightV2);

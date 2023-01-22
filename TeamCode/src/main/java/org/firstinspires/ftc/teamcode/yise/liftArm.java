@@ -10,11 +10,19 @@ public class liftArm {
     public final Servo coneGrabber;
     public final ColorSensor color;
 
+    public final Servo poleSupport;
+
     // Tracks whether grabber is currently opened or closed
     public grabberPositions grabber_status;
     public enum grabberPositions {
         OPEN,
         CLOSED
+    }
+
+    public polePositions pole_status;
+    public enum polePositions {
+        DOWN,
+        UP
     }
 
     // Used to set pole height.
@@ -45,8 +53,11 @@ public class liftArm {
         rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         coneGrabber = hardwareMap.get(Servo.class, "cone_grabber");
+        poleSupport = hardwareMap.get(Servo.class, "pole_support");
         coneGrabber.setPosition(Servo.MIN_POSITION);
         grabber_status = grabberPositions.OPEN;
+        poleSupport.setPosition(0.4);
+        pole_status = polePositions.UP;
 
         color = hardwareMap.get(ColorSensor.class, "Color");
 
@@ -160,6 +171,15 @@ public class liftArm {
     public void openGrabber() {
         coneGrabber.setPosition(Servo.MIN_POSITION);
         grabber_status = grabberPositions.OPEN;
+    }
+
+    public void poleUp() {
+        poleSupport.setPosition(0.4);
+        pole_status = polePositions.UP;
+    }
+    public void poleDown() {
+        poleSupport.setPosition(Servo.MIN_POSITION);
+        pole_status = polePositions.DOWN;
     }
 
     public Boolean findRed() {
