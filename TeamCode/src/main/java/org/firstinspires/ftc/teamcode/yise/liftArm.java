@@ -138,7 +138,19 @@ public class liftArm {
         rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         leftSlide.setPower(0.05);
         rightSlide.setPower(0.05);
+    }
 
+    public void getConeFromStack(int targetCone) {
+        int top_cone = 300;
+        int cone_offset = 60;
+        cone_position = top_cone - (cone_offset * (5 - targetCone));
+
+        leftSlide.setTargetPosition(cone_position);
+        rightSlide.setTargetPosition(cone_position);
+        leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftSlide.setPower(1);
+        rightSlide.setPower(1);
     }
 
     // Sets the lift arm height for grabbing the top cone of the 5 cone stack
