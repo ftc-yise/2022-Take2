@@ -31,6 +31,7 @@ public class StrafeDrive extends LinearOpMode {
     public boolean closed = false;
     public boolean idle = false;
     public boolean gamepadAWasReleased = true;
+    public boolean gamepadXWasReleased = true;
 
     @Override
     public void runOpMode() {
@@ -135,6 +136,20 @@ public class StrafeDrive extends LinearOpMode {
                     arm.poleDown();
                 }
             }
+
+            if (!gamepad1.x){
+                gamepadXWasReleased = true;
+            }
+
+            if (gamepad1.x && gamepadXWasReleased) {
+                gamepadXWasReleased = false;
+                if (arm.clawSlide_status == liftArm.clawSlidePositions.OUT) {
+                    arm.clawIn();
+                } else if (arm.clawSlide_status == liftArm.clawSlidePositions.IN) {
+                    arm.clawOut();
+                }
+            }
+
             // Force lift arm down (ignoring encoders) - temp until limit switch integrated
             if ((gamepad1.right_stick_button || gamepad2.right_stick_button) && armResetButtonWasReleased) {
                 armResetButtonWasReleased = arm.forceDown();
@@ -183,6 +198,8 @@ public class StrafeDrive extends LinearOpMode {
                 leds.setLed(ledLights.ledStates.CLOSE);
                 closed = true;
             }
+
+
 
 
             // -----------------------------------------------------------------------------------

@@ -12,6 +12,8 @@ public class liftArm {
 
     public final Servo poleSupport;
 
+    public final Servo clawSlide;
+
     // Tracks whether grabber is currently opened or closed
     public grabberPositions grabber_status;
     public enum grabberPositions {
@@ -23,6 +25,12 @@ public class liftArm {
     public enum polePositions {
         DOWN,
         UP
+    }
+
+    public clawSlidePositions clawSlide_status;
+    public enum clawSlidePositions {
+        IN,
+        OUT
     }
 
     // Used to set pole height.
@@ -54,10 +62,14 @@ public class liftArm {
 
         coneGrabber = hardwareMap.get(Servo.class, "cone_grabber");
         poleSupport = hardwareMap.get(Servo.class, "pole_support");
-        coneGrabber.setPosition(Servo.MIN_POSITION);
+        clawSlide = hardwareMap.get(Servo.class, "claw_slide");
+        coneGrabber.setPosition(Servo.MAX_POSITION);
         grabber_status = grabberPositions.OPEN;
         poleSupport.setPosition(0.4);
         pole_status = polePositions.UP;
+
+        clawSlide.setPosition(Servo.MIN_POSITION);
+        clawSlide_status = clawSlidePositions.IN;
 
         color = hardwareMap.get(ColorSensor.class, "Color");
 
@@ -180,6 +192,15 @@ public class liftArm {
     public void poleDown() {
         poleSupport.setPosition(Servo.MIN_POSITION);
         pole_status = polePositions.DOWN;
+    }
+
+    public void clawOut() {
+        clawSlide.setPosition(Servo.MAX_POSITION);
+        clawSlide_status = clawSlidePositions.OUT;
+    }
+    public void clawIn() {
+        clawSlide.setPosition(Servo.MIN_POSITION);
+        clawSlide_status = clawSlidePositions.IN;
     }
 
     public Boolean findRed() {
