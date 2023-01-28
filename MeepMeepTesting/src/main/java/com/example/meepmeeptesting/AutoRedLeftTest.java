@@ -35,40 +35,15 @@ public class AutoRedLeftTest {
                                 })
                                 .waitSeconds(1.5)
                                 .addTemporalMarker(() -> {
-                                    //arm.setPoleHeight(liftArm.Heights.HIGH);
+                                    //arm.setPoleHeight(liftArm.Heights.LOW);
                                 })
-
-
-                                //SEQ2
-                                .lineToConstantHeading(new Vector2d(-11, -14))
-                                .turn(Math.toRadians(140))
-                                .forward(8)
+                                //seq 2
+                                .back(10)
+                                .turn(Math.toRadians(90))
                                 .addTemporalMarker(() -> {
-                                    //yiseDrive.autoCenterLoop(mecanumDrive.centerModes.POLE);
+                                    // arm.openGrabber();
                                 })
-                                .waitSeconds(.2)
-                                .addTemporalMarker(() -> {
-                                    //arm.openGrabber();
-                                })
-                                .waitSeconds(.4)
-                                .back(8)
-                                //.build();
-
-                                //SEQ3
-
-
-                                //SEQ4
-
-
-                                //seq5
-
-                                //END SEQ
-
-                                //.lineToLinearHeading(new Pose2d(-12, -16, Math.toRadians(-0)))  //location = 3
-                                //.lineToLinearHeading(new Pose2d(-35, -16, Math.toRadians(0))) // location = 2
-                                .lineToLinearHeading(new Pose2d(-58, -14, Math.toRadians(0)))  //location = 1
                                 .turn(Math.toRadians(-90))
-                                .waitSeconds(3)  //added only to see ending spot in meep meep
                                 .build()
 
                 );

@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 // hardware packages
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 
@@ -26,6 +27,10 @@ public class StrafeDrive extends LinearOpMode {
     public boolean armResetButtonWasReleased = true;
     public boolean leftBumperWasReleased = true;
     public boolean canSwitchModes = false;
+    public boolean closed = false;
+    public boolean idle = false;
+    public boolean gamepadAWasReleased = true;
+    public boolean gamepadXWasReleased = true;
 
     @Override
     public void runOpMode() {
@@ -48,7 +53,10 @@ public class StrafeDrive extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
-            leds.setLed(ledLights.ledStates.OPEN);
+            if (!idle) {
+                leds.setLed(ledLights.ledStates.OPEN);
+                idle = true;
+            }
 
             // -----------------------------------------------------------------------------------
             // Drive Code
@@ -83,22 +91,70 @@ public class StrafeDrive extends LinearOpMode {
             // -----------------------------------------------------------------------------------
 
             // Lift Arm 4 Position Code
-            if (gamepad2.dpad_up) {
+            if (gamepad2.dpad_up && closed) {
                 arm.setPoleHeight(liftArm.Heights.HIGH);
-            } else if (gamepad2.dpad_left) {
+                leds.setLed(ledLights.ledStates.HOVER);
+
+            } else if (gamepad2.dpad_up && !closed) {
+                arm.setPoleHeight(liftArm.Heights.HIGH);
+                leds.setLed(ledLights.ledStates.BADHOVER);
+
+            } else if (gamepad2.dpad_left && closed) {
                 arm.setPoleHeight(liftArm.Heights.MEDIUM);
-            } else if (gamepad2.dpad_right) {
+                leds.setLed(ledLights.ledStates.HOVER);
+
+            } else if (gamepad2.dpad_left && !closed) {
+                arm.setPoleHeight(liftArm.Heights.MEDIUM);
+                leds.setLed(ledLights.ledStates.BADHOVER);
+            } else if (gamepad2.dpad_right && closed) {
                 arm.setPoleHeight(liftArm.Heights.LOW);
-            } else if (gamepad2.x) {
+                leds.setLed(ledLights.ledStates.HOVER);
+
+            } else if (gamepad2.dpad_right && !closed) {
+                arm.setPoleHeight(liftArm.Heights.LOW);
+                leds.setLed(ledLights.ledStates.BADHOVER);
+
+            } else if (gamepad2.x && closed) {
                 arm.setPoleHeight(liftArm.Heights.HOVER);
+                leds.setLed(ledLights.ledStates.HOVER);
+            } else if (gamepad2.x && !closed) {
+                arm.setPoleHeight(liftArm.Heights.HOVER);
+                leds.setLed(ledLights.ledStates.BADHOVER);
             } else if (gamepad2.dpad_down) {
                 arm.returnToBottom();
+                leds.setLed(ledLights.ledStates.OPEN);
+            }
+
+            if (!gamepad1.a){
+                gamepadAWasReleased = true;
+            }
+
+            if (gamepad1.a && gamepadAWasReleased) {
+                gamepadAWasReleased = false;
+                if (arm.pole_status == liftArm.polePositions.DOWN) {
+                    arm.poleUp();
+                } else if (arm.pole_status == liftArm.polePositions.UP) {
+                    arm.poleDown();
+                }
+            }
+
+            if (!gamepad1.x){
+                gamepadXWasReleased = true;
+            }
+
+            if (gamepad1.x && gamepadXWasReleased) {
+                gamepadXWasReleased = false;
+                if (arm.clawSlide_status == liftArm.clawSlidePositions.OUT) {
+                    arm.clawIn();
+                } else if (arm.clawSlide_status == liftArm.clawSlidePositions.IN) {
+                    arm.clawOut();
+                }
             }
 
             // Force lift arm down (ignoring encoders) - temp until limit switch integrated
-            if ((gamepad1.right_stick_button || gamepad2.right_stick_button) && armResetButtonWasReleased){
+            if ((gamepad1.right_stick_button || gamepad2.right_stick_button) && armResetButtonWasReleased) {
                 armResetButtonWasReleased = arm.forceDown();
-            } else if ((!gamepad1.right_stick_button || !gamepad2.right_stick_button)  && !armResetButtonWasReleased) {
+            } else if ((!gamepad1.right_stick_button || !gamepad2.right_stick_button) && !armResetButtonWasReleased) {
                 armResetButtonWasReleased = arm.stopAndReset();
             }
 
@@ -112,7 +168,7 @@ public class StrafeDrive extends LinearOpMode {
             // -----------------------------------------------------------------------------------
 
             // track when left_bumper is released so we only drop 1 position per button press
-            if (!gamepad2.left_bumper){
+            if (!gamepad2.left_bumper) {
                 leftBumperWasReleased = true;
             }
 
@@ -176,9 +232,14 @@ public class StrafeDrive extends LinearOpMode {
             //telemetry.addData("Distance left: ", distanceLeft);
             //telemetry.addData("Distance right: ", distanceRight);
 
-            telemetry.addData("Red", arm.color.red());
-            telemetry.addData("Green", arm.color.green());
-            telemetry.addData("Blue", arm.color.blue());
+            telemetry.addData("Red", color.red());
+            telemetry.addData("Green", color.green());
+            telemetry.addData("Blue", color.blue());
+            telemetry.addData("pole", gamepadAWasReleased);
+
+            //telemetry.addData("DistanceLeftV2: ", drive.distanceLeftV2);
+            //telemetry.addData("DistanceRightV2: ", drive.distanceRightV2);
+
             telemetry.update();
         }
     }

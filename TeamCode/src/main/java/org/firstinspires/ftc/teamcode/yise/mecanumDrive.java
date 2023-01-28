@@ -20,13 +20,16 @@ public class mecanumDrive {
     public final Rev2mDistanceSensor distanceSensorRight, distanceSensorLeft;
     public double distanceLeft, distanceRight;
 
+    //public final Rev2mDistanceSensor distanceSensorRightV2, distanceSensorLeftV2;
+    //public double distanceLeftV2, distanceRightV2;
+
     // Used to track slow-mode versus normal mode
     public Speeds currentSpeed;
     public enum Speeds {
         SLOW,
         NORMAL
     }
-    
+
     public enum centerModes {
         CONE,
         STACK
@@ -60,10 +63,15 @@ public class mecanumDrive {
         distanceSensorRight = hardwareMap.get(Rev2mDistanceSensor.class, "distance_sensor_right");
         distanceSensorLeft = hardwareMap.get(Rev2mDistanceSensor.class, "distance_sensor_left");
 
+        //distanceSensorRightV2 = hardwareMap.get(Rev2mDistanceSensor.class, "distance_sensor_right_V2");
+        //distanceSensorLeftV2 = hardwareMap.get(Rev2mDistanceSensor.class, "distance_sensor_left_V2");
+
         // initialize the distance measurements using centimeters units
         distanceLeft = distanceSensorLeft.getDistance(DistanceUnit.CM);
         distanceRight = distanceSensorRight.getDistance(DistanceUnit.CM);
 
+        //distanceLeftV2 = distanceSensorLeftV2.getDistance(DistanceUnit.CM);
+        //distanceRightV2 = distanceSensorRightV2.getDistance(DistanceUnit.CM);
     }
 
     // Updates power to the 4 drive motors based on input from the stick on the first controller
@@ -191,7 +199,7 @@ public class mecanumDrive {
         double startCentering, finishCentering, stopDistance;
 
         // default values are for centerModes.CONE
-        startCentering = 30;
+        startCentering = 40;
         finishCentering = 14;
         stopDistance = 8;
 
@@ -213,7 +221,7 @@ public class mecanumDrive {
                 rightBackDrive.setPower(0.4);
                 leftBackDrive.setPower(0.4);
                 rightFrontDrive.setPower(0.4);
-            // otherwise we stop, return true and let the user code drive forward correct distance
+                // otherwise we stop, return true and let the user code drive forward correct distance
             } else {
                 leftFrontDrive.setPower(0);
                 rightBackDrive.setPower(0);
