@@ -9,9 +9,7 @@ public class liftArm {
     public final DcMotor leftSlide, rightSlide;
     public final Servo coneGrabber;
     public final ColorSensor color;
-
     public final Servo poleSupport;
-
     public final Servo clawSlide;
 
     // Tracks whether grabber is currently opened or closed
@@ -20,13 +18,11 @@ public class liftArm {
         OPEN,
         CLOSED
     }
-
     public polePositions pole_status;
     public enum polePositions {
         DOWN,
         UP
     }
-
     public clawSlidePositions clawSlide_status;
     public enum clawSlidePositions {
         IN,
@@ -63,11 +59,10 @@ public class liftArm {
         coneGrabber = hardwareMap.get(Servo.class, "cone_grabber");
         poleSupport = hardwareMap.get(Servo.class, "pole_support");
         clawSlide = hardwareMap.get(Servo.class, "claw_slide");
-        coneGrabber.setPosition(Servo.MAX_POSITION);
+        coneGrabber.setPosition(Servo.MIN_POSITION);
         grabber_status = grabberPositions.OPEN;
         poleSupport.setPosition(0.4);
         pole_status = polePositions.UP;
-
         clawSlide.setPosition(Servo.MIN_POSITION);
         clawSlide_status = clawSlidePositions.IN;
 

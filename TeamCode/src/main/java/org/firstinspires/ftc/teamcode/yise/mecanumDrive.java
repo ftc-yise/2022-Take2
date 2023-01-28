@@ -176,7 +176,7 @@ public class mecanumDrive {
     public Boolean autoCenterLoop(centerModes mode) {
         Boolean centered = false;
         // set timeout for breaking out of the loop (in milliseconds)
-        long timeout = 1000;
+        long timeout = 3000;
         long start, current, elapsed;
 
         // need to set zero power behavior to brake for more accuracy
