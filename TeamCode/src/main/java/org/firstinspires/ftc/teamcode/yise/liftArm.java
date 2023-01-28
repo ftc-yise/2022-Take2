@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class liftArm {
+    // Define hardware instance variables here
     public final DcMotor leftSlide, rightSlide;
     public final Servo coneGrabber;
     public final ColorSensor color;
@@ -18,11 +19,15 @@ public class liftArm {
         OPEN,
         CLOSED
     }
+
+    // Tracks whether pole positioning arm is up or down
     public polePositions pole_status;
     public enum polePositions {
         DOWN,
         UP
     }
+
+    // Tracks whether claw slide is in or out
     public clawSlidePositions clawSlide_status;
     public enum clawSlidePositions {
         IN,
@@ -47,29 +52,34 @@ public class liftArm {
     public int cone_position;
 
     public liftArm(HardwareMap hardwareMap) {
+        // initialize slide motors
         leftSlide = hardwareMap.get(DcMotor.class, "left_slide");
         rightSlide = hardwareMap.get(DcMotor.class, "right_slide");
-
         leftSlide.setDirection(DcMotor.Direction.REVERSE);
         rightSlide.setDirection(DcMotor.Direction.FORWARD);
-
         leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+        // initialize cone grabber
         coneGrabber = hardwareMap.get(Servo.class, "cone_grabber");
-        poleSupport = hardwareMap.get(Servo.class, "pole_support");
-        clawSlide = hardwareMap.get(Servo.class, "claw_slide");
         coneGrabber.setPosition(Servo.MIN_POSITION);
         grabber_status = grabberPositions.OPEN;
+
+        // initialize pole positioning arm
+        poleSupport = hardwareMap.get(Servo.class, "pole_support");
         poleSupport.setPosition(0.4);
         pole_status = polePositions.UP;
+
+        // initialize claw slider
+        clawSlide = hardwareMap.get(Servo.class, "claw_slide");
         clawSlide.setPosition(Servo.MIN_POSITION);
         clawSlide_status = clawSlidePositions.IN;
 
+        // initialize color sensor
         color = hardwareMap.get(ColorSensor.class, "Color");
-
     }
 
+    // moves the arm to a predefined height/position
     public void setPoleHeight(Heights targetHeight) {
         switch (targetHeight) {
             case LOW:
@@ -95,6 +105,7 @@ public class liftArm {
         rightSlide.setPower(1);
     }
 
+    // resets the arm back to bottom based on encoder position of 0
     public void returnToBottom() {
         leftSlide.setTargetPosition(0);
         rightSlide.setTargetPosition(0);
@@ -104,6 +115,7 @@ public class liftArm {
         rightSlide.setPower(1);
     }
 
+    // used in driver control to forcearm back to the bottom overriding the encoder position
     public boolean forceDown() {
         leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -112,6 +124,7 @@ public class liftArm {
         return false;
     }
 
+    // used in driver control to reset encoder to postion 0 after forcing down
     public boolean stopAndReset() {
         leftSlide.setPower(0);
         rightSlide.setPower(0);
