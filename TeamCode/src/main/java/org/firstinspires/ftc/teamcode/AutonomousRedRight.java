@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -39,11 +40,20 @@ public class AutonomousRedRight extends LinearOpMode {
         // create instance of yise lift arm class
         arm = new liftArm(hardwareMap);
 
+        int cone;
+
+        leds.lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.BREATH_RED);
+
+        while (!isStarted()) {
+            cone = tfod.readCone();
+
+            telemetry.addData("Cone: ", cone);
+            telemetry.update();
+        }
+
 
         waitForStart();
         if(isStopRequested()) return;
-
-        leds.setLed(ledLights.ledStates.RED);
 
         // ------------------------------------------------------------------------------------
         // Define Trajectories and Arm/Grabber Actions
@@ -68,12 +78,10 @@ public class AutonomousRedRight extends LinearOpMode {
                 .back(10)
                 .addDisplacementMarker(0.2, () -> {
                     arm.setPoleHeight(liftArm.Heights.LOW);
-                    //yiseDrive.autoCenterLoop(mecanumDrive.centerModes.POLE);
                 })
                 .lineToLinearHeading(new Pose2d(37, -13.5, Math.toRadians(125)))
                 .addDisplacementMarker(10, () -> {
                     arm.setPoleHeight(liftArm.Heights.HIGH);
-                    //yiseDrive.autoCenterLoop(mecanumDrive.centerModes.POLE);
                 })
                 .forward(10)
                 .build();
@@ -104,7 +112,18 @@ public class AutonomousRedRight extends LinearOpMode {
                 .build();
 
         //Sense cones
-        int cone = tfod.readCone();
+        cone = tfod.readCone();
+        switch (cone) {
+            case 1:
+                leds.lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
+                break;
+            case 2:
+                leds.lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+                break;
+            case 3:
+                leds.lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE);
+                break;
+        }
         telemetry.addData("Cone: ", cone);
         telemetry.update();
         //Drive to cone stack with arm at cone 5 height
@@ -113,8 +132,10 @@ public class AutonomousRedRight extends LinearOpMode {
         //Run method to pick up cone and drop it on pole
         coneLoop(driveToPole);
 
+        leds.lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.GOLD);
         //Drive back to get another cone
         drive.followTrajectorySequence(driveToStack);
+
 
         //Run method to pick up cone and drop it on pole
         coneLoop(driveToPole);
@@ -138,9 +159,6 @@ public class AutonomousRedRight extends LinearOpMode {
     }
 
     public void coneLoop(TrajectorySequence poleTrajectory) {
-        //Auto center on cones
-        //yiseDrive.autoCenterLoop(mecanumDrive.centerModes.CONE);
-
         //Grab and lift cone
         arm.closeGrabber();
         sleep(200);
