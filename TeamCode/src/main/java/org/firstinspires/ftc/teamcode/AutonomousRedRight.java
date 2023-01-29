@@ -113,6 +113,10 @@ public class AutonomousRedRight extends LinearOpMode {
 
         //Sense cones
         cone = tfod.readCone();
+
+        telemetry.addData("Cone: ", cone);
+        telemetry.update();
+
         switch (cone) {
             case 1:
                 leds.lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
@@ -129,10 +133,11 @@ public class AutonomousRedRight extends LinearOpMode {
         //Drive to cone stack with arm at cone 5 height
         drive.followTrajectorySequence(driveForward);
 
-        //Run method to pick up cone and drop it on pole
-        coneLoop(driveToPole);
-
         leds.lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.GOLD);
+
+        //Run method to pick up cone and drop it on pole
+        coneLoop(driveToPole);
+
         //Drive back to get another cone
         drive.followTrajectorySequence(driveToStack);
 
@@ -145,6 +150,18 @@ public class AutonomousRedRight extends LinearOpMode {
 
         //Run method to pick up cone and drop it on pole
         coneLoop(driveToPole);
+
+        switch (cone) {
+            case 1:
+                leds.lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
+                break;
+            case 2:
+                leds.lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+                break;
+            case 3:
+                leds.lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE);
+                break;
+        }
 
         //Drive to right position based on Tensorflow input
         if (cone == 1) {
@@ -161,9 +178,7 @@ public class AutonomousRedRight extends LinearOpMode {
     public void coneLoop(TrajectorySequence poleTrajectory) {
         //Grab and lift cone
         arm.closeGrabber();
-        sleep(200);
-        arm.setPoleHeight(liftArm.Heights.LOW);
-        //sleep(50);
+        sleep(300);
 
         //Drive to pole
         drive.followTrajectorySequence(poleTrajectory);
