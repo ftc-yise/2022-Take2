@@ -52,8 +52,6 @@ public class AutonomousRedLeftTestForLow extends LinearOpMode {
 
         while (!isStarted()) {
             coneNumber = tensor.readCone();
-            telemetry.addData("Cone: ", coneNumber);
-            telemetry.update();
         }
         waitForStart();
         if (isStopRequested()) return;
@@ -84,76 +82,44 @@ public class AutonomousRedLeftTestForLow extends LinearOpMode {
             endHeading_Z = -0;
         }
 
-        // example trajectory sequences
-        // based on testing, there's no problem doing forward and strafeRight in a row
-
-        // startpath_1:
-        // Drive forward 20 inches (after first 10 inches, start raising arm to top cone height)
-        // Then strafe right 20 inches and turn right 90 degrees
-        //
-        // This is an example of a "global" displacement marker, it actually doesn't matter where
-        // it is placed in the order of the sequence. It will run after the bot has moved
-        // a total of 10 inches.
-        //
-        // If you change the marker from 10 to 30, it will run in the middle of the stafeRight()
-        // Note: 1 marker, when written in this syntax, can include multiple actions
-
         // Sequence 1 is start of program ending at cone pickup.
-        TrajectorySequence startpath_auto_center = drive.trajectorySequenceBuilder(startPose)
-                .strafeRight(12)
-                .splineToConstantHeading(new Vector2d(-48, -14), Math.toRadians(270))
-                .addDisplacementMarker(20, () -> {
-                    arm.getConeFromStack(stackPosition);
-                    arm.openGrabber();
-                })
-                .turn(Math.toRadians(-90))
-                .addTemporalMarker(() -> {
-                    yiseDrive.autoCenterLoop(mecanumDrive.centerModes.STACK);
-                    yiseDrive.driveUntilClosed(arm);
-                })
-                .waitSeconds(0.5)
-                .addTemporalMarker(() -> {
-                    arm.setPoleHeight(liftArm.Heights.LOW  );
-                })
-                .back(5)
-                .build();
-
         TrajectorySequence startpath = drive.trajectorySequenceBuilder(startPose)
-                .strafeRight(12)
-                .splineToConstantHeading(new Vector2d(-48, -14), Math.toRadians(270))
-                .addDisplacementMarker(20, () -> {
+                .strafeRight(23)
+                .lineToLinearHeading(new Pose2d(-59,-20, Math.toRadians(270)))
+                .lineToLinearHeading(new Pose2d(-48, -14, Math.toRadians(180)))
+                .addDisplacementMarker(30, () -> {
                     arm.getConeFromStack(stackPosition);
                     arm.openGrabber();
                 })
-                .turn(Math.toRadians(-90))
-                .forward(10)
+                .forward(15)
                 .addTemporalMarker(() -> {
                     arm.closeGrabber();
                 })
-                .waitSeconds(0.5)
+                .waitSeconds(0.25)
                 .addTemporalMarker(() -> {
                     arm.setPoleHeight(liftArm.Heights.LOW  );
                 })
-                .back(5)
+                .back(7)
                 .build();
         Pose2d stackPose = startpath.end();
 
         TrajectorySequence scorecone = drive.trajectorySequenceBuilder(stackPose)
-                .lineToLinearHeading(new Pose2d(-46, -14, Math.toRadians(270)))
-                .forward(2)
+                .lineToLinearHeading(new Pose2d(-49, -13, Math.toRadians(270)))
+                .forward(4)
                 .addTemporalMarker(() -> {
                     arm.openGrabber();
                 })
-                .back(2)
+                .waitSeconds(0.25)
+                .back(6)
                 .build();
         Pose2d scorePose = scorecone.end();
 
         TrajectorySequence grabcone = drive.trajectorySequenceBuilder(scorePose)
-                .lineToLinearHeading(new Pose2d(-48, -14, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(-50, -14, Math.toRadians(180)))
                 .addDisplacementMarker(1,() -> {
                     arm.getConeFromStack(stackPosition);
                 })
-                .forward(10)
+                .forward(13)
                 .addTemporalMarker(() -> {
                     arm.closeGrabber();
                 })
@@ -161,37 +127,10 @@ public class AutonomousRedLeftTestForLow extends LinearOpMode {
                 .addTemporalMarker(() -> {
                     arm.setPoleHeight(liftArm.Heights.LOW  );
                 })
-                .back(5)
+                .back(7)
                 .build();
 
-
-        /*
-        TrajectorySequence grabcone_4 = drive.trajectorySequenceBuilder(scorecone_2.end())
-                .turn(Math.toRadians(-135))
-                .lineToConstantHeading(new Vector2d(-52, -12))
-                .addDisplacementMarker(20, () -> {
-                    arm.getTopCone();
-                    arm.downOneCone();
-                    arm.downOneCone();
-                })
-                .addTemporalMarker(() -> {
-                    yiseDrive.autoCenterLoop(mecanumDrive.centerModes.CONE);
-                })
-                .waitSeconds(.2)
-                .addTemporalMarker(() ->{
-                    arm.closeGrabber();
-                })
-                .waitSeconds(.5)
-                .build();
-
-        TrajectorySequence testWait_5 = drive.trajectorySequenceBuilder(scorecone_2.end())
-                .waitSeconds(10)
-                .build();
-         */
-
-        //Need to add in additional trajectories becuase you can't repeat the motions and pick up a cone a different height
-
-        TrajectorySequence endposition_4 = drive.trajectorySequenceBuilder(scorePose)
+        TrajectorySequence endposition = drive.trajectorySequenceBuilder(scorePose)
                 .lineToLinearHeading(new Pose2d( endLocation_X, endLocation_Y,  Math.toRadians(endHeading_Z)))
                 .addTemporalMarker(() ->{
                     arm.closeGrabber();
@@ -212,27 +151,16 @@ public class AutonomousRedLeftTestForLow extends LinearOpMode {
 
         //drive to cone stack with arm at cone 5 height
         drive.followTrajectorySequence(startpath);
-        // drive.followTrajectorySequence(scorecone);
-        // telemetry.update();
+        drive.followTrajectorySequence(scorecone);
 
+        stackPosition = 4;
+        drive.followTrajectorySequence(grabcone);
+        drive.followTrajectorySequence(scorecone);
 
-        //stackPosition = 4;
-        //drive.followTrajectorySequence(grabcone);
-        //drive.followTrajectorySequence(scorecone);
-        /*
         stackPosition = 3;
         drive.followTrajectorySequence(grabcone);
         drive.followTrajectorySequence(scorecone);
 
-        stackPosition = 2;
-        drive.followTrajectorySequence(endposition_4);
-        */
-
-        // drive.followTrajectorySequence(testWait_5);
-        //Location 3 x =-12  y =-16
-        //location 2 x =-34  y =-16
-        //location 1 1x =-59  y =-16
-
-
+        drive.followTrajectorySequence(endposition);
     }
 }
