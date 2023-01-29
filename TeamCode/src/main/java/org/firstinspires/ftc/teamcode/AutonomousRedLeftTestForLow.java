@@ -44,10 +44,17 @@ public class AutonomousRedLeftTestForLow extends LinearOpMode {
 
         ledLights leds = new ledLights(hardwareMap);
 
+        int coneNumber;
+
         // set variable for holding the signal beacon detection for end placment
         tensor.initVuforia();
         tensor.initTfod();
 
+        while (!isStarted()) {
+            coneNumber = tensor.readCone();
+            telemetry.addData("Cone: ", coneNumber);
+            telemetry.update();
+        }
         waitForStart();
         if (isStopRequested()) return;
 
@@ -61,7 +68,6 @@ public class AutonomousRedLeftTestForLow extends LinearOpMode {
         Pose2d startPose = new Pose2d(-36, -62, Math.toRadians(270));
         drive.setPoseEstimate(startPose);
 
-        int coneNumber = 3;
         coneNumber = tensor.readCone();
 
         if (coneNumber == 1){
@@ -93,13 +99,11 @@ public class AutonomousRedLeftTestForLow extends LinearOpMode {
         // Note: 1 marker, when written in this syntax, can include multiple actions
 
         // Sequence 1 is start of program ending at cone pickup.
-        TrajectorySequence startpath = drive.trajectorySequenceBuilder(startPose)
+        TrajectorySequence startpath_auto_center = drive.trajectorySequenceBuilder(startPose)
                 .strafeRight(12)
                 .splineToConstantHeading(new Vector2d(-48, -14), Math.toRadians(270))
                 .addDisplacementMarker(20, () -> {
                     arm.getConeFromStack(stackPosition);
-                })
-                .addDisplacementMarker(20, () -> {
                     arm.openGrabber();
                 })
                 .turn(Math.toRadians(-90))
@@ -113,17 +117,34 @@ public class AutonomousRedLeftTestForLow extends LinearOpMode {
                 })
                 .back(5)
                 .build();
+
+        TrajectorySequence startpath = drive.trajectorySequenceBuilder(startPose)
+                .strafeRight(12)
+                .splineToConstantHeading(new Vector2d(-48, -14), Math.toRadians(270))
+                .addDisplacementMarker(20, () -> {
+                    arm.getConeFromStack(stackPosition);
+                    arm.openGrabber();
+                })
+                .turn(Math.toRadians(-90))
+                .forward(10)
+                .addTemporalMarker(() -> {
+                    arm.closeGrabber();
+                })
+                .waitSeconds(0.5)
+                .addTemporalMarker(() -> {
+                    arm.setPoleHeight(liftArm.Heights.LOW  );
+                })
+                .back(5)
+                .build();
         Pose2d stackPose = startpath.end();
 
         TrajectorySequence scorecone = drive.trajectorySequenceBuilder(stackPose)
-                .lineToLinearHeading(new Pose2d(-46, -14, Math.toRadians(180)))
-               // .splineToConstantHeading(new Vector2d(-46, -14), Math.toRadians(270))
-                .turn(Math.toRadians(90))
+                .lineToLinearHeading(new Pose2d(-46, -14, Math.toRadians(270)))
                 .forward(2)
                 .addTemporalMarker(() -> {
                     arm.openGrabber();
                 })
-                .back(6)
+                .back(2)
                 .build();
         Pose2d scorePose = scorecone.end();
 
@@ -132,9 +153,9 @@ public class AutonomousRedLeftTestForLow extends LinearOpMode {
                 .addDisplacementMarker(1,() -> {
                     arm.getConeFromStack(stackPosition);
                 })
+                .forward(10)
                 .addTemporalMarker(() -> {
-                    yiseDrive.autoCenterLoop(mecanumDrive.centerModes.STACK);
-                    yiseDrive.driveUntilClosed(arm);
+                    arm.closeGrabber();
                 })
                 .waitSeconds(0.5)
                 .addTemporalMarker(() -> {
@@ -191,8 +212,8 @@ public class AutonomousRedLeftTestForLow extends LinearOpMode {
 
         //drive to cone stack with arm at cone 5 height
         drive.followTrajectorySequence(startpath);
-        drive.followTrajectorySequence(scorecone);
-        telemetry.update();
+        // drive.followTrajectorySequence(scorecone);
+        // telemetry.update();
 
 
         //stackPosition = 4;
