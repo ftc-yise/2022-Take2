@@ -116,17 +116,19 @@ public class AutonomousRedLeftTestForLow extends LinearOpMode {
         Pose2d stackPose = startpath.end();
 
         TrajectorySequence scorecone = drive.trajectorySequenceBuilder(stackPose)
-                .lineToLinearHeading(new Pose2d(-48, -14, Math.toRadians(270)))
-                .forward(4)
+                .lineToLinearHeading(new Pose2d(-46, -14, Math.toRadians(180)))
+               // .splineToConstantHeading(new Vector2d(-46, -14), Math.toRadians(270))
+                .turn(Math.toRadians(90))
+                .forward(2)
                 .addTemporalMarker(() -> {
                     arm.openGrabber();
                 })
-                .back(4)
+                .back(6)
                 .build();
         Pose2d scorePose = scorecone.end();
 
         TrajectorySequence grabcone = drive.trajectorySequenceBuilder(scorePose)
-                .lineToLinearHeading(new Pose2d(-52, -14, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(-48, -14, Math.toRadians(180)))
                 .addDisplacementMarker(1,() -> {
                     arm.getConeFromStack(stackPosition);
                 })
@@ -140,6 +142,7 @@ public class AutonomousRedLeftTestForLow extends LinearOpMode {
                 })
                 .back(5)
                 .build();
+
 
         /*
         TrajectorySequence grabcone_4 = drive.trajectorySequenceBuilder(scorecone_2.end())
@@ -186,21 +189,23 @@ public class AutonomousRedLeftTestForLow extends LinearOpMode {
         telemetry.addData("Distance S Right", yiseDrive.distanceSensorRight);
         telemetry.update();
 
-        //                drive to cone stack with arm at cone 5 height
+        //drive to cone stack with arm at cone 5 height
         drive.followTrajectorySequence(startpath);
         drive.followTrajectorySequence(scorecone);
         telemetry.update();
 
-        stackPosition = 4;
-        drive.followTrajectorySequence(grabcone);
-        drive.followTrajectorySequence(scorecone);
 
+        //stackPosition = 4;
+        //drive.followTrajectorySequence(grabcone);
+        //drive.followTrajectorySequence(scorecone);
+        /*
         stackPosition = 3;
         drive.followTrajectorySequence(grabcone);
         drive.followTrajectorySequence(scorecone);
 
         stackPosition = 2;
         drive.followTrajectorySequence(endposition_4);
+        */
 
         // drive.followTrajectorySequence(testWait_5);
         //Location 3 x =-12  y =-16

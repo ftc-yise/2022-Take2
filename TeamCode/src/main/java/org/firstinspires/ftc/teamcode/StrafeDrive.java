@@ -229,14 +229,19 @@ public class StrafeDrive extends LinearOpMode {
             telemetry.addData(" Right Encoder:", -drive.rightBackDrive.getCurrentPosition());
 
             // Add distance sensor data
-            //telemetry.addData("Distance left: ", distanceLeft);
-            //telemetry.addData("Distance right: ", distanceRight);
+            drive.readDistances();
+            telemetry.addData("Distance left: ", drive.distanceLeft);
+            telemetry.addData("Distance right: ", drive.distanceRight);
 
-            telemetry.addData("Red", color.red());
-            telemetry.addData("Green", color.green());
-            telemetry.addData("Blue", color.blue());
+            telemetry.addData("Red", arm.color.red());
+            telemetry.addData("Green", arm.color.green());
+            telemetry.addData("Blue", arm.color.blue());
             telemetry.addData("pole", gamepadAWasReleased);
 
+            arm.getSlidePosition(liftArm.Sides.LEFT);
+            arm.getSlidePosition(liftArm.Sides.RIGHT);
+            telemetry.addData("leftslide", arm.leftSlide);
+            telemetry.addData("rightlide", arm.rightSlide);
             //telemetry.addData("DistanceLeftV2: ", drive.distanceLeftV2);
             //telemetry.addData("DistanceRightV2: ", drive.distanceRightV2);
 
