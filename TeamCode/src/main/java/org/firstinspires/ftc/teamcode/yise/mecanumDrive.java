@@ -199,7 +199,7 @@ public class mecanumDrive {
         double startCentering, finishCentering, stopDistance;
 
         // default values are for centerModes.CONE
-        startCentering = 40;
+        startCentering = 50;
         finishCentering = 14;
         stopDistance = 8;
 
@@ -296,6 +296,11 @@ public class mecanumDrive {
         rightBackDrive.setPower(0);
         leftBackDrive.setPower(0);
         rightFrontDrive.setPower(0);
+    }
+
+    public void readDistances() {
+        distanceLeft = distanceSensorLeft.getDistance(DistanceUnit.CM);
+        distanceRight = distanceSensorRight.getDistance(DistanceUnit.CM);
     }
 }
 

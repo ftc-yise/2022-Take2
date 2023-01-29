@@ -67,7 +67,7 @@ public class liftArm {
 
         // initialize pole positioning arm
         poleSupport = hardwareMap.get(Servo.class, "pole_support");
-        poleSupport.setPosition(0.4);
+        poleSupport.setPosition(0.5);
         pole_status = polePositions.UP;
 
         // initialize claw slider
@@ -206,11 +206,11 @@ public class liftArm {
     }
 
     public void poleUp() {
-        poleSupport.setPosition(0.4);
+        poleSupport.setPosition(0.5);
         pole_status = polePositions.UP;
     }
     public void poleDown() {
-        poleSupport.setPosition(Servo.MIN_POSITION);
+        poleSupport.setPosition(Servo.MAX_POSITION);
         pole_status = polePositions.DOWN;
     }
 
