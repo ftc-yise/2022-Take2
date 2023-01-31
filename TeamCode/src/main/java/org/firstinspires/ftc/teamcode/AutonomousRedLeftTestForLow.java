@@ -35,7 +35,8 @@ public class AutonomousRedLeftTestForLow extends LinearOpMode {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
         // create instance of YISE tensorFlow class
-        tensorFlow tensor = new tensorFlow(hardwareMap);
+        //tensorFlow tensor = new tensorFlow(hardwareMap);
+        tensorFlow tfod = new tensorFlow(hardwareMap);
 
         // create instance of YISE drive class - for autoCenterLoop() only
         mecanumDrive yiseDrive = new mecanumDrive(hardwareMap);
@@ -45,19 +46,29 @@ public class AutonomousRedLeftTestForLow extends LinearOpMode {
 
         ledLights leds = new ledLights(hardwareMap);
 
-        int coneNumber;
+       // int coneNumber;
 
         // set variable for holding the signal beacon detection for end placment
-        tensor.initVuforia();
-        tensor.initTfod();
+        //tensor.initVuforia();
+        //tensor.initTfod();
+        tfod.initVuforia();
+        tfod.initTfod();
+
+        int coneNumber;
+        leds.setLed(ledLights.ledStates.RED);
 
         while (!isStarted()) {
-            coneNumber = tensor.readCone();
+            //coneNumber = tensor.readCone();
+            coneNumber = tfod.readCone();
+
+            telemetry.addData("Cone: ", coneNumber);
+            telemetry.update();
         }
+
         waitForStart();
         if (isStopRequested()) return;
 
-        leds.setLed(ledLights.ledStates.RED);
+
 
         // ------------------------------------------------------------------------------------
         // Define Trajectories and Arm/Grabber Actions
@@ -67,7 +78,8 @@ public class AutonomousRedLeftTestForLow extends LinearOpMode {
         Pose2d startPose = new Pose2d(-36, -62, Math.toRadians(270));
         drive.setPoseEstimate(startPose);
 
-        coneNumber = tensor.readCone();
+        //coneNumber = tensor.readCone();
+        coneNumber = tfod.readCone();
 
         if (coneNumber == 1){
             endLocation_X = -58;
@@ -78,8 +90,7 @@ public class AutonomousRedLeftTestForLow extends LinearOpMode {
             endLocation_X = -35;
             endLocation_Y = -16;
             endHeading_Z = 270;
-            leds.setLed(ledLights.ledStates.GREEN
-            );
+            leds.setLed(ledLights.ledStates.GREEN);
         } else if (coneNumber == 3){
             endLocation_X = -12;
             endLocation_Y = -16;
@@ -143,7 +154,7 @@ public class AutonomousRedLeftTestForLow extends LinearOpMode {
                 .addTemporalMarker(() ->{
                     arm.returnToBottom();
                 })
-                .turn(Math.toRadians(-90))
+                .turn(Math.toRadians(-90))  // SHOULD WE REMOVE THIS TURN?
                 .build();
 
 
