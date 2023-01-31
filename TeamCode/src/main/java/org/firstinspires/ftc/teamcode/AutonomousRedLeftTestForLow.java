@@ -20,6 +20,7 @@ public class AutonomousRedLeftTestForLow extends LinearOpMode {
     public float endLocation_Y = -16;
     public float endHeading_Z = -90;
 
+
     // Used to keep track of which cone we are picking up off the stack
     public int stackPosition = 5;
 
@@ -71,15 +72,19 @@ public class AutonomousRedLeftTestForLow extends LinearOpMode {
         if (coneNumber == 1){
             endLocation_X = -58;
             endLocation_Y = -14;
-            endHeading_Z = 0;
+            endHeading_Z = 270;
+            leds.setLed(ledLights.ledStates.RED);
         } else if (coneNumber == 2){
             endLocation_X = -35;
             endLocation_Y = -16;
-            endHeading_Z = 0;
+            endHeading_Z = 270;
+            leds.setLed(ledLights.ledStates.GREEN
+            );
         } else if (coneNumber == 3){
             endLocation_X = -12;
             endLocation_Y = -16;
-            endHeading_Z = -0;
+            endHeading_Z = 270;
+            leds.setLed(ledLights.ledStates.BLUE);
         }
 
         // Sequence 1 is start of program ending at cone pickup.
@@ -95,7 +100,7 @@ public class AutonomousRedLeftTestForLow extends LinearOpMode {
                 .addTemporalMarker(() -> {
                     arm.closeGrabber();
                 })
-                .waitSeconds(0.25)
+                .waitSeconds(0.125)
                 .addTemporalMarker(() -> {
                     arm.setPoleHeight(liftArm.Heights.LOW  );
                 })
@@ -109,7 +114,7 @@ public class AutonomousRedLeftTestForLow extends LinearOpMode {
                 .addTemporalMarker(() -> {
                     arm.openGrabber();
                 })
-                .waitSeconds(0.25)
+                .waitSeconds(0.125)
                 .back(6)
                 .build();
         Pose2d scorePose = scorecone.end();
@@ -123,7 +128,7 @@ public class AutonomousRedLeftTestForLow extends LinearOpMode {
                 .addTemporalMarker(() -> {
                     arm.closeGrabber();
                 })
-                .waitSeconds(0.5)
+                .waitSeconds(0.25)
                 .addTemporalMarker(() -> {
                     arm.setPoleHeight(liftArm.Heights.LOW  );
                 })
@@ -160,6 +165,11 @@ public class AutonomousRedLeftTestForLow extends LinearOpMode {
         stackPosition = 3;
         drive.followTrajectorySequence(grabcone);
         drive.followTrajectorySequence(scorecone);
+
+        stackPosition = 2;
+        drive.followTrajectorySequence(grabcone);
+        drive.followTrajectorySequence(scorecone);
+
 
         drive.followTrajectorySequence(endposition);
     }
