@@ -57,14 +57,14 @@ public class AutonomousRedLeftTestForLow extends LinearOpMode {
         int coneNumber;
         leds.setLed(ledLights.ledStates.RED);
 
-        while (!isStarted()) {
+     /*   while (!isStarted()) {
             //coneNumber = tensor.readCone();
             coneNumber = tfod.readCone();
 
             telemetry.addData("Cone: ", coneNumber);
             telemetry.update();
         }
-
+    */
         waitForStart();
         if (isStopRequested()) return;
 
@@ -79,22 +79,22 @@ public class AutonomousRedLeftTestForLow extends LinearOpMode {
         drive.setPoseEstimate(startPose);
 
         //coneNumber = tensor.readCone();
-        coneNumber = tfod.readCone();
+       coneNumber = tfod.readCone();
 
         if (coneNumber == 1){
-            endLocation_X = -58;
+            endLocation_X = -61;
             endLocation_Y = -14;
-            endHeading_Z = 270;
+            endHeading_Z = 180;
             leds.setLed(ledLights.ledStates.RED);
         } else if (coneNumber == 2){
             endLocation_X = -35;
             endLocation_Y = -16;
-            endHeading_Z = 270;
+            endHeading_Z = 180;
             leds.setLed(ledLights.ledStates.GREEN);
         } else if (coneNumber == 3){
             endLocation_X = -12;
             endLocation_Y = -16;
-            endHeading_Z = 270;
+            endHeading_Z = 180;
             leds.setLed(ledLights.ledStates.BLUE);
         }
 
@@ -148,13 +148,14 @@ public class AutonomousRedLeftTestForLow extends LinearOpMode {
 
         TrajectorySequence endposition = drive.trajectorySequenceBuilder(scorePose)
                 .lineToLinearHeading(new Pose2d( endLocation_X, endLocation_Y,  Math.toRadians(endHeading_Z)))
+                //.lineToLinearHeading(new Pose2d( -35, -16,  Math.toRadians(270)))
+
                 .addTemporalMarker(() ->{
                     arm.closeGrabber();
                 })
                 .addTemporalMarker(() ->{
                     arm.returnToBottom();
                 })
-                .turn(Math.toRadians(-90))  // SHOULD WE REMOVE THIS TURN?
                 .build();
 
 
@@ -177,9 +178,9 @@ public class AutonomousRedLeftTestForLow extends LinearOpMode {
         drive.followTrajectorySequence(grabcone);
         drive.followTrajectorySequence(scorecone);
 
-        stackPosition = 2;
-        drive.followTrajectorySequence(grabcone);
-        drive.followTrajectorySequence(scorecone);
+        //stackPosition = 2;
+        //drive.followTrajectorySequence(grabcone);
+        //drive.followTrajectorySequence(scorecone);
 
 
         drive.followTrajectorySequence(endposition);
