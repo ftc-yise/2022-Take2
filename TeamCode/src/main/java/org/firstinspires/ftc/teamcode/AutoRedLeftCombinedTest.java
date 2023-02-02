@@ -1,20 +1,19 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
-import org.firstinspires.ftc.teamcode.yise.mecanumDrive;
-import org.firstinspires.ftc.teamcode.yise.liftArm;
-import org.firstinspires.ftc.teamcode.yise.tensorFlow;
 import org.firstinspires.ftc.teamcode.yise.ledLights;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.yise.liftArm;
+import org.firstinspires.ftc.teamcode.yise.mecanumDrive;
+import org.firstinspires.ftc.teamcode.yise.tensorFlow;
 
 
-@Autonomous(name = "Auto Red Left Low", group = "Linear Opmode")
-public class AutonomousRedLeftTestForLow extends LinearOpMode {
+@Autonomous(name = "Auto Red Left Combined", group = "Linear Opmode")
+public class AutoRedLeftCombinedTest extends LinearOpMode {
 
     public float endLocation_X = 0;
     public float endLocation_Y = -16;
@@ -89,17 +88,17 @@ public class AutonomousRedLeftTestForLow extends LinearOpMode {
         } else if (coneNumber == 2){
             endLocation_X = -35;
             endLocation_Y = -16;
-            endHeading_Z = -90;
+            endHeading_Z = 180;
             leds.setLed(ledLights.ledStates.GREEN);
         } else if (coneNumber == 3){
-            endLocation_X = -15;
+            endLocation_X = -12;
             endLocation_Y = -16;
             endHeading_Z = 180;
             leds.setLed(ledLights.ledStates.BLUE);
         }
 
         // Sequence 1 is start of program ending at cone pickup.
-        TrajectorySequence startpath = drive.trajectorySequenceBuilder(startPose)
+        TrajectorySequence cone1 = drive.trajectorySequenceBuilder(startPose)
                 .strafeRight(23)
                 .lineToLinearHeading(new Pose2d(-59,-20, Math.toRadians(270)))
                 .lineToLinearHeading(new Pose2d(-48, -14, Math.toRadians(180)))
@@ -116,10 +115,7 @@ public class AutonomousRedLeftTestForLow extends LinearOpMode {
                     arm.setPoleHeight(liftArm.Heights.LOW  );
                 })
                 .back(7)
-                .build();
-        Pose2d stackPose = startpath.end();
 
-        TrajectorySequence scorecone = drive.trajectorySequenceBuilder(stackPose)
                 .lineToLinearHeading(new Pose2d(-49, -13, Math.toRadians(270)))
                 .forward(4)
                 .addTemporalMarker(() -> {
@@ -128,9 +124,11 @@ public class AutonomousRedLeftTestForLow extends LinearOpMode {
                 .waitSeconds(0.125)
                 .back(6)
                 .build();
-        Pose2d scorePose = scorecone.end();
+        Pose2d stackPose = cone1.end();
 
-        TrajectorySequence grabcone = drive.trajectorySequenceBuilder(scorePose)
+        TrajectorySequence cone2 = drive.trajectorySequenceBuilder(stackPose)
+
+
                 .lineToLinearHeading(new Pose2d(-50, -14, Math.toRadians(180)))
                 .addDisplacementMarker(1,() -> {
                     arm.getConeFromStack(stackPosition);
@@ -144,18 +142,105 @@ public class AutonomousRedLeftTestForLow extends LinearOpMode {
                     arm.setPoleHeight(liftArm.Heights.LOW  );
                 })
                 .back(7)
+                .lineToLinearHeading(new Pose2d(-49, -13, Math.toRadians(270)))
+                .forward(4)
+                .addTemporalMarker(() -> {
+                    arm.openGrabber();
+                })
+                .waitSeconds(0.125)
+                .back(6)
+
+                .build();
+        Pose2d scorePose = cone2.end();
+
+        TrajectorySequence cone3 = drive.trajectorySequenceBuilder(scorePose)
+                .lineToLinearHeading(new Pose2d(-50, -14, Math.toRadians(180)))
+                .addDisplacementMarker(1,() -> {
+                    arm.getConeFromStack(stackPosition);
+                })
+                .forward(13)
+                .addTemporalMarker(() -> {
+                    arm.closeGrabber();
+                })
+                .waitSeconds(0.25)
+                .addTemporalMarker(() -> {
+                    arm.setPoleHeight(liftArm.Heights.LOW  );
+                })
+                .back(7)
+
+                .lineToLinearHeading(new Pose2d(-49, -13, Math.toRadians(270)))
+                .forward(4)
+                .addTemporalMarker(() -> {
+                    arm.openGrabber();
+                })
+                .waitSeconds(0.125)
+                .back(6)
                 .build();
 
-        TrajectorySequence endposition = drive.trajectorySequenceBuilder(scorePose)
+        Pose2d scorePose2 = cone3.end();
+
+        TrajectorySequence cone4 = drive.trajectorySequenceBuilder(scorePose2)
+                .lineToLinearHeading(new Pose2d(-50, -14, Math.toRadians(180)))
+                .addDisplacementMarker(1,() -> {
+                    arm.getConeFromStack(stackPosition);
+                })
+                .forward(13)
+                .addTemporalMarker(() -> {
+                    arm.closeGrabber();
+                })
+                .waitSeconds(0.25)
+                .addTemporalMarker(() -> {
+                    arm.setPoleHeight(liftArm.Heights.LOW  );
+                })
+                .back(7)
+
+                .lineToLinearHeading(new Pose2d(-49, -13, Math.toRadians(270)))
+                .forward(4)
+                .addTemporalMarker(() -> {
+                    arm.openGrabber();
+                })
+                .waitSeconds(0.125)
+                .back(6)
+                .build();
+        Pose2d scorePose3 = cone4.end();
+
+        TrajectorySequence cone5 = drive.trajectorySequenceBuilder(scorePose3)
+                .lineToLinearHeading(new Pose2d(-50, -14, Math.toRadians(180)))
+                .addDisplacementMarker(1,() -> {
+                    arm.getConeFromStack(stackPosition);
+                })
+                .forward(13)
+                .addTemporalMarker(() -> {
+                    arm.closeGrabber();
+                })
+                .waitSeconds(0.25)
+                .addTemporalMarker(() -> {
+                    arm.setPoleHeight(liftArm.Heights.LOW  );
+                })
+                .back(7)
+
+                .lineToLinearHeading(new Pose2d(-49, -13, Math.toRadians(270)))
+                .forward(4)
+                .addTemporalMarker(() -> {
+                    arm.openGrabber();
+                })
+                .waitSeconds(0.125)
+                .back(6)
+                .build();
+        Pose2d scorePose4 = cone5.end();
+
+
+
+
+        TrajectorySequence endposition = drive.trajectorySequenceBuilder(scorePose4)
                 .lineToLinearHeading(new Pose2d( endLocation_X, endLocation_Y,  Math.toRadians(endHeading_Z)))
-                //.lineToLinearHeading(new Pose2d( -35, -16,  Math.toRadians(270)))
+                //.lineToLinearHeading(new Pose2d( -35, -16,  Math.toRadians(180)))
 
                 .addTemporalMarker(() ->{
                     arm.closeGrabber();
-                })
-                .addTemporalMarker(() ->{
                     arm.returnToBottom();
                 })
+
                 .build();
 
 
@@ -167,19 +252,23 @@ public class AutonomousRedLeftTestForLow extends LinearOpMode {
         telemetry.update();
 
         //drive to cone stack with arm at cone 5 height
-        drive.followTrajectorySequence(startpath);
-        drive.followTrajectorySequence(scorecone);
+        drive.followTrajectorySequence(cone1);
+       // drive.followTrajectorySequence(scorecone);
 
         stackPosition = 4;
-        drive.followTrajectorySequence(grabcone);
-        drive.followTrajectorySequence(scorecone);
+        drive.followTrajectorySequence(cone2);
+        //drive.followTrajectorySequence(scorecone);
 
         stackPosition = 3;
-        drive.followTrajectorySequence(grabcone);
-        drive.followTrajectorySequence(scorecone);
+        drive.followTrajectorySequence(cone3);
+        //drive.followTrajectorySequence(scorecone);
 
-        //stackPosition = 2;
-        //drive.followTrajectorySequence(grabcone);
+        stackPosition = 2;
+        drive.followTrajectorySequence(cone4);
+        //drive.followTrajectorySequence(scorecone);
+
+        stackPosition = 1;
+        drive.followTrajectorySequence(cone5);
         //drive.followTrajectorySequence(scorecone);
 
 
