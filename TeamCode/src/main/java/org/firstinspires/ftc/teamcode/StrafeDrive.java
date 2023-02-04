@@ -31,6 +31,7 @@ public class StrafeDrive extends LinearOpMode {
     public boolean idle = false;
     public boolean gamepadAWasReleased = true;
     public boolean gamepadXWasReleased = true;
+    public boolean gamepad2Awasreleased = true;
 
     @Override
     public void runOpMode() {
@@ -182,18 +183,23 @@ public class StrafeDrive extends LinearOpMode {
             // -----------------------------------------------------------------------------------
             // Open and Close the Grabber Automatically
             // -----------------------------------------------------------------------------------
-            if (arm.findRed() && arm.grabber_status == liftArm.grabberPositions.OPEN) {
+            if (arm.findRed() && arm.grabber_status == liftArm.grabberPositions.OPEN && gamepad2Awasreleased) {
                 arm.closeGrabber();
                 leds.setLed(ledLights.ledStates.CLOSE);
-            } else if (arm.findBlue() && arm.grabber_status == liftArm.grabberPositions.OPEN) {
+                gamepad2Awasreleased = false;
+            } else if (arm.findBlue() && arm.grabber_status == liftArm.grabberPositions.OPEN && gamepad2Awasreleased) {
                 arm.closeGrabber();
                 leds.setLed(ledLights.ledStates.CLOSE);
+                gamepad2Awasreleased = false;
             } else if (gamepad2.b && arm.grabber_status == liftArm.grabberPositions.OPEN) {
                 arm.closeGrabber();
                 leds.setLed(ledLights.ledStates.CLOSE);
-            } else if (gamepad2.a && arm.grabber_status == liftArm.grabberPositions.CLOSED) {
+            } else if (gamepad2.a && arm.grabber_status == liftArm.grabberPositions.CLOSED && !gamepad2Awasreleased) {
                 arm.openGrabber();
                 leds.setLed(ledLights.ledStates.OPEN);
+                gamepad2Awasreleased = false;
+            } else if (!gamepad2.a){
+                gamepad2Awasreleased = true;
             }
 
             // -----------------------------------------------------------------------------------
