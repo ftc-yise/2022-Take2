@@ -176,7 +176,7 @@ public class liftArm {
         if (cone_position < 0) {
             cone_position = 1;
         } else {
-            cone_position = cone_position - 60;
+            cone_position = cone_position - 70;  //controls how far the arm comes down on each press for each cone
             leftSlide.setTargetPosition(cone_position);
             rightSlide.setTargetPosition(cone_position);
             leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);

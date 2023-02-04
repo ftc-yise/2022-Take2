@@ -17,12 +17,13 @@ public class ledLights {
         CLOSE,
         BADHOVER,
         HOVER,
+        GREEN
     }
 
     public ledLights(HardwareMap hardwareMap) {
         lights = hardwareMap.get(RevBlinkinLedDriver.class, "led");
         currentState = ledStates.INIT;
-        lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.COLOR_WAVES_LAVA_PALETTE);
+        lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.BREATH_RED);
     }
 
     public void setLed(ledStates state) {
@@ -32,7 +33,7 @@ public class ledLights {
                 currentState = state;
                 break;
             case RED:
-                lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_RED);
+                lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.BREATH_RED);
                 currentState = state;
                 break;
             case BLUE:
@@ -48,6 +49,10 @@ public class ledLights {
                 currentState = state;
                 break;
             case HOVER:
+                lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.DARK_GREEN);
+                currentState = state;
+                break;
+            case GREEN:
                 lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.DARK_GREEN);
                 currentState = state;
                 break;
