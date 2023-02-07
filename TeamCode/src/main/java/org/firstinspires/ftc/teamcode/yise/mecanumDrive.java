@@ -135,23 +135,23 @@ public class mecanumDrive {
         if (gamepad.dpad_right) {
             leftFrontDrive.setPower(power);
             rightBackDrive.setPower(power);
-            leftBackDrive.setPower(power * -1);
-            rightFrontDrive.setPower(power * -1);
+            leftBackDrive.setPower(power * -.251);
+            rightFrontDrive.setPower(power * -.251);
         } else if (gamepad.dpad_left) {
-            leftFrontDrive.setPower(power * -1);
-            rightBackDrive.setPower(power * -1);
-            leftBackDrive.setPower(power);
-            rightFrontDrive.setPower(power);
+            leftFrontDrive.setPower(power * -.251);
+            rightBackDrive.setPower(power * -.251);
+            leftBackDrive.setPower(power * .251);
+            rightFrontDrive.setPower(power * .251);
         } else if (gamepad.dpad_up) {
-            leftFrontDrive.setPower(power);
-            rightBackDrive.setPower(power);
-            leftBackDrive.setPower(power);
-            rightFrontDrive.setPower(power);
+            leftFrontDrive.setPower(power * .251);
+            rightBackDrive.setPower(power * .251);
+            leftBackDrive.setPower(power * .251);
+            rightFrontDrive.setPower(power * .251);
         } else if (gamepad.dpad_down) {
-            leftFrontDrive.setPower(-power);
-            rightBackDrive.setPower(-power);
-            leftBackDrive.setPower(-power);
-            rightFrontDrive.setPower(-power);
+            leftFrontDrive.setPower(-power * .251);
+            rightBackDrive.setPower(-power * .251);
+            leftBackDrive.setPower(-power * .251);
+            rightFrontDrive.setPower(-power * .251);
         }
     }
 

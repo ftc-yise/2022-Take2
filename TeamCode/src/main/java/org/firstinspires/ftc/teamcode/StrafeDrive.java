@@ -145,8 +145,10 @@ public class StrafeDrive extends LinearOpMode {
                 gamepadAWasReleased = false;
                 if (arm.pole_status == liftArm.polePositions.DOWN) {
                     arm.poleUp();
+                    once = false;
                 } else if (arm.pole_status == liftArm.polePositions.UP) {
                     arm.poleDown();
+                    once = true;
                 }
             }
 
@@ -166,7 +168,7 @@ public class StrafeDrive extends LinearOpMode {
 
             if(touch == true && once){
                 arm.clawOut();
-                sleep(700);
+                sleep(1000);
                 arm.openGrabber();
                 sleep(500);
                 arm.clawIn();
