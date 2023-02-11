@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 
 
 
-@TeleOp(name="TBot Drive", group="Linear Opmode")
+@TeleOp(name="TBot Drive1", group="Linear Opmode")
 public class TestBotDrive extends LinearOpMode {
 
 
@@ -21,6 +21,9 @@ public class TestBotDrive extends LinearOpMode {
     private DcMotor leftBackDrive = null;
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
+
+    public float speedmulti = 1;
+
 
     //private Servo fireServo = null;
     //private CRServo barrel = null;
@@ -41,20 +44,20 @@ public class TestBotDrive extends LinearOpMode {
         // Most robots need the motors on one side to be reversed to drive forward.
         // When you first test your robot, push the left joystick forward
         // and flip the direction ( FORWARD <-> REVERSE ) of any wheel that runs backwards
-        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
         //fireServo.setDirection(Servo.Direction.FORWARD);
 
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Status", "Initialized");
 
-        if (limit.isPressed()) {
+        /*if (limit.isPressed()) {
             leftFrontDrive.setPower(0);
         } else { // Otherwise, run the motor
             leftFrontDrive.setPower(1);
-        }
+        }*/
 
 
         telemetry.update();
@@ -69,10 +72,16 @@ public class TestBotDrive extends LinearOpMode {
 
             TouchSensor limit = null;
 
-            if (limit.isPressed()) {
+            /*if (limit.isPressed()) {
                 leftBackDrive.setPower(0);
             } else { // Otherwise, run the motor
                 leftBackDrive.setPower(1);
+            }*/
+
+            if(gamepad1.y && speedmulti == 1){
+                speedmulti = .5f;
+            } else if(gamepad1.y && speedmulti == .5f){
+                speedmulti = 1f;
             }
 
             telemetry.addData("motor Power:", leftBackDrive.getPower());
@@ -82,16 +91,16 @@ public class TestBotDrive extends LinearOpMode {
 
 
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
-            double vertical   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
-            double horizontal =  gamepad1.left_stick_x;
-            double turn     =  gamepad1.right_stick_x;
+            //double vertical   = -gamepad1.right_stick_x;  // Note: pushing stick forward gives negative value
+            double horizontal =  gamepad1.left_stick_y;
+            double turn     =  gamepad1.left_stick_x;
 
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
             // Set up a variable for each drive wheel to save the power level for telemetry.
-            double leftFrontPower  = vertical + horizontal + turn;
-            double rightFrontPower = vertical - horizontal - turn;
-            double leftBackPower   = vertical - horizontal + turn;
-            double rightBackPower  = vertical + horizontal - turn;
+            double leftFrontPower  = /*vertical*/ + horizontal + turn * 5;
+            double rightFrontPower = /*vertical*/ - horizontal - turn * .5;
+            double leftBackPower   = /*vertical*/ - horizontal + turn * .5;
+            double rightBackPower  = /*vertical*/ + horizontal - turn * .5;
 
             // Normalize the values so no wheel power exceeds 100%
             // This ensures that the robot maintains the desired motion.
@@ -104,6 +113,17 @@ public class TestBotDrive extends LinearOpMode {
                 rightFrontPower /= max;
                 leftBackPower   /= max;
                 rightBackPower  /= max;
+            }
+            if(gamepad1.right_stick_x > .5){
+                leftFrontPower = -.51;
+                leftBackPower = -.51;
+                rightBackPower = -.51;
+                rightFrontPower = -.51;
+            }else if(gamepad1.right_stick_x  < -.5){
+                leftFrontPower = .51;
+                leftBackPower = .51;
+                rightBackPower = .51;
+                rightFrontPower = .51;
             }
 
             /*if (gamepad1.a){
