@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 // hardware packages
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -23,6 +24,9 @@ public class StrafeDrive extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private Servo coneGrabber = null;
 
+    DigitalChannel digitalTouch;  // Hardware Device Object
+
+
     // state variables that track if buttons were released
     public boolean armResetButtonWasReleased = true;
     public boolean leftBumperWasReleased = true;
@@ -31,6 +35,10 @@ public class StrafeDrive extends LinearOpMode {
     public boolean idle = false;
     public boolean gamepadAWasReleased = true;
     public boolean gamepadXWasReleased = true;
+    public boolean pole = true;
+    public boolean touch = false;
+    public boolean once = false;
+    public boolean coneStsack = true;
 
     @Override
     public void runOpMode() {
@@ -42,6 +50,11 @@ public class StrafeDrive extends LinearOpMode {
         liftArm arm = new liftArm(hardwareMap);
 
         ledLights leds = new ledLights(hardwareMap);
+
+        digitalTouch = hardwareMap.get(DigitalChannel.class, "touch");
+
+        // set the digital channel to input.
+        digitalTouch.setMode(DigitalChannel.Mode.INPUT);
 
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Status", "Initialized");
@@ -133,8 +146,10 @@ public class StrafeDrive extends LinearOpMode {
                 gamepadAWasReleased = false;
                 if (arm.pole_status == liftArm.polePositions.DOWN) {
                     arm.poleUp();
+                    once = false;
                 } else if (arm.pole_status == liftArm.polePositions.UP) {
                     arm.poleDown();
+                    once = true;
                 }
             }
 
@@ -150,6 +165,30 @@ public class StrafeDrive extends LinearOpMode {
                     arm.clawOut();
                 }
             }
+
+
+            if(touch == true && once){
+                arm.clawOut();
+                sleep(1000);
+                arm.openGrabber();
+                sleep(500);
+                arm.clawIn();
+                once = false;
+            }
+
+            if (digitalTouch.getState() == false){
+                touch = true;
+            }
+
+
+
+            if (digitalTouch.getState() == true) {
+                telemetry.addData("Digital Touch", "Is Not Pressed");
+                touch = false;
+            } else {
+                telemetry.addData("Digital Touch", "Is Pressed");
+            }
+
 
             // Force lift arm down (ignoring encoders) - temp until limit switch integrated
             if ((gamepad1.right_stick_button || gamepad2.right_stick_button) && armResetButtonWasReleased) {
@@ -175,6 +214,7 @@ public class StrafeDrive extends LinearOpMode {
             // either drop 1 cone or go to top cone
             if (gamepad2.left_bumper && leftBumperWasReleased) {
                 arm.downOneCone();
+                leftBumperWasReleased = false;
             } else if (gamepad2.right_bumper) {
                 arm.getTopCone();
             }
