@@ -90,9 +90,23 @@ public class mecanumDrive {
 
         // Assign human readable names to the stick inputs
         // Note: Pushing the stick forward gives a negative value, so we have to invert it
-        vertical = -gamepad.left_stick_y;
-        horizontal = gamepad.left_stick_x;
-        turn = gamepad.right_stick_x;
+        if (-gamepad.left_stick_y > 0) {
+            vertical = Math.cos((0.5 * -gamepad.left_stick_y * 3.14159265358979323846) - 3.14159265358979323846) + 1;
+        } else {
+            vertical = Math.cos((0.5 * -gamepad.left_stick_y * 3.14159265358979323846)) - 1;
+        }
+
+        if (gamepad.left_stick_x > 0) {
+           horizontal = Math.cos((0.5 * -gamepad.left_stick_x * 3.14159265358979323846) - 3.14159265358979323846) + 1;
+        } else {
+           horizontal = Math.cos((0.5 * -gamepad.left_stick_x * 3.14159265358979323846)) - 1;
+        }
+
+        if (gamepad.right_stick_x > 0) {
+            turn = Math.cos((0.5 * -gamepad.right_stick_x * 3.14159265358979323846) - 3.14159265358979323846) + 1;
+        } else {
+            turn = Math.cos((0.5 * -gamepad.right_stick_x * 3.14159265358979323846)) - 1;
+        }
         turn = turn * .85;
 
         // Calculate individual motor power base on the stick input values
