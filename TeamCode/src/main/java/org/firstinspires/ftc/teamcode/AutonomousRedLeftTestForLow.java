@@ -23,6 +23,7 @@ public class AutonomousRedLeftTestForLow extends LinearOpMode {
     liftArm arm;
     SampleMecanumDrive drive;
     mecanumDrive yiseDrive;
+    ledLights leds;
 
     // Used to keep track of which cone we are picking up off the stack
     public int stackPosition = 5;
@@ -48,20 +49,30 @@ public class AutonomousRedLeftTestForLow extends LinearOpMode {
         // create instance of YISE lift arm class
         arm = new liftArm(hardwareMap);
 
-        ledLights leds = new ledLights(hardwareMap);
-
-        int coneNumber;
-
+        // create instance of YISE led light class
+        leds = new ledLights(hardwareMap);
         leds.setLed(ledLights.ledStates.RED);
 
-        /*while (!isStarted()) {
+        int coneNumber = 3;
+
+        while (!opModeIsActive()) {
             coneNumber = tfod.readCone();
+            if (coneNumber == 1) {
+                leds.setLed(ledLights.ledStates.RED);
+            } else if (coneNumber == 2) {
+                leds.setLed(ledLights.ledStates.GREEN);
+            } else if (coneNumber == 3) {
+                leds.setLed(ledLights.ledStates.BLUE);
+            }
             telemetry.addData("Cone: ", coneNumber);
             telemetry.update();
-        }*/
+        }
 
         waitForStart();
         if (isStopRequested()) return;
+
+        // turn off tensorFlow
+        tfod.disable();
 
         // ------------------------------------------------------------------------------------
         // Define Trajectories and Arm/Grabber Actions
@@ -71,7 +82,8 @@ public class AutonomousRedLeftTestForLow extends LinearOpMode {
         Pose2d startPose = new Pose2d(-36, -62, Math.toRadians(270));
         drive.setPoseEstimate(startPose);
 
-        coneNumber = tfod.readCone();
+        // disabled the cone read after starting, should be recognized during init
+        //coneNumber = tfod.readCone();
 
         if (coneNumber == 1) {
             endLocation_X = -61;

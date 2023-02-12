@@ -18,7 +18,11 @@ public class AutonomousBlueRightTestForLow extends LinearOpMode {
     public float endLocation_X = 0;
     public float endLocation_Y = 16;
     public float endHeading_Z = 90;
-
+    tensorFlow tfod;
+    liftArm arm;
+    SampleMecanumDrive drive;
+    mecanumDrive yiseDrive;
+    ledLights leds;
 
     // Used to keep track of which cone we are picking up off the stack
     public int stackPosition = 5;
@@ -31,43 +35,46 @@ public class AutonomousBlueRightTestForLow extends LinearOpMode {
         // ------------------------------------------------------------------------------------
 
         // create instance of RoadRunner drive class
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        drive = new SampleMecanumDrive(hardwareMap);
 
         // create instance of YISE tensorFlow class
         //tensorFlow tensor = new tensorFlow(hardwareMap);
-        tensorFlow tfod = new tensorFlow(hardwareMap);
+        tfod = new tensorFlow(hardwareMap);
 
         // create instance of YISE drive class - for autoCenterLoop() only
-        mecanumDrive yiseDrive = new mecanumDrive(hardwareMap);
+        yiseDrive = new mecanumDrive(hardwareMap);
 
         // create instance of YISE lift arm class
-        liftArm arm = new liftArm(hardwareMap);
+        arm = new liftArm(hardwareMap);
 
-        ledLights leds = new ledLights(hardwareMap);
-
-       // int coneNumber;
+        // create instance of YISE led lights class
+        leds = new ledLights(hardwareMap);
+        leds.setLed(ledLights.ledStates.RED);
 
         // set variable for holding the signal beacon detection for end placment
-        //tensor.initVuforia();
-        //tensor.initTfod();
         tfod.initVuforia();
         tfod.initTfod();
 
-        int coneNumber;
-        leds.setLed(ledLights.ledStates.RED);
+        int coneNumber = 3;
 
-     /*   while (!isStarted()) {
-            //coneNumber = tensor.readCone();
+        while (!opModeIsActive()) {
             coneNumber = tfod.readCone();
-
+            if (coneNumber == 1) {
+                leds.setLed(ledLights.ledStates.RED);
+            } else if (coneNumber == 2) {
+                leds.setLed(ledLights.ledStates.GREEN);
+            } else if (coneNumber == 3) {
+                leds.setLed(ledLights.ledStates.BLUE);
+            }
             telemetry.addData("Cone: ", coneNumber);
             telemetry.update();
         }
-    */
+
         waitForStart();
         if (isStopRequested()) return;
 
-
+        // turn off tensorFlow
+        tfod.disable();
 
         // ------------------------------------------------------------------------------------
         // Define Trajectories and Arm/Grabber Actions
@@ -77,8 +84,8 @@ public class AutonomousBlueRightTestForLow extends LinearOpMode {
         Pose2d startPose = new Pose2d(-38, 62, Math.toRadians(90));
         drive.setPoseEstimate(startPose);
 
-        //coneNumber = tensor.readCone();
-       coneNumber = tfod.readCone();
+        // disabling cone read after start
+        //coneNumber = tfod.readCone();
 
         if (coneNumber == 3){
             endLocation_X = -66;
@@ -95,7 +102,6 @@ public class AutonomousBlueRightTestForLow extends LinearOpMode {
             endLocation_Y = 16;
             endHeading_Z = 180;
             leds.setLed(ledLights.ledStates.RED);
-
         }
 
         // Sequence 1 is start of program ending at cone pickup.
@@ -149,7 +155,6 @@ public class AutonomousBlueRightTestForLow extends LinearOpMode {
         TrajectorySequence endposition = drive.trajectorySequenceBuilder(scorePose)
                 .lineToLinearHeading(new Pose2d( endLocation_X, endLocation_Y,  Math.toRadians(endHeading_Z)))
                 //.lineToLinearHeading(new Pose2d( -35, -16,  Math.toRadians(270)))
-
                 .addTemporalMarker(() ->{
                     arm.closeGrabber();
                 })
@@ -160,7 +165,6 @@ public class AutonomousBlueRightTestForLow extends LinearOpMode {
 
 
         // run my trajectories in order
-
         telemetry.addData("cone#", coneNumber);
         telemetry.addData("Distance S Left", yiseDrive.distanceSensorLeft);
         telemetry.addData("Distance S Right", yiseDrive.distanceSensorRight);
@@ -181,7 +185,6 @@ public class AutonomousBlueRightTestForLow extends LinearOpMode {
         //stackPosition = 2;
         //drive.followTrajectorySequence(grabcone);
         //drive.followTrajectorySequence(scorecone);
-
 
         drive.followTrajectorySequence(endposition);
     }
