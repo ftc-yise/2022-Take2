@@ -38,6 +38,7 @@ public class StrafeDrive extends LinearOpMode {
     public boolean pole = true;
     public boolean touch = false;
     public boolean once = false;
+    public boolean coneStsack = true;
 
     @Override
     public void runOpMode() {
@@ -213,6 +214,7 @@ public class StrafeDrive extends LinearOpMode {
             // either drop 1 cone or go to top cone
             if (gamepad2.left_bumper && leftBumperWasReleased) {
                 arm.downOneCone();
+                leftBumperWasReleased = false;
             } else if (gamepad2.right_bumper) {
                 arm.getTopCone();
             }

@@ -133,25 +133,25 @@ public class mecanumDrive {
         }
 
         if (gamepad.dpad_right) {
-            leftFrontDrive.setPower(power);
-            rightBackDrive.setPower(power);
-            leftBackDrive.setPower(power * -.251);
-            rightFrontDrive.setPower(power * -.251);
+            leftFrontDrive.setPower(power * .51);
+            rightBackDrive.setPower(power * .51);
+            leftBackDrive.setPower(power * -.51);
+            rightFrontDrive.setPower(power * -.51);
         } else if (gamepad.dpad_left) {
-            leftFrontDrive.setPower(power * -.251);
-            rightBackDrive.setPower(power * -.251);
-            leftBackDrive.setPower(power * .251);
-            rightFrontDrive.setPower(power * .251);
+            leftFrontDrive.setPower(power * -.51);
+            rightBackDrive.setPower(power * -.51);
+            leftBackDrive.setPower(power * .51);
+            rightFrontDrive.setPower(power * .51);
         } else if (gamepad.dpad_up) {
-            leftFrontDrive.setPower(power * .251);
-            rightBackDrive.setPower(power * .251);
-            leftBackDrive.setPower(power * .251);
-            rightFrontDrive.setPower(power * .251);
+            leftFrontDrive.setPower(power * .51);
+            rightBackDrive.setPower(power * .51);
+            leftBackDrive.setPower(power * .51);
+            rightFrontDrive.setPower(power * .51);
         } else if (gamepad.dpad_down) {
-            leftFrontDrive.setPower(-power * .251);
-            rightBackDrive.setPower(-power * .251);
-            leftBackDrive.setPower(-power * .251);
-            rightFrontDrive.setPower(-power * .251);
+            leftFrontDrive.setPower(-power * .51);
+            rightBackDrive.setPower(-power * .51);
+            leftBackDrive.setPower(-power * .51);
+            rightFrontDrive.setPower(-power * .51);
         }
     }
 

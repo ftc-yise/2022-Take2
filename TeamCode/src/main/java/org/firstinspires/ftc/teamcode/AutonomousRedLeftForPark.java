@@ -95,7 +95,7 @@ public class AutonomousRedLeftForPark extends LinearOpMode {
                 .lineToLinearHeading(new Pose2d(-59,-20, Math.toRadians(270)))
                 .lineToLinearHeading(new Pose2d(-48, -14, Math.toRadians(180)))
 
-                /*.forward(10)
+                .forward(10)
                 .addTemporalMarker(() -> {
                     yiseDrive.autoCenterLoop(mecanumDrive.centerModes.CONE);
                 })
@@ -104,10 +104,10 @@ public class AutonomousRedLeftForPark extends LinearOpMode {
                 .addTemporalMarker(() -> {
                     arm.closeGrabber();
                 })
-                .waitSeconds(1.5)
+                .waitSeconds(0.5)
                 .addTemporalMarker(() -> {
                     arm.setPoleHeight(liftArm.Heights.HIGH);
-                })*/
+                })
                 .build();
 
 
@@ -140,7 +140,7 @@ public class AutonomousRedLeftForPark extends LinearOpMode {
                 .addTemporalMarker(() ->{
                     arm.closeGrabber();
                 })
-                .waitSeconds(.2)
+                .waitSeconds(.4)
                 .addTemporalMarker(() ->{
                     arm.setPoleHeight(liftArm.Heights.HIGH);
                 })
@@ -191,10 +191,10 @@ public class AutonomousRedLeftForPark extends LinearOpMode {
 
         //                drive to cone stack with arm at cone 5 height
         drive.followTrajectorySequence(startpath_1);
-        //drive.followTrajectorySequence(scorecone_2);
+        drive.followTrajectorySequence(scorecone_2);
         telemetry.update();
-        //drive.followTrajectorySequence(grabcone_3);
-        //drive.followTrajectorySequence(scorecone_2);
+        drive.followTrajectorySequence(grabcone_3);
+        drive.followTrajectorySequence(scorecone_2);
         drive.followTrajectorySequence(endposition_4);
        // drive.followTrajectorySequence(testWait_5);
         //Location 3 x =-12  y =-16
