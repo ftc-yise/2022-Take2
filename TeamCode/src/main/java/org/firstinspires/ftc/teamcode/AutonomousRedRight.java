@@ -19,6 +19,8 @@ public class AutonomousRedRight extends LinearOpMode {
     SampleMecanumDrive drive;
     liftArm arm;
     tensorFlow tfod;
+
+    int cone;
     int loop = 1;
 
     @Override
@@ -40,55 +42,40 @@ public class AutonomousRedRight extends LinearOpMode {
         // create instance of yise lift arm class
         arm = new liftArm(hardwareMap);
 
-        int cone;
-
         leds.lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.BREATH_RED);
 
-        while (!isStarted()) {
-            cone = tfod.readCone();
-
-            telemetry.addData("Cone: ", cone);
-            telemetry.update();
-        }
-
-
-        waitForStart();
-        if(isStopRequested()) return;
-
         // ------------------------------------------------------------------------------------
-        // Define Trajectories and Arm/Grabber Actions
+        // INITIALIZE TRAJECTORIES
         // ------------------------------------------------------------------------------------
 
         // Start by defining our start position
-        Pose2d startPose = new Pose2d(36, -61, Math.toRadians(270));
+        Pose2d startPose = new Pose2d(36, -62, Math.toRadians(270));
         drive.setPoseEstimate(startPose);
 
         //Drive from starting pos to stack
         TrajectorySequence driveForward = drive.trajectorySequenceBuilder(startPose)
-                .lineToLinearHeading(new Pose2d(36, -13, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(36, -14, Math.toRadians(0)))
                 .addDisplacementMarker(10, () -> {
                     arm.openGrabber();
                     arm.getTopCone();
                 })
                 .forward(27)
+                .back(1)
                 .build();
 
         //Drive with cone to pole
         TrajectorySequence driveToPole = drive.trajectorySequenceBuilder(driveForward.end())
-                .back(10)
+                .back(4)
+                .lineToLinearHeading(new Pose2d(48, -11, Math.toRadians(270)))
+                .forward(6)
                 .addDisplacementMarker(0.2, () -> {
                     arm.setPoleHeight(liftArm.Heights.LOW);
                 })
-                .lineToLinearHeading(new Pose2d(37, -13.5, Math.toRadians(125)))
-                .addDisplacementMarker(10, () -> {
-                    arm.setPoleHeight(liftArm.Heights.HIGH);
-                })
-                .forward(10)
                 .build();
 
         //Drive back to stack to get another cone
         TrajectorySequence driveToStack = drive.trajectorySequenceBuilder(driveToPole.end())
-                .back(10)
+                .back(5)
                 .addDisplacementMarker(() -> {
                     arm.openGrabber();
                     arm.getTopCone();
@@ -97,26 +84,39 @@ public class AutonomousRedRight extends LinearOpMode {
                     }
                     loop++;
                 })
-                .lineToLinearHeading(new Pose2d(48, -13.5, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(48, -14, Math.toRadians(0)))
                 .forward(15)
+                .back(1)
                 .build();
 
         //Finishing positions
         TrajectorySequence driveTo1pos = drive.trajectorySequenceBuilder(driveToPole.end())
-                .back(9)
-                .lineToLinearHeading(new Pose2d(13, -12, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(13, -12, Math.toRadians(90)))
+                .back(5)
                 .build();
         TrajectorySequence driveTo2pos = drive.trajectorySequenceBuilder(driveToPole.end())
-                .back(10)
-                .lineToLinearHeading(new Pose2d(36, -14, Math.toRadians(90)))
+                .lineToLinearHeading(new Pose2d(36, -12, Math.toRadians(90)))
+                .back(5)
                 .build();
 
         //Sense cones
-        cone = tfod.readCone();
+        while (!isStarted()) {
+            sleep(2000);
+            cone = tfod.readCone();
 
-        telemetry.addData("Cone: ", cone);
-        telemetry.update();
+            telemetry.addData("Cone: ", cone);
+            telemetry.update();
+        }
 
+        if(isStopRequested()) return;
+
+
+        // -----------------------------------------------------------------------
+        // START OF PROGRAM
+        // -----------------------------------------------------------------------
+
+
+        //Sense cones
         switch (cone) {
             case 1:
                 leds.lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
@@ -128,8 +128,10 @@ public class AutonomousRedRight extends LinearOpMode {
                 leds.lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE);
                 break;
         }
-        telemetry.addData("Cone: ", cone);
-        telemetry.update();
+
+        //Stop tensorflow from running
+        tfod.tfod.shutdown();
+
         //Drive to cone stack with arm at cone 5 height
         drive.followTrajectorySequence(driveForward);
 
@@ -138,18 +140,14 @@ public class AutonomousRedRight extends LinearOpMode {
         //Run method to pick up cone and drop it on pole
         coneLoop(driveToPole);
 
-        //Drive back to get another cone
-        drive.followTrajectorySequence(driveToStack);
+        //Loop through pole and cone stack
+        for (int i = 0; i < 2; i++) {
+            //Drive back to get another cone
+            drive.followTrajectorySequence(driveToStack);
 
-
-        //Run method to pick up cone and drop it on pole
-        coneLoop(driveToPole);
-
-        //Drive back to get another cone
-        drive.followTrajectorySequence(driveToStack);
-
-        //Run method to pick up cone and drop it on pole
-        coneLoop(driveToPole);
+            //Run method to pick up cone and drop it on pole
+            coneLoop(driveToPole);
+        }
 
         switch (cone) {
             case 1:
@@ -178,11 +176,12 @@ public class AutonomousRedRight extends LinearOpMode {
     public void coneLoop(TrajectorySequence poleTrajectory) {
         //Grab and lift cone
         arm.closeGrabber();
-        sleep(300);
+        sleep(500);
 
         //Drive to pole
         drive.followTrajectorySequence(poleTrajectory);
         //Center on pole and drop cone
         arm.openGrabber();
+        sleep(200);
     }
 }
