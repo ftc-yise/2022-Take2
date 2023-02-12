@@ -42,7 +42,7 @@ public class AutonomousBlueLeft extends LinearOpMode {
         // create instance of yise lift arm class
         arm = new liftArm(hardwareMap);
 
-        leds.lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.BREATH_RED);
+        leds.lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.BREATH_BLUE);
 
         // ------------------------------------------------------------------------------------
         // INITIALIZE TRAJECTORIES
@@ -91,12 +91,14 @@ public class AutonomousBlueLeft extends LinearOpMode {
 
         //Finishing positions
         TrajectorySequence driveTo1pos = drive.trajectorySequenceBuilder(driveToPole.end())
-                .lineToLinearHeading(new Pose2d(13, 12, Math.toRadians(270)))
                 .back(5)
+                .lineToLinearHeading(new Pose2d(13, 12, Math.toRadians(90)))
+                .forward(5)
                 .build();
         TrajectorySequence driveTo2pos = drive.trajectorySequenceBuilder(driveToPole.end())
-                .lineToLinearHeading(new Pose2d(36, 12, Math.toRadians(270)))
                 .back(5)
+                .lineToLinearHeading(new Pose2d(36, 12, Math.toRadians(90)))
+                .forward(5)
                 .build();
 
         //Sense cones
