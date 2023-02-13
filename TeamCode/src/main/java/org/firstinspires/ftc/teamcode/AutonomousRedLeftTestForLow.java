@@ -55,20 +55,13 @@ public class AutonomousRedLeftTestForLow extends LinearOpMode {
 
         int coneNumber = 3;
 
-        while (!opModeIsActive()) {
+        while (!isStarted()) {
+            sleep(1000);
             coneNumber = tfod.readCone();
-            if (coneNumber == 1) {
-                leds.setLed(ledLights.ledStates.RED);
-            } else if (coneNumber == 2) {
-                leds.setLed(ledLights.ledStates.GREEN);
-            } else if (coneNumber == 3) {
-                leds.setLed(ledLights.ledStates.BLUE);
-            }
             telemetry.addData("Cone: ", coneNumber);
             telemetry.update();
         }
 
-        waitForStart();
         if (isStopRequested()) return;
 
         // turn off tensorFlow
@@ -81,9 +74,6 @@ public class AutonomousRedLeftTestForLow extends LinearOpMode {
         // Start by defining our start position
         Pose2d startPose = new Pose2d(-36, -62, Math.toRadians(270));
         drive.setPoseEstimate(startPose);
-
-        // disabled the cone read after starting, should be recognized during init
-        //coneNumber = tfod.readCone();
 
         if (coneNumber == 1) {
             endLocation_X = -61;
@@ -153,7 +143,6 @@ public class AutonomousRedLeftTestForLow extends LinearOpMode {
         TrajectorySequence endposition = drive.trajectorySequenceBuilder(scorePose)
                 .lineToLinearHeading(new Pose2d( endLocation_X, endLocation_Y,  Math.toRadians(endHeading_Z)))
                 //.lineToLinearHeading(new Pose2d( -35, -16,  Math.toRadians(270)))
-
                 .addTemporalMarker(() ->{
                     arm.closeGrabber();
                 })
@@ -163,7 +152,7 @@ public class AutonomousRedLeftTestForLow extends LinearOpMode {
                 .build();
 
         // run my trajectories in order
-        telemetry.addData("cone#", coneNumber);
+        //telemetry.addData("cone#", coneNumber);
         telemetry.addData("Distance S Left", yiseDrive.distanceSensorLeft);
         telemetry.addData("Distance S Right", yiseDrive.distanceSensorRight);
         telemetry.update();

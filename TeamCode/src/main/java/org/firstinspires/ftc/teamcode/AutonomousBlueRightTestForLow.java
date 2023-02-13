@@ -57,20 +57,13 @@ public class AutonomousBlueRightTestForLow extends LinearOpMode {
 
         int coneNumber = 3;
 
-        while (!opModeIsActive()) {
+        while (!isStarted()) {
+            sleep(1000);
             coneNumber = tfod.readCone();
-            if (coneNumber == 1) {
-                leds.setLed(ledLights.ledStates.RED);
-            } else if (coneNumber == 2) {
-                leds.setLed(ledLights.ledStates.GREEN);
-            } else if (coneNumber == 3) {
-                leds.setLed(ledLights.ledStates.BLUE);
-            }
             telemetry.addData("Cone: ", coneNumber);
             telemetry.update();
         }
 
-        waitForStart();
         if (isStopRequested()) return;
 
         // turn off tensorFlow
@@ -83,9 +76,6 @@ public class AutonomousBlueRightTestForLow extends LinearOpMode {
         // Start by defining our start position
         Pose2d startPose = new Pose2d(-38, 62, Math.toRadians(90));
         drive.setPoseEstimate(startPose);
-
-        // disabling cone read after start
-        //coneNumber = tfod.readCone();
 
         if (coneNumber == 3){
             endLocation_X = -66;
@@ -104,16 +94,17 @@ public class AutonomousBlueRightTestForLow extends LinearOpMode {
             leds.setLed(ledLights.ledStates.RED);
         }
 
+
         // Sequence 1 is start of program ending at cone pickup.
         TrajectorySequence startpath = drive.trajectorySequenceBuilder(startPose)
                 .strafeLeft(23)
                 .lineToLinearHeading(new Pose2d(-59,20, Math.toRadians(90)))
-                .lineToLinearHeading(new Pose2d(-48, 14, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(-48, 13, Math.toRadians(180)))
                 .addDisplacementMarker(30, () -> {
                     arm.getConeFromStack(stackPosition);
                     arm.openGrabber();
                 })
-                .forward(16)
+                .forward(15)
                 .addTemporalMarker(() -> {
                     arm.closeGrabber();
                 })
@@ -121,13 +112,13 @@ public class AutonomousBlueRightTestForLow extends LinearOpMode {
                 .addTemporalMarker(() -> {
                     arm.setPoleHeight(liftArm.Heights.LOW  );
                 })
-                .back(7)
+                .back(6)
                 .build();
         Pose2d stackPose = startpath.end();
 
         TrajectorySequence scorecone = drive.trajectorySequenceBuilder(stackPose)
-                .lineToLinearHeading(new Pose2d(-51, 13, Math.toRadians(90)))
-                .forward(3)
+                .lineToLinearHeading(new Pose2d(-49.5, 11, Math.toRadians(90)))
+                .forward(5)
                 .addTemporalMarker(() -> {
                     arm.openGrabber();
                 })
@@ -137,11 +128,11 @@ public class AutonomousBlueRightTestForLow extends LinearOpMode {
         Pose2d scorePose = scorecone.end();
 
         TrajectorySequence grabcone = drive.trajectorySequenceBuilder(scorePose)
-                .lineToLinearHeading(new Pose2d(-50, 14, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(-48, 13, Math.toRadians(180)))
                 .addDisplacementMarker(1,() -> {
                     arm.getConeFromStack(stackPosition);
                 })
-                .forward(15)
+                .forward(16)
                 .addTemporalMarker(() -> {
                     arm.closeGrabber();
                 })
@@ -149,12 +140,11 @@ public class AutonomousBlueRightTestForLow extends LinearOpMode {
                 .addTemporalMarker(() -> {
                     arm.setPoleHeight(liftArm.Heights.LOW  );
                 })
-                .back(7)
+                .back(6)
                 .build();
 
         TrajectorySequence endposition = drive.trajectorySequenceBuilder(scorePose)
                 .lineToLinearHeading(new Pose2d( endLocation_X, endLocation_Y,  Math.toRadians(endHeading_Z)))
-                //.lineToLinearHeading(new Pose2d( -35, -16,  Math.toRadians(270)))
                 .addTemporalMarker(() ->{
                     arm.closeGrabber();
                 })
