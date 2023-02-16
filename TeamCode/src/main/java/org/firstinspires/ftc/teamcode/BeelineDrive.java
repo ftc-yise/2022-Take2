@@ -39,6 +39,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 @TeleOp(name="Beeline go brrr", group="Linear Opmode")
+@Disabled
 public class BeelineDrive extends LinearOpMode {
 
     // Declare OpMode members.

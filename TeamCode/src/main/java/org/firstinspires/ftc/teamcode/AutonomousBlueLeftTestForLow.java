@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
@@ -14,6 +15,7 @@ import org.firstinspires.ftc.teamcode.yise.tensorFlow;
 
 
 @Autonomous(name = "Auto Blue Right Low bad", group = "Linear Opmode")
+@Disabled
 public class AutonomousBlueLeftTestForLow extends LinearOpMode {
 
     public float endLocation_X = 0;
