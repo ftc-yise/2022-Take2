@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
@@ -14,9 +13,8 @@ import org.firstinspires.ftc.teamcode.yise.mecanumDrive;
 import org.firstinspires.ftc.teamcode.yise.tensorFlow;
 
 
-@Autonomous(name = "Auto Red Left Park", group = "Linear Opmode")
-@Disabled
-public class AutonomousRedLeftForPark extends LinearOpMode {
+@Autonomous(name = "Auto Park", group = "Linear Opmode")
+public class AutonomousPark extends LinearOpMode {
 
     public float endLocation_X = 0;
     public float endLocation_Y = -16;
@@ -57,24 +55,24 @@ public class AutonomousRedLeftForPark extends LinearOpMode {
         // ------------------------------------------------------------------------------------
 
         // Start by defining our start position
-        Pose2d startPose = new Pose2d(-36, -62, Math.toRadians(270));
+        Pose2d startPose = new Pose2d(36, -62, Math.toRadians(270));
         drive.setPoseEstimate(startPose);
 
         int coneNumber = 3;
         coneNumber = tensor.readCone();
 
-        if (coneNumber == 1){
-            endLocation_X = -58;
-            endLocation_Y = -14;
-            endHeading_Z = 180;
+        if (coneNumber == 3){
+            endLocation_X = 58;
+            endLocation_Y = -36;
+            endHeading_Z = -90;
         } else if (coneNumber == 2){
-            endLocation_X = -35;
-            endLocation_Y = -16;
-            endHeading_Z = 180;
-        } else if (coneNumber == 3){
-            endLocation_X = -12;
-            endLocation_Y = -16;
-            endHeading_Z = 180;
+            endLocation_X = 35;
+            endLocation_Y = -36;
+            endHeading_Z = -90;
+        } else if (coneNumber == 1){
+            endLocation_X = 12;
+            endLocation_Y = -36;
+            endHeading_Z = -90;
         }
 
         // example trajectory sequences
@@ -93,11 +91,11 @@ public class AutonomousRedLeftForPark extends LinearOpMode {
 
         // Sequence 1 is start of program ending at cone pickup.
         TrajectorySequence startpath_1 = drive.trajectorySequenceBuilder(startPose)
-                .strafeRight(23)
-                .lineToLinearHeading(new Pose2d(-59,-20, Math.toRadians(270)))
-                .lineToLinearHeading(new Pose2d(-48, -14, Math.toRadians(180)))
+                .back(28)
+                //.lineToLinearHeading(new Pose2d(59,-20, Math.toRadians(270)))
+                //.lineToLinearHeading(new Pose2d(48, -14, Math.toRadians(0)))
 
-                .forward(10)
+                /*.forward(10)
                 .addTemporalMarker(() -> {
                     yiseDrive.autoCenterLoop(mecanumDrive.centerModes.CONE);
                 })
@@ -106,10 +104,10 @@ public class AutonomousRedLeftForPark extends LinearOpMode {
                 .addTemporalMarker(() -> {
                     arm.closeGrabber();
                 })
-                .waitSeconds(0.5)
+                .waitSeconds(1.5)
                 .addTemporalMarker(() -> {
                     arm.setPoleHeight(liftArm.Heights.HIGH);
-                })
+                })*/
                 .build();
 
 
@@ -142,7 +140,7 @@ public class AutonomousRedLeftForPark extends LinearOpMode {
                 .addTemporalMarker(() ->{
                     arm.closeGrabber();
                 })
-                .waitSeconds(.4)
+                .waitSeconds(.2)
                 .addTemporalMarker(() ->{
                     arm.setPoleHeight(liftArm.Heights.HIGH);
                 })
@@ -175,7 +173,7 @@ public class AutonomousRedLeftForPark extends LinearOpMode {
         TrajectorySequence endposition_4 = drive.trajectorySequenceBuilder(startpath_1.end())
                 .lineToLinearHeading(new Pose2d( endLocation_X, endLocation_Y,  Math.toRadians(endHeading_Z)))
                 .addTemporalMarker(() ->{
-                    arm.closeGrabber();
+                    arm.openGrabber();
                 })
                 .addTemporalMarker(() ->{
                     arm.returnToBottom();
@@ -193,10 +191,10 @@ public class AutonomousRedLeftForPark extends LinearOpMode {
 
         //                drive to cone stack with arm at cone 5 height
         drive.followTrajectorySequence(startpath_1);
-        drive.followTrajectorySequence(scorecone_2);
+        //drive.followTrajectorySequence(scorecone_2);
         telemetry.update();
-        drive.followTrajectorySequence(grabcone_3);
-        drive.followTrajectorySequence(scorecone_2);
+        //drive.followTrajectorySequence(grabcone_3);
+        //drive.followTrajectorySequence(scorecone_2);
         drive.followTrajectorySequence(endposition_4);
        // drive.followTrajectorySequence(testWait_5);
         //Location 3 x =-12  y =-16
