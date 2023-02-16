@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
@@ -13,7 +14,8 @@ import org.firstinspires.ftc.teamcode.yise.mecanumDrive;
 import org.firstinspires.ftc.teamcode.yise.tensorFlow;
 
 
-@Autonomous(name = "Auto Red Left park", group = "Linear Opmode")
+@Autonomous(name = "Auto Red Left Park", group = "Linear Opmode")
+@Disabled
 public class AutonomousRedLeftForPark extends LinearOpMode {
 
     public float endLocation_X = 0;
