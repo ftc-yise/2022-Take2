@@ -71,6 +71,13 @@ public class AutonomousRedRight extends LinearOpMode {
                 .addDisplacementMarker(0.2, () -> {
                     arm.setPoleHeight(liftArm.Heights.LOW);
                 })
+                .addDisplacementMarker(3, () -> {
+                    if (!arm.findBlue() || !arm.findRed()) {
+                        telemetry.addData("Cone not collected, new height: ", 6-loop);
+                        telemetry.update();
+                        loop--;
+                    }
+                })
                 .build();
 
         //Drive back to stack to get another cone
