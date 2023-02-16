@@ -49,7 +49,7 @@ import org.firstinspires.ftc.teamcode.yise.liftArm;
 
 
 @TeleOp(name = "Sensor: Digital touch", group = "Sensor")
-//@Disabled
+@Disabled
 public class SensorDigitalTouchTest extends LinearOpMode {
     /**
      * The REV Robotics Touch Sensor

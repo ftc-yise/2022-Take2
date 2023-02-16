@@ -23,6 +23,7 @@ public class AutonomousRedLeftTestForLow extends LinearOpMode {
     liftArm arm;
     SampleMecanumDrive drive;
     mecanumDrive yiseDrive;
+    ledLights leds;
 
     // Used to keep track of which cone we are picking up off the stack
     public int stackPosition = 5;
@@ -48,20 +49,23 @@ public class AutonomousRedLeftTestForLow extends LinearOpMode {
         // create instance of YISE lift arm class
         arm = new liftArm(hardwareMap);
 
-        ledLights leds = new ledLights(hardwareMap);
-
-        int coneNumber;
-
+        // create instance of YISE led light class
+        leds = new ledLights(hardwareMap);
         leds.setLed(ledLights.ledStates.RED);
 
-        /*while (!isStarted()) {
+        int coneNumber = 3;
+
+        while (!isStarted()) {
+            sleep(1000);
             coneNumber = tfod.readCone();
             telemetry.addData("Cone: ", coneNumber);
             telemetry.update();
-        }*/
+        }
 
-        waitForStart();
         if (isStopRequested()) return;
+
+        // turn off tensorFlow
+        tfod.disable();
 
         // ------------------------------------------------------------------------------------
         // Define Trajectories and Arm/Grabber Actions
@@ -70,8 +74,6 @@ public class AutonomousRedLeftTestForLow extends LinearOpMode {
         // Start by defining our start position
         Pose2d startPose = new Pose2d(-36, -62, Math.toRadians(270));
         drive.setPoseEstimate(startPose);
-
-        coneNumber = tfod.readCone();
 
         if (coneNumber == 1) {
             endLocation_X = -61;
@@ -141,7 +143,6 @@ public class AutonomousRedLeftTestForLow extends LinearOpMode {
         TrajectorySequence endposition = drive.trajectorySequenceBuilder(scorePose)
                 .lineToLinearHeading(new Pose2d( endLocation_X, endLocation_Y,  Math.toRadians(endHeading_Z)))
                 //.lineToLinearHeading(new Pose2d( -35, -16,  Math.toRadians(270)))
-
                 .addTemporalMarker(() ->{
                     arm.closeGrabber();
                 })
@@ -151,7 +152,7 @@ public class AutonomousRedLeftTestForLow extends LinearOpMode {
                 .build();
 
         // run my trajectories in order
-        telemetry.addData("cone#", coneNumber);
+        //telemetry.addData("cone#", coneNumber);
         telemetry.addData("Distance S Left", yiseDrive.distanceSensorLeft);
         telemetry.addData("Distance S Right", yiseDrive.distanceSensorRight);
         telemetry.update();

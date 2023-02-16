@@ -110,4 +110,11 @@ public class tensorFlow {
             tfod.setZoom(2.0, 16.0 / 9.0);
         }
     }
+
+    // shuts off tensorflow to conserve cpu resources
+    public void disable() {
+        if (tfod != null) {
+            tfod.shutdown();
+        }
+    }
 }
