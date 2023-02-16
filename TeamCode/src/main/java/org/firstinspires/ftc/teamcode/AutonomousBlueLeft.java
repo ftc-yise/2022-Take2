@@ -97,7 +97,7 @@ public class AutonomousBlueLeft extends LinearOpMode {
                 .build();
 
         //Finishing positions
-        TrajectorySequence driveTo1pos = drive.trajectorySequenceBuilder(driveToPole.end())
+        TrajectorySequence driveTo3pos = drive.trajectorySequenceBuilder(driveToPole.end())
                 .back(5)
                 .lineToLinearHeading(new Pose2d(13, 12, Math.toRadians(90)))
                 .forward(5)
@@ -172,11 +172,11 @@ public class AutonomousBlueLeft extends LinearOpMode {
 
         //Drive to right position based on Tensorflow input
         if (cone == 1) {
-            drive.followTrajectorySequence(driveTo1pos);
+            drive.followTrajectorySequence(driveToStack);
         } else if (cone == 2) {
             drive.followTrajectorySequence(driveTo2pos);
         } else {
-            drive.followTrajectorySequence(driveToStack);
+            drive.followTrajectorySequence(driveTo3pos);
         }
         arm.returnToBottom();
 
