@@ -54,12 +54,12 @@ public class AutonomousBlueLeft extends LinearOpMode {
 
         //Drive from starting pos to stack
         TrajectorySequence driveForward = drive.trajectorySequenceBuilder(startPose)
-                .lineToLinearHeading(new Pose2d(36, 14, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(36, 12, Math.toRadians(0)))
                 .addDisplacementMarker(10, () -> {
                     arm.openGrabber();
                     arm.getTopCone();
                 })
-                .forward(27)
+                .forward(26)
                 .back(1)
                 .build();
 
@@ -67,9 +67,16 @@ public class AutonomousBlueLeft extends LinearOpMode {
         TrajectorySequence driveToPole = drive.trajectorySequenceBuilder(driveForward.end())
                 .back(4)
                 .lineToLinearHeading(new Pose2d(48, 11, Math.toRadians(90)))
-                .forward(6)
+                .forward(5)
                 .addDisplacementMarker(0.2, () -> {
                     arm.setPoleHeight(liftArm.Heights.LOW);
+                })
+                .addDisplacementMarker(3, () -> {
+                    if (!arm.findBlue() || !arm.findRed()) {
+                        telemetry.addData("Cone not collected, new height: ", 6-loop);
+                        telemetry.update();
+                        loop--;
+                    }
                 })
                 .build();
 
@@ -84,8 +91,8 @@ public class AutonomousBlueLeft extends LinearOpMode {
                     }
                     loop++;
                 })
-                .lineToLinearHeading(new Pose2d(48, 14, Math.toRadians(0)))
-                .forward(15)
+                .lineToLinearHeading(new Pose2d(48, 13, Math.toRadians(0)))
+                .forward(14)
                 .back(1)
                 .build();
 
