@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.yise.ledLights;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 
-@Autonomous(name = "Auto Red Left Low", group = "Linear Opmode")
+@Autonomous(name = "Auto Red Left", group = "Linear Opmode")
 public class AutonomousRedLeftTestForLow extends LinearOpMode {
 
     public float endLocation_X = 0;

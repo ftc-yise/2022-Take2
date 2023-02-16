@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.yise.mecanumDrive;
 import org.firstinspires.ftc.teamcode.yise.tensorFlow;
 
 
-@Autonomous(name = "Auto Blue Right Low", group = "Linear Opmode")
+@Autonomous(name = "Auto Blue Right", group = "Linear Opmode")
 public class AutonomousBlueRightTestForLow extends LinearOpMode {
 
     public float endLocation_X = 0;
