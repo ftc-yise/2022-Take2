@@ -78,7 +78,7 @@ public class AutonomousRedLeftTestForLow extends LinearOpMode {
         if (coneNumber == 1) {
             endLocation_X = -61;
             endLocation_Y = -14;
-            endHeading_Z = 180;
+            endHeading_Z = -90;
             leds.setLed(ledLights.ledStates.RED);
         } else if (coneNumber == 2) {
             endLocation_X = -35;
@@ -88,15 +88,16 @@ public class AutonomousRedLeftTestForLow extends LinearOpMode {
         } else if (coneNumber == 3) {
             endLocation_X = -15;
             endLocation_Y = -16;
-            endHeading_Z = 180;
+            endHeading_Z = -90;
             leds.setLed(ledLights.ledStates.BLUE);
         }
 
         // Sequence 1 is start of program ending at cone pickup.
         TrajectorySequence startpath = drive.trajectorySequenceBuilder(startPose)
-                .strafeRight(23)
+                .back(1)
+                .lineToLinearHeading(new Pose2d(-59,-61, Math.toRadians(270)))
                 .lineToLinearHeading(new Pose2d(-59,-20, Math.toRadians(270)))
-                .lineToLinearHeading(new Pose2d(-48, -14, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(-48, -12, Math.toRadians(180)))
                 .addDisplacementMarker(30, () -> {
                     arm.getConeFromStack(stackPosition);
                     arm.openGrabber();

@@ -74,32 +74,33 @@ public class AutonomousBlueRightTestForLow extends LinearOpMode {
         // ------------------------------------------------------------------------------------
 
         // Start by defining our start position
-        Pose2d startPose = new Pose2d(-38, 62, Math.toRadians(90));
+        Pose2d startPose = new Pose2d(-36, 62, Math.toRadians(90));
         drive.setPoseEstimate(startPose);
 
         if (coneNumber == 3){
             endLocation_X = -66;
             endLocation_Y = 14;
-            endHeading_Z = 180;
+            endHeading_Z = 90;
             leds.setLed(ledLights.ledStates.BLUE);
         } else if (coneNumber == 2){
             endLocation_X = -40;
-            endLocation_Y = 16;
+            endLocation_Y = 12;
             endHeading_Z = 90;
             leds.setLed(ledLights.ledStates.GREEN);
         } else if (coneNumber == 1){
-            endLocation_X = -15;
-            endLocation_Y = 16;
-            endHeading_Z = 180;
+            endLocation_X = -12;
+            endLocation_Y = 12;
+            endHeading_Z = 90;
             leds.setLed(ledLights.ledStates.RED);
         }
 
 
         // Sequence 1 is start of program ending at cone pickup.
         TrajectorySequence startpath = drive.trajectorySequenceBuilder(startPose)
-                .strafeLeft(23)
+                .back(1)
+                .lineToLinearHeading(new Pose2d(-59,61, Math.toRadians(90)))
                 .lineToLinearHeading(new Pose2d(-59,20, Math.toRadians(90)))
-                .lineToLinearHeading(new Pose2d(-48, 13, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(-48, 12, Math.toRadians(180)))
                 .addDisplacementMarker(30, () -> {
                     arm.getConeFromStack(stackPosition);
                     arm.openGrabber();
@@ -112,27 +113,27 @@ public class AutonomousBlueRightTestForLow extends LinearOpMode {
                 .addTemporalMarker(() -> {
                     arm.setPoleHeight(liftArm.Heights.LOW  );
                 })
-                .back(6)
+                .back(7)
                 .build();
         Pose2d stackPose = startpath.end();
 
         TrajectorySequence scorecone = drive.trajectorySequenceBuilder(stackPose)
-                .lineToLinearHeading(new Pose2d(-49.5, 11, Math.toRadians(90)))
-                .forward(5)
+                .lineToLinearHeading(new Pose2d(-49, 13, Math.toRadians(90)))
+                .forward(4)
                 .addTemporalMarker(() -> {
                     arm.openGrabber();
                 })
                 .waitSeconds(0.05125)
-                .back(7)
+                .back(6)
                 .build();
         Pose2d scorePose = scorecone.end();
 
         TrajectorySequence grabcone = drive.trajectorySequenceBuilder(scorePose)
-                .lineToLinearHeading(new Pose2d(-48, 13, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(-50, 14, Math.toRadians(180)))
                 .addDisplacementMarker(1,() -> {
                     arm.getConeFromStack(stackPosition);
                 })
-                .forward(16)
+                .forward(13)
                 .addTemporalMarker(() -> {
                     arm.closeGrabber();
                 })
@@ -140,7 +141,7 @@ public class AutonomousBlueRightTestForLow extends LinearOpMode {
                 .addTemporalMarker(() -> {
                     arm.setPoleHeight(liftArm.Heights.LOW  );
                 })
-                .back(6)
+                .back(7)
                 .build();
 
         TrajectorySequence endposition = drive.trajectorySequenceBuilder(scorePose)
