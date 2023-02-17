@@ -15,7 +15,7 @@ import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 
-@Autonomous(name = "Auto Blue Right", group = "Linear Opmode")
+@Autonomous(name = "Auto Blue Right Bad", group = "Linear Opmode")
 @Disabled
 public class AutonomousBlueRight extends LinearOpMode {
     public float endLocation_X = 0;
