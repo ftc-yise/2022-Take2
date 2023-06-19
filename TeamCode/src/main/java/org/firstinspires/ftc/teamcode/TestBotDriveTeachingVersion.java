@@ -3,9 +3,10 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
+import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name="TBotTeachings" +
         "", group="Linear Opmode")
@@ -18,7 +19,8 @@ public class TestBotDriveTeachingVersion extends LinearOpMode {
     private DcMotor leftBackDrive = null;
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
-    
+
+    private Servo smasher;
 
     public float speedmulti = 1;
 
@@ -36,6 +38,7 @@ public class TestBotDriveTeachingVersion extends LinearOpMode {
         leftBackDrive  = hardwareMap.get(DcMotor.class, "LeftBackDrive");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "RightFrontDrive");
         rightBackDrive = hardwareMap.get(DcMotor.class, "RightBackDrive");
+        smasher = hardwareMap.get(Servo.class, "smasher");
         //fireServo = hardwareMap.get(Servo.class, "fire_servo");
         //barrel = hardwareMap.get(CRServo.class, "barrel" );
 
@@ -120,15 +123,14 @@ public class TestBotDriveTeachingVersion extends LinearOpMode {
 
 
 
-            /*if (gamepad1.a){
-                fireServo.setPosition(Servo.MAX_POSITION);
+            if (gamepad1.a){
+                smasher.setPosition(Servo.MAX_POSITION);
             }
             else if (gamepad1.b){
-                fireServo.setPosition(Servo.MIN_POSITION);
-
+                smasher.setPosition(Servo.MIN_POSITION);
             }
 
-            if (gamepad1.left_bumper){
+            /*if (gamepad1.left_bumper){
                 barrel.setPower(1);
 
             }else if (gamepad1.right_bumper){
@@ -136,7 +138,7 @@ public class TestBotDriveTeachingVersion extends LinearOpMode {
 
             }
             else
-                barrel.setPower(0);
+                barrel.setPower(0);*/
 
 
 
