@@ -2,18 +2,14 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.TouchSensor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 
-
-@TeleOp(name="TBot" +
+@TeleOp(name="TBotTeachings" +
         "", group="Linear Opmode")
-public class TestBotDrive extends LinearOpMode {
+public class TestBotDriveTeachingVersion extends LinearOpMode {
 
 
     // Declare OpMode members for each of the 4 motors.
@@ -22,6 +18,7 @@ public class TestBotDrive extends LinearOpMode {
     private DcMotor leftBackDrive = null;
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
+    
 
     public float speedmulti = 1;
 
@@ -85,6 +82,11 @@ public class TestBotDrive extends LinearOpMode {
                 speedmulti = 1f;
             }
 
+            //VERY IMPORTANT KILL SWITCH TO END ROBOT MOVEMENT
+            if(gamepad1.x){
+                terminateOpModeNow();
+            }
+
             telemetry.addData("motor Power:", leftBackDrive.getPower());
 
 
@@ -94,14 +96,14 @@ public class TestBotDrive extends LinearOpMode {
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
             //double vertical   = -gamepad1.right_stick_x;  // Note: pushing stick forward gives negative value
             double horizontal =  gamepad1.left_stick_y;
-            double turn     =  gamepad1.left_stick_x;
-
+            double turn     =    gamepad1.right_stick_x;
+            double strafe   =    gamepad1.left_stick_x;
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
             // Set up a variable for each drive wheel to save the power level for telemetry.
-            double leftFrontPower  = /*vertical*/  horizontal - turn * speedmulti;
-            double rightFrontPower = /*vertical*/  horizontal + turn * speedmulti;
-            double leftBackPower   = /*vertical*/  horizontal - turn * speedmulti;
-            double rightBackPower  = /*vertical*/  horizontal + turn * speedmulti;
+            double leftFrontPower  = horizontal - strafe - turn * speedmulti;
+            double rightFrontPower = horizontal - strafe + turn * speedmulti;
+            double leftBackPower   = horizontal + strafe - turn * speedmulti;
+            double rightBackPower  = horizontal + strafe + turn * speedmulti;
 
             // Normalize the values so no wheel power exceeds 100%
             // This ensures that the robot maintains the desired motion.
@@ -115,62 +117,9 @@ public class TestBotDrive extends LinearOpMode {
                 leftBackPower   /= max;
                 rightBackPower  /= max;
             }
-            if(gamepad1.right_stick_x > .5){
-                leftFrontPower = -1 * speedmulti;
-                leftBackPower = -1 * speedmulti;
-                rightBackPower = 1 * speedmulti;
-                rightFrontPower = 1 * speedmulti;
-            }else if(gamepad1.right_stick_x  < -.5){
-                leftFrontPower = 1 * speedmulti;
-                leftBackPower = 1 * speedmulti;
-                rightBackPower = -1 * speedmulti;
-                rightFrontPower = -1 * speedmulti;
-            }
-            if(gamepad1.left_stick_x < -.5){
-                leftFrontPower = 1 * speedmulti;
-                leftBackPower = -1 * speedmulti;
-                rightBackPower = -1 * speedmulti;
-                rightFrontPower = 1 * speedmulti;
-            }else if(gamepad1.left_stick_x  > .5){
-                leftFrontPower = -1 * speedmulti;
-                leftBackPower = 1 * speedmulti;
-                rightBackPower = 1 * speedmulti;
-                rightFrontPower = -1 * speedmulti;
-            }
-            if(gamepad1.left_trigger > .5){
-                leftFrontPower = .051;
-                leftBackPower = .051;
-                rightBackPower = -.051;
-                rightFrontPower = -.05;
-        }
-            if(gamepad1.right_trigger > .5){
-                leftFrontPower = -.051;
-                leftBackPower = .051;
-                rightBackPower = .051;
-                rightFrontPower = -.05;
-            }
-            // testing out how to make the motors stop on a dime by keeping constant power so they dont spin freely
-           /* if(gamepad1.left_stick_x == 0){
-                leftFrontPower = .01;
-                leftBackPower = -.01;
-                rightBackPower = -.01;
-                rightFrontPower = .01;
-            }else if(gamepad1.right_stick_x == 0) {
-                leftFrontPower = -.01;
-                leftBackPower = .01;
-                rightBackPower = .01;
-                rightFrontPower = -.01;
-            }else if(gamepad1.right_stick_y == 0) {
-                leftFrontPower = -.01;
-                leftBackPower = .01;
-                rightBackPower = .01;
-                rightFrontPower = -.01;
-            }else if(gamepad1.left_stick_y == 0) {
-                leftFrontPower = -.01;
-                leftBackPower = .01;
-                rightBackPower = .01;
-                rightFrontPower = -.01;
-            }*/
+
+
+
             /*if (gamepad1.a){
                 fireServo.setPosition(Servo.MAX_POSITION);
             }
