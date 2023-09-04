@@ -38,8 +38,9 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.teamcode.yise.liftArm2;
+
 @TeleOp(name="Beeline go brrr", group="Linear Opmode")
-@Disabled
 public class BeelineDrive extends LinearOpMode {
 
     // Declare OpMode members.
@@ -49,12 +50,20 @@ public class BeelineDrive extends LinearOpMode {
     private DcMotor leftBackDrive = null;
     private DcMotor rightBackDrive = null;
 
+
     float speedMultiplier = 1;
+
+    public boolean once = false;
+    public boolean gamepadAWasReleased = true;
+
 
     @Override
     public void runOpMode(){
         telemetry.addData("Status", "Initialized");
         telemetry.update();
+
+        liftArm2 arm = new liftArm2(hardwareMap);
+
 
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
@@ -66,10 +75,10 @@ public class BeelineDrive extends LinearOpMode {
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
-        leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
-        leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
+        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -87,14 +96,34 @@ public class BeelineDrive extends LinearOpMode {
             // POV Mode uses left stick to go forward, and right stick to turn.
             // - This uses basic math to combine motions and is easier to drive straight.
             drive = -gamepad1.left_stick_y;
-            turn = gamepad1.right_stick_x;
-            leftPower    = Range.clip(drive + turn, -1.0, 1.0) ;
-            rightPower   = Range.clip(drive - turn, -1.0, 1.0) ;
+            turn = -gamepad1.left_stick_x;
+            leftPower = Range.clip(drive + turn, -1.0, 1.0);
+            rightPower = Range.clip(drive - turn, -1.0, 1.0);
 
-            if (gamepad1.y && (speedMultiplier == 1)) {
-                speedMultiplier = 0.5f;
-            } else if (gamepad1.y && (speedMultiplier == 0.5f)){
-                speedMultiplier = 1f;
+            if (speedMultiplier == 1){
+            speedMultiplier = .75f;
+            } else if (gamepad1.y && (speedMultiplier == .75)) {
+                speedMultiplier = 0.25f;
+            } else if (gamepad1.y && (speedMultiplier == 0.25f)){
+                speedMultiplier = .75f;
+            }
+            if(gamepad1.x){
+                terminateOpModeNow();
+            }//Kill Switch
+
+            if (!gamepad1.a){
+                gamepadAWasReleased = true;
+            }
+
+            if (gamepad1.a && gamepadAWasReleased) {
+                gamepadAWasReleased = false;
+                if (arm.pole_status == liftArm2.polePositions.DOWN) {
+                    arm.poleUp();
+                    once = false;
+                } else if (arm.pole_status == liftArm2.polePositions.UP) {
+                    arm.poleDown();
+                    once = true;
+                }
             }
 
             leftFrontDrive.setPower(leftPower * speedMultiplier);
